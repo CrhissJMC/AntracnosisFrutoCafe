@@ -100,7 +100,7 @@ Anota dónde aparecen las lesiones, cuándo comenzaron y cómo cambian después 
     title: 'Colletotrichum: conociendo al patógeno',
     subtitle: 'Por qué antracnosis y Coffee Berry Disease no son sinónimos, y cuándo es necesario un diagnóstico.',
     read_minutes: 4,
-    image_url: 'https://images.unsplash.com/photo-1530092285049-1c42085fd395?w=1200&q=80',
+    image_url: 'https://images.unsplash.com/photo-1791728214841-a55960d9f9ec?w=1200&q=80',
     source_text: 'Literatura sobre Colletotrichum en café',
     content: `## 1. Un género, diferentes especies
 
@@ -124,7 +124,7 @@ Si observas lesiones circulares, oscuras y deprimidas en cerezas verdes o madura
     title: 'Lluvias y antracnosis: cuándo reforzar la observación',
     subtitle: 'La humedad puede favorecer la enfermedad, pero el riesgo también depende del fruto, la variedad y el manejo.',
     read_minutes: 3,
-    image_url: 'https://images.unsplash.com/photo-1504455583697-3a9b04be6397?w=1200&q=80',
+    image_url: 'https://images.unsplash.com/photo-1695781398648-61682bb523ba?w=1200&q=80',
     source_text: 'Estudios de clima y fitopatología del café',
     content: `## 1. Humedad y dispersión
 
@@ -148,7 +148,7 @@ Aplicar fungicidas simplemente porque llovió, sin confirmar presencia activa de
     title: 'Trichoderma: posibilidades y límites del control biológico',
     subtitle: 'Los resultados prometedores de laboratorio necesitan validación en campo antes de convertirse en recomendaciones.',
     read_minutes: 4,
-    image_url: 'https://images.unsplash.com/photo-1574263965717-d95abf6a1e62?w=1200&q=80',
+    image_url: 'https://images.unsplash.com/photo-1760861715390-d85bd4eb617e?w=1200&q=80',
     source_text: 'Investigaciones sobre control biológico en café',
     content: `## 1. Qué es Trichoderma
 
