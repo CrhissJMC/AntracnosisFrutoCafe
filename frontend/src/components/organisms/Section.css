@@ -1,0 +1,9 @@
+.section { padding-block: var(--space-16); }
+.section--alt { background: var(--color-surface-alt); }
+.section--dark { background: var(--color-forest-900); color: var(--color-text-inverse); }
+.section__title { margin-bottom: var(--space-8); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(var(--grid-min), 100%), 1fr)); padding: 0; }
+.grid--gap-sm { gap: var(--space-4); }
+.grid--gap-md { gap: var(--space-5); }
+.grid--gap-lg { gap: var(--space-8); }
+@media (max-width: 600px) { .section { padding-block: var(--space-12); } }

@@ -1,0 +1,20 @@
+.heading { font-weight: 700; line-height: 1.2; text-wrap: balance; }
+.heading--serif { font-family: var(--font-serif); }
+.heading--display { font-size: var(--text-4xl); line-height: 1.12; }
+.heading--xl { font-size: var(--text-3xl); }
+.heading--lg { font-size: var(--text-2xl); }
+.heading--md { font-size: var(--text-lg); }
+.heading--sm { font-size: var(--text-base); font-family: var(--font-sans); font-weight: 600; line-height: 1.35; }
+
+.text { text-wrap: pretty; }
+.text--sm { font-size: var(--text-sm); line-height: 1.6; }
+.text--md { font-size: 0.95rem; line-height: 1.7; }
+.text--lg { font-size: var(--text-lg); line-height: 1.65; }
+
+.eyebrow { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: var(--space-3); }
+
+.tone--default { color: var(--color-text); }
+.tone--muted { color: var(--color-text-muted); }
+.tone--brand { color: var(--color-brand); }
+.tone--inverse { color: var(--color-text-inverse); }
+.tone--inverse-muted { color: rgba(255, 255, 255, 0.72); }

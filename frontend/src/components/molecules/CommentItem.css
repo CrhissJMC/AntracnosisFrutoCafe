@@ -1,0 +1,8 @@
+.comment { display: flex; gap: var(--space-3); list-style: none; padding-block: var(--space-4); border-bottom: 1px solid var(--color-border); }
+.comment:last-child { border-bottom: 0; }
+.comment__main { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-1); }
+.comment__head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.comment__author { font-weight: 600; font-size: var(--text-sm); }
+.comment__date { font-size: var(--text-xs); color: var(--color-text-muted); }
+/* white-space: pre-wrap respeta los saltos de línea del usuario sin usar HTML */
+.comment__body { font-size: 0.95rem; color: var(--color-text); white-space: pre-wrap; overflow-wrap: anywhere; }

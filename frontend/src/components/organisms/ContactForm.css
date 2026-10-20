@@ -1,0 +1,4 @@
+.contact-form { display: flex; flex-direction: column; gap: var(--space-5); }
+.contact-form__row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); }
+.contact-form__trap { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+@media (max-width: 600px) { .contact-form__row { grid-template-columns: 1fr; } .contact-form .btn { width: 100%; } }

@@ -1,0 +1,4 @@
+.what-is__grid { display: grid; grid-template-columns: 1fr 2fr; gap: var(--space-16); align-items: start; }
+.what-is__text p { color: var(--color-text-muted); font-size: 0.95rem; margin-bottom: var(--space-4); }
+.what-is__text p:last-child { margin-bottom: 0; }
+@media (max-width: 720px) { .what-is__grid { grid-template-columns: 1fr; gap: var(--space-4); } }

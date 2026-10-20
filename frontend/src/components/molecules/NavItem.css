@@ -1,0 +1,11 @@
+.nav-item { position: relative; display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--tap); font-size: var(--text-sm); font-weight: 500; color: var(--color-text-muted); transition: color var(--duration-fast) ease; }
+.nav-item[aria-current='page'] { color: var(--color-brand); }
+.nav-item--top::after { content: ''; position: absolute; left: 0; right: 0; bottom: 8px; height: 2px; background: var(--color-brand); transform: scaleX(0); transform-origin: left; transition: transform var(--duration) var(--ease-out); }
+.nav-item--top[aria-current='page']::after { transform: scaleX(1); }
+.nav-item--side { width: 100%; padding: 0 var(--space-3); border-radius: var(--radius); color: rgba(255, 255, 255, 0.72); }
+.nav-item--side[aria-current='page'] { background: rgba(255, 255, 255, 0.1); color: #fff; }
+@media (hover: hover) {
+  .nav-item--top:hover { color: var(--color-text); }
+  .nav-item--top[aria-current='page']:hover { color: var(--color-brand); }
+  .nav-item--side:hover { color: #fff; background: rgba(255, 255, 255, 0.06); }
+}

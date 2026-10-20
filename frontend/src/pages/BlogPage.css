@@ -1,0 +1,5 @@
+.blog-filters { display: flex; gap: var(--space-2); margin-bottom: var(--space-8); overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+.blog-filters::-webkit-scrollbar { display: none; }
+.blog-filter { flex-shrink: 0; min-height: 36px; padding: 0 var(--space-4); border: 1px solid var(--color-border); border-radius: 999px; background: var(--color-surface); font-size: var(--text-sm); font-weight: 500; color: var(--color-text-muted); cursor: pointer; transition: background-color var(--duration-fast) ease, color var(--duration-fast) ease, border-color var(--duration-fast) ease; }
+.blog-filter[aria-pressed='true'] { background: var(--color-forest-900); border-color: var(--color-forest-900); color: #fff; }
+@media (hover: hover) { .blog-filter:not([aria-pressed='true']):hover { border-color: var(--color-text-muted); color: var(--color-text); } }

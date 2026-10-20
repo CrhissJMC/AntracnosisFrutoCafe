@@ -1,0 +1,77 @@
+/* =========================================================
+   Design tokens — la base de todo el sistema atómico.
+   Los átomos solo usan estas variables, nunca valores sueltos.
+   ========================================================= */
+:root {
+  /* Color */
+  --color-brand: #8b1a1a;
+  --color-brand-hover: #6e1414;
+  --color-brand-soft: #f6e9e9;
+  --color-forest-900: #0d1f18;
+  --color-forest-700: #1c3a2a;
+  --color-forest-300: #a8c5a0;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f6f8f6;
+  --color-surface-tint: #eef2ee;
+  --color-text: #1a1a1a;
+  --color-text-muted: #555b57;
+  --color-text-inverse: #ffffff;
+  --color-border: #d6dbd6;
+  --color-success-bg: #e6f4eb;
+  --color-success-border: #9cc9a8;
+  --color-success-text: #1c5c30;
+  --color-danger-bg: #fbeaea;
+  --color-danger-border: #e2a5a5;
+  --color-danger-text: #8b1a1a;
+  --color-info-bg: #eef2ee;
+  --color-info-text: #1c3a2a;
+
+  /* Tipografía */
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: clamp(1.5rem, 3vw, 1.75rem);
+  --text-3xl: clamp(1.8rem, 4vw, 2.6rem);
+  --text-4xl: clamp(2rem, 5vw, 3.1rem);
+
+  /* Espaciado (escala de 4px) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* Forma y profundidad */
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-lg: 10px;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.09);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.12);
+
+  /* Movimiento */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 150ms;
+  --duration: 220ms;
+
+  /* Capas (escala fija, sin z-index: 9999) */
+  --z-sticky: 10;
+  --z-drawer: 20;
+  --z-modal: 30;
+  --z-toast: 40;
+
+  /* Layout */
+  --container: 1100px;
+  --gutter: clamp(1rem, 4vw, 2rem);
+  --navbar-h: 60px;
+  --tap: 44px;
+}

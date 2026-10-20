@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Proyecto Antracnosis – Fitopatología del Café</title>
+  <meta name="description" content="Investigación y conocimiento sobre la antracnosis en el fruto del café. Causada por hongos del género Colletotrichum, aprende a reconocerla y manejarla." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ==================== NAVBAR ==================== -->
+  <header class="navbar" id="navbar">
+    <div class="navbar-inner">
+      <a href="#" class="nav-logo" onclick="showPage('inicio'); return false;">
+        <span class="logo-leaf">🌿</span> Proyecto Antracnosis
+      </a>
+      <nav class="nav-links" id="navLinks">
+        <a href="#" class="nav-link" data-page="inicio" onclick="showPage('inicio'); return false;">Inicio</a>
+        <a href="#" class="nav-link" data-page="nosotros" onclick="showPage('nosotros'); return false;">Nosotros</a>
+        <a href="#" class="nav-link" data-page="servicios" onclick="showPage('servicios'); return false;">Servicios</a>
+        <a href="#" class="nav-link" data-page="blog" onclick="showPage('blog'); return false;">Blog</a>
+        <a href="#" class="nav-link" data-page="contacto" onclick="showPage('contacto'); return false;">Contacto</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Menú">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ==================== INICIO ==================== -->
+  <main id="page-inicio" class="page active">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <p class="hero-label">FITOPATOLOGÍA DEL CAFÉ</p>
+        <h1 class="hero-title">Antracnosis en el fruto del café</h1>
+        <p class="hero-desc">Causada por hongos del género <em>Colletotrichum</em>, es una de las enfermedades que más pérdidas provoca en la cereza. Aprende a reconocerla y manejarla.</p>
+        <div class="hero-btns">
+          <button class="btn btn-primary" onclick="showPage('servicios')">Ver servicios</button>
+          <button class="btn btn-outline" onclick="showPage('contacto')">Contáctanos</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUÉ ES -->
+    <section class="que-es">
+      <div class="container que-es-grid">
+        <div class="que-es-left">
+          <h2 class="section-question">¿Qué es?</h2>
+        </div>
+        <div class="que-es-right">
+          <p>La antracnosis es una enfermedad fúngica producida principalmente por <em>Colletotrichum gloeosporioides</em> y, en África, por <em>C. kahawae</em> (CBD, "Coffee Berry Disease"), la forma más agresiva.</p>
+          <p>Ataca flores, frutos verdes y maduros, afectando el rendimiento y la calidad de taza al generar granos negros o vinagres.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SÍNTOMAS -->
+    <section class="sintomas">
+      <div class="container">
+        <h2 class="section-title red">Síntomas en el fruto</h2>
+        <div class="cards-grid-2">
+          <div class="symptom-card">
+            <span class="dot red"></span>
+            <h3>Manchas hundidas</h3>
+            <p>Lesiones circulares, oscuras y deprimidas sobre la cereza verde o madura.</p>
+          </div>
+          <div class="symptom-card">
+            <span class="dot red"></span>
+            <h3>Fruto momificado</h3>
+            <p>Las cerezas afectadas se secan, ennegrecen y quedan adheridas a la rama.</p>
+          </div>
+          <div class="symptom-card">
+            <span class="dot red"></span>
+            <h3>Masas rosadas</h3>
+            <p>Con humedad alta aparecen esporas color salmón sobre las lesiones.</p>
+          </div>
+          <div class="symptom-card">
+            <span class="dot red"></span>
+            <h3>Caída prematura</h3>
+            <p>Los frutos jóvenes se desprenden antes de madurar, reduciendo la cosecha.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CICLO -->
+    <section class="ciclo">
+      <div class="container">
+        <h2 class="section-title red">Ciclo de la enfermedad</h2>
+        <div class="ciclo-grid">
+          <div class="ciclo-step">
+            <span class="step-num">01</span>
+            <div class="step-divider"></div>
+            <h3>Inóculo</h3>
+            <p>Esporas sobreviven en frutos momificados, ramas secas y hojas.</p>
+          </div>
+          <div class="ciclo-step">
+            <span class="step-num">02</span>
+            <div class="step-divider"></div>
+            <h3>Dispersión</h3>
+            <p>La lluvia y el salpique transportan los conidios a frutos sanos.</p>
+          </div>
+          <div class="ciclo-step">
+            <span class="step-num">03</span>
+            <div class="step-divider"></div>
+            <h3>Infección</h3>
+            <p>Con 20–25 °C y alta humedad, el hongo penetra la cutícula.</p>
+          </div>
+          <div class="ciclo-step">
+            <span class="step-num">04</span>
+            <div class="step-divider"></div>
+            <h3>Lesión</h3>
+            <p>En 1–2 semanas aparecen manchas y nuevas esporas reinician el ciclo.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MANEJO INTEGRADO -->
+    <section class="manejo">
+      <div class="container">
+        <h2 class="manejo-title">Manejo integrado</h2>
+        <div class="manejo-grid">
+          <div class="manejo-col">
+            <h3>Cultural</h3>
+            <ul>
+              <li>→ Retirar frutos momificados y ramas secas</li>
+              <li>→ Podas para mejorar aireación</li>
+              <li>→ Regular la sombra</li>
+              <li>→ Nutrición balanceada (K, Ca)</li>
+            </ul>
+          </div>
+          <div class="manejo-col">
+            <h3>Genético</h3>
+            <ul>
+              <li>→ Sembrar variedades tolerantes</li>
+              <li>→ Renovar cafetales envejecidos</li>
+              <li>→ Usar semilla certificada</li>
+            </ul>
+          </div>
+          <div class="manejo-col">
+            <h3>Biológico</h3>
+            <ul>
+              <li>→ Trichoderma spp.</li>
+              <li>→ Bacillus subtilis</li>
+              <li>→ Fomentar microbiota del suelo</li>
+            </ul>
+          </div>
+          <div class="manejo-col">
+            <h3>Químico</h3>
+            <ul>
+              <li>→ Fungicidas cúpricos preventivos</li>
+              <li>→ Rotar modos de acción</li>
+              <li>→ Aplicar según asesoría técnica y etiqueta</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container footer-grid">
+        <div class="footer-brand">
+          <p class="footer-logo">Proyecto Antracnosis</p>
+          <p class="footer-tagline">Investigación y conocimiento para el cuidado del fruto del café y la sanidad del cafetal.</p>
+          <p class="footer-loc">Bagua · Amazonas · Perú</p>
+        </div>
+        <div class="footer-nav">
+          <p class="footer-nav-title">El proyecto</p>
+          <a href="#" onclick="showPage('inicio'); return false;">Inicio</a>
+          <a href="#" onclick="showPage('nosotros'); return false;">Nosotros</a>
+          <a href="#" onclick="showPage('servicios'); return false;">Servicios</a>
+          <a href="#" onclick="showPage('blog'); return false;">Blog</a>
+          <a href="#" onclick="showPage('contacto'); return false;">Contacto</a>
+        </div>
+        <div class="footer-contact">
+          <p class="footer-nav-title">Contacto</p>
+          <a href="mailto:nfransa19@gmail.com">nfransa19@gmail.com ↗</a>
+          <p>8:00 a. m. – 5:00 p. m.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 Proyecto Antracnosis · Fines educativos</p>
+        <p>La información no sustituye la asesoría agronómica profesional.</p>
+      </div>
+    </footer>
+  </main>
+
+  <!-- ==================== NOSOTROS ==================== -->
+  <main id="page-nosotros" class="page">
+
+    <section class="page-hero">
+      <div class="container">
+        <p class="page-label">NOSOTROS</p>
+        <h1 class="page-hero-title">Un equipo comprometido con el café</h1>
+        <p class="page-hero-desc">Somos estudiantes que investigan cómo prevenir y manejar la antracnosis en el fruto del café.</p>
+      </div>
+    </section>
+
+    <section class="nosotros-section">
+      <div class="container">
+        <div class="mvision-grid">
+          <div class="mvision-card">
+            <h3 class="mvision-title red">Misión</h3>
+            <p>Difundir conocimiento científico sobre la antracnosis para apoyar a productores de café.</p>
+          </div>
+          <div class="mvision-card">
+            <h3 class="mvision-title red">Visión</h3>
+            <p>Ser un referente académico en sanidad vegetal del cultivo de café.</p>
+          </div>
+          <div class="mvision-card">
+            <h3 class="mvision-title red">Método</h3>
+            <p>Revisión bibliográfica, observación de campo y análisis de casos reales.</p>
+          </div>
+        </div>
+
+        <h2 class="equipo-title">Equipo</h2>
+        <div class="equipo-grid">
+          <div class="equipo-card">
+            <span class="equipo-num">01</span>
+            <h3>ARVILDO JULCA ENITH FIORELA</h3>
+            <p>Integrante del proyecto</p>
+          </div>
+          <div class="equipo-card">
+            <span class="equipo-num">02</span>
+            <h3>CARUAJULCA SALAZAR DALMER ASUNCION</h3>
+            <p>Integrante del proyecto</p>
+          </div>
+          <div class="equipo-card">
+            <span class="equipo-num">03</span>
+            <h3>MAGALLAN CULQUI CRISTHIAN JEFRYE</h3>
+            <p>Integrante del proyecto</p>
+          </div>
+          <div class="equipo-card">
+            <span class="equipo-num">04</span>
+            <h3>SILVA AVELLANEDA FRANS NORBERT</h3>
+            <p>Integrante del proyecto</p>
+          </div>
+        </div>
+
+        <div class="docente-section">
+          <p class="docente-label red">Docente asesor</p>
+          <h2 class="docente-name">Dr. FUENTES MAZA FRANS</h2>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container footer-grid">
+        <div class="footer-brand">
+          <p class="footer-logo">Proyecto Antracnosis</p>
+          <p class="footer-tagline">Investigación y conocimiento para el cuidado del fruto del café y la sanidad del cafetal.</p>
+          <p class="footer-loc">Bagua · Amazonas · Perú</p>
+        </div>
+        <div class="footer-nav">
+          <p class="footer-nav-title">El proyecto</p>
+          <a href="#" onclick="showPage('inicio'); return false;">Inicio</a>
+          <a href="#" onclick="showPage('nosotros'); return false;">Nosotros</a>
+          <a href="#" onclick="showPage('servicios'); return false;">Servicios</a>
+          <a href="#" onclick="showPage('blog'); return false;">Blog</a>
+          <a href="#" onclick="showPage('contacto'); return false;">Contacto</a>
+        </div>
+        <div class="footer-contact">
+          <p class="footer-nav-title">Contacto</p>
+          <a href="mailto:nfransa19@gmail.com">nfransa19@gmail.com ↗</a>
+          <p>8:00 a. m. – 5:00 p. m.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 Proyecto Antracnosis · Fines educativos</p>
+        <p>La información no sustituye la asesoría agronómica profesional.</p>
+      </div>
+    </footer>
+  </main>
+
+  <!-- ==================== SERVICIOS ==================== -->
+  <main id="page-servicios" class="page">
+
+    <section class="page-hero">
+      <div class="container">
+        <p class="page-label">SERVICIOS</p>
+        <h1 class="page-hero-title">Lo que ofrecemos</h1>
+        <p class="page-hero-desc">Herramientas y conocimiento para enfrentar la antracnosis de manera responsable.</p>
+      </div>
+    </section>
+
+    <section class="servicios-section">
+      <div class="container">
+        <div class="servicios-grid">
+          <div class="servicio-card">
+            <span class="servicio-num">01</span>
+            <h3>Diagnóstico visual</h3>
+            <p>Orientación para identificar síntomas de antracnosis en cerezas, flores y ramas.</p>
+          </div>
+          <div class="servicio-card">
+            <span class="servicio-num">02</span>
+            <h3>Talleres y capacitación</h3>
+            <p>Charlas para productores y estudiantes sobre el ciclo y manejo de la enfermedad.</p>
+          </div>
+          <div class="servicio-card">
+            <span class="servicio-num">03</span>
+            <h3>Guías de manejo integrado</h3>
+            <p>Material descargable con prácticas culturales, biológicas y químicas.</p>
+          </div>
+          <div class="servicio-card">
+            <span class="servicio-num">04</span>
+            <h3>Monitoreo de campo</h3>
+            <p>Protocolos de muestreo para estimar la incidencia en el cafetal.</p>
+          </div>
+          <div class="servicio-card">
+            <span class="servicio-num">05</span>
+            <h3>Asesoría académica</h3>
+            <p>Apoyo en trabajos de investigación sobre fitopatología del café.</p>
+          </div>
+          <div class="servicio-card">
+            <span class="servicio-num">06</span>
+            <h3>Recursos educativos</h3>
+            <p>Infografías, fichas técnicas y presentaciones de libre uso.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container footer-grid">
+        <div class="footer-brand">
+          <p class="footer-logo">Proyecto Antracnosis</p>
+          <p class="footer-tagline">Investigación y conocimiento para el cuidado del fruto del café y la sanidad del cafetal.</p>
+          <p class="footer-loc">Bagua · Amazonas · Perú</p>
+        </div>
+        <div class="footer-nav">
+          <p class="footer-nav-title">El proyecto</p>
+          <a href="#" onclick="showPage('inicio'); return false;">Inicio</a>
+          <a href="#" onclick="showPage('nosotros'); return false;">Nosotros</a>
+          <a href="#" onclick="showPage('servicios'); return false;">Servicios</a>
+          <a href="#" onclick="showPage('blog'); return false;">Blog</a>
+          <a href="#" onclick="showPage('contacto'); return false;">Contacto</a>
+        </div>
+        <div class="footer-contact">
+          <p class="footer-nav-title">Contacto</p>
+          <a href="mailto:nfransa19@gmail.com">nfransa19@gmail.com ↗</a>
+          <p>8:00 a. m. – 5:00 p. m.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 Proyecto Antracnosis · Fines educativos</p>
+        <p>La información no sustituye la asesoría agronómica profesional.</p>
+      </div>
+    </footer>
+  </main>
+
+  <!-- ==================== BLOG ==================== -->
+  <main id="page-blog" class="page">
+
+    <section class="page-hero">
+      <div class="container">
+        <p class="page-label">CUADERNO DE CAMPO · 2026</p>
+        <h1 class="page-hero-title">Ciencia que cuida el café</h1>
+        <p class="page-hero-desc">Artículos sobre sanidad vegetal, prevención y cuidado del fruto. Del conocimiento a la parcela.</p>
+      </div>
+    </section>
+
+    <section class="blog-section">
+      <div class="container">
+        <div class="blog-grid">
+          <article class="blog-card">
+            <div class="blog-img blog-img-1"></div>
+            <div class="blog-body">
+              <div class="blog-meta">
+                <span class="blog-tag">PREVENCIÓN</span>
+                <span class="blog-read">⏱ 4 min</span>
+              </div>
+              <h3>5 prácticas culturales para un cafetal más sano</h3>
+              <p>Saneamiento, poda y observación: la prevención empieza con el cuidado cotidiano de la parcela.</p>
+              <div class="blog-footer-row">
+                <span>19 de octubre de 2026</span>
+                <a href="#" class="leer-mas" onclick="showArticle(0); return false;">Leer más ↗</a>
+              </div>
+            </div>
+          </article>
+          <article class="blog-card">
+            <div class="blog-img blog-img-2"></div>
+            <div class="blog-body">
+              <div class="blog-meta">
+                <span class="blog-tag">CIENCIA</span>
+                <span class="blog-read">⏱ 4 min</span>
+              </div>
+              <h3>Colletotrichum: conociendo al patógeno</h3>
+              <p>Por qué antracnosis y Coffee Berry Disease no son sinónimos, y cuándo es necesario un diagnóstico.</p>
+              <div class="blog-footer-row">
+                <span>19 de octubre de 2026</span>
+                <a href="#" class="leer-mas" onclick="showArticle(1); return false;">Leer más ↗</a>
+              </div>
+            </div>
+          </article>
+          <article class="blog-card">
+            <div class="blog-img blog-img-3"></div>
+            <div class="blog-body">
+              <div class="blog-meta">
+                <span class="blog-tag">CLIMA</span>
+                <span class="blog-read">⏱ 3 min</span>
+              </div>
+              <h3>Lluvias y antracnosis: cuándo reforzar la observación</h3>
+              <p>La humedad puede favorecer la enfermedad, pero el riesgo también depende del fruto, la variedad y el manejo.</p>
+              <div class="blog-footer-row">
+                <span>19 de octubre de 2026</span>
+                <a href="#" class="leer-mas" onclick="showArticle(2); return false;">Leer más ↗</a>
+              </div>
+            </div>
+          </article>
+          <article class="blog-card">
+            <div class="blog-img blog-img-4"></div>
+            <div class="blog-body">
+              <div class="blog-meta">
+                <span class="blog-tag">MANEJO</span>
+                <span class="blog-read">⏱ 4 min</span>
+              </div>
+              <h3>Trichoderma: posibilidades y límites del control biológico</h3>
+              <p>Los resultados prometedores de laboratorio necesitan validación en campo antes de convertirse en recomendaciones.</p>
+              <div class="blog-footer-row">
+                <span>19 de octubre de 2026</span>
+                <a href="#" class="leer-mas" onclick="showArticle(3); return false;">Leer más ↗</a>
+              </div>
+            </div>
+          </article>
+          <article class="blog-card">
+            <div class="blog-img blog-img-5"></div>
+            <div class="blog-body">
+              <div class="blog-meta">
+                <span class="blog-tag">CALIDAD</span>
+                <span class="blog-read">⏱ 3 min</span>
+              </div>
+              <h3>Frutos enfermos y calidad del café: qué podemos afirmar</h3>
+              <p>Separar daño en el fruto, pérdidas de cosecha y defectos sensoriales permite interpretar mejor la calidad.</p>
+              <div class="blog-footer-row">
+                <span>19 de octubre de 2026</span>
+                <a href="#" class="leer-mas" onclick="showArticle(4); return false;">Leer más ↗</a>
+              </div>
+            </div>
+          </article>
+          <article class="blog-card">
+            <div class="blog-img blog-img-6"></div>
+            <div class="blog-body">
+              <div class="blog-meta">
+                <span class="blog-tag">CAMPO</span>
+                <span class="blog-read">⏱ 4 min</span>
+              </div>
+              <h3>Cómo observar y registrar frutos con síntomas</h3>
+              <p>Un registro consistente ayuda a evaluar la incidencia aparente sin confundir observación con diagnóstico.</p>
+              <div class="blog-footer-row">
+                <span>19 de octubre de 2026</span>
+                <a href="#" class="leer-mas" onclick="showArticle(5); return false;">Leer más ↗</a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container footer-grid">
+        <div class="footer-brand">
+          <p class="footer-logo">Proyecto Antracnosis</p>
+          <p class="footer-tagline">Investigación y conocimiento para el cuidado del fruto del café y la sanidad del cafetal.</p>
+          <p class="footer-loc">Bagua · Amazonas · Perú</p>
+        </div>
+        <div class="footer-nav">
+          <p class="footer-nav-title">El proyecto</p>
+          <a href="#" onclick="showPage('inicio'); return false;">Inicio</a>
+          <a href="#" onclick="showPage('nosotros'); return false;">Nosotros</a>
+          <a href="#" onclick="showPage('servicios'); return false;">Servicios</a>
+          <a href="#" onclick="showPage('blog'); return false;">Blog</a>
+          <a href="#" onclick="showPage('contacto'); return false;">Contacto</a>
+        </div>
+        <div class="footer-contact">
+          <p class="footer-nav-title">Contacto</p>
+          <a href="mailto:nfransa19@gmail.com">nfransa19@gmail.com ↗</a>
+          <p>8:00 a. m. – 5:00 p. m.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 Proyecto Antracnosis · Fines educativos</p>
+        <p>La información no sustituye la asesoría agronómica profesional.</p>
+      </div>
+    </footer>
+  </main>
+
+  <!-- ==================== CONTACTO ==================== -->
+  <main id="page-contacto" class="page">
+
+    <section class="page-hero">
+      <div class="container">
+        <p class="page-label">CONTACTO</p>
+        <h1 class="page-hero-title">Hablemos</h1>
+        <p class="page-hero-desc">¿Tienes preguntas o quieres colaborar? Déjanos un mensaje.</p>
+      </div>
+    </section>
+
+    <section class="contacto-section">
+      <div class="container contacto-grid">
+        <div class="contacto-info">
+          <div class="contacto-item">
+            <span class="contacto-icon">✉</span>
+            <div>
+              <p class="contacto-item-label red">Correo</p>
+              <p>nfransa19@gmail.com</p>
+            </div>
+          </div>
+          <div class="contacto-item">
+            <span class="contacto-icon">📍</span>
+            <div>
+              <p class="contacto-item-label red">Ubicación</p>
+              <p>Bagua, Amazonas, Perú</p>
+            </div>
+          </div>
+          <div class="contacto-item">
+            <span class="contacto-icon">🕐</span>
+            <div>
+              <p class="contacto-item-label red">Horario de atención</p>
+              <p>8:00 a. m. – 5:00 p. m.</p>
+            </div>
+          </div>
+        </div>
+
+        <form class="contacto-form" id="contactForm" onsubmit="handleFormSubmit(event)">
+          <div class="form-group">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" name="nombre" required />
+          </div>
+          <div class="form-group">
+            <label for="correo">Correo electrónico</label>
+            <input type="email" id="correo" name="correo" required />
+          </div>
+          <div class="form-group">
+            <label for="mensaje">Mensaje</label>
+            <textarea id="mensaje" name="mensaje" rows="6" required></textarea>
+          </div>
+          <p class="form-note">Tus datos se usarán únicamente para atender esta consulta.</p>
+          <button type="submit" class="btn btn-primary">✉ Enviar mensaje</button>
+          <div id="form-success" class="form-success hidden">¡Mensaje enviado! Te responderemos pronto.</div>
+        </form>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container footer-grid">
+        <div class="footer-brand">
+          <p class="footer-logo">Proyecto Antracnosis</p>
+          <p class="footer-tagline">Investigación y conocimiento para el cuidado del fruto del café y la sanidad del cafetal.</p>
+          <p class="footer-loc">Bagua · Amazonas · Perú</p>
+        </div>
+        <div class="footer-nav">
+          <p class="footer-nav-title">El proyecto</p>
+          <a href="#" onclick="showPage('inicio'); return false;">Inicio</a>
+          <a href="#" onclick="showPage('nosotros'); return false;">Nosotros</a>
+          <a href="#" onclick="showPage('servicios'); return false;">Servicios</a>
+          <a href="#" onclick="showPage('blog'); return false;">Blog</a>
+          <a href="#" onclick="showPage('contacto'); return false;">Contacto</a>
+        </div>
+        <div class="footer-contact">
+          <p class="footer-nav-title">Contacto</p>
+          <a href="mailto:nfransa19@gmail.com">nfransa19@gmail.com ↗</a>
+          <p>8:00 a. m. – 5:00 p. m.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 Proyecto Antracnosis · Fines educativos</p>
+        <p>La información no sustituye la asesoría agronómica profesional.</p>
+      </div>
+    </footer>
+  </main>
+
+
+  <!-- ==================== ARTÍCULO DETALLE ==================== -->
+  <main id="page-articulo" class="page">
+    <section class="art-header">
+      <div class="container">
+        <a href="#" class="art-back" onclick="showPage('blog'); return false;">&#8592; Todos los artículos</a>
+        <p class="art-category" id="art-category"></p>
+        <h1 class="art-title" id="art-title"></h1>
+        <p class="art-subtitle" id="art-subtitle"></p>
+        <div class="art-byline">
+          <span>Equipo Proyecto Antracnosis</span>
+          <span id="art-date"></span>
+          <span id="art-read"></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="art-body-section">
+      <div class="container art-container">
+        <div class="art-img-wrap">
+          <div class="art-hero-img" id="art-hero-img"></div>
+          <p class="art-img-caption">Imagen ilustrativa generada; no constituye una muestra diagnóstica.</p>
+        </div>
+        <div id="art-content" class="art-content"></div>
+        <div class="art-note">
+          <p>Material educativo. La identificación del patógeno y cualquier tratamiento requieren asesoría profesional y cumplimiento de las indicaciones locales.</p>
+        </div>
+        <div class="art-sources">
+          <h3>Fuentes y lecturas</h3>
+          <a href="#" id="art-source-link" onclick="return false;" class="art-source-link"></a>
+        </div>
+        <div class="art-volver">
+          <a href="#" class="art-back" onclick="showPage('blog'); return false;">&#8592; Volver al blog</a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container footer-grid">
+        <div class="footer-brand">
+          <p class="footer-logo">Proyecto Antracnosis</p>
+          <p class="footer-tagline">Investigación y conocimiento para el cuidado del fruto del café y la sanidad del cafetal.</p>
+          <p class="footer-loc">Bagua · Amazonas · Perú</p>
+        </div>
+        <div class="footer-nav">
+          <p class="footer-nav-title">El proyecto</p>
+          <a href="#" onclick="showPage('inicio'); return false;">Inicio</a>
+          <a href="#" onclick="showPage('nosotros'); return false;">Nosotros</a>
+          <a href="#" onclick="showPage('servicios'); return false;">Servicios</a>
+          <a href="#" onclick="showPage('blog'); return false;">Blog</a>
+          <a href="#" onclick="showPage('contacto'); return false;">Contacto</a>
+        </div>
+        <div class="footer-contact">
+          <p class="footer-nav-title">Contacto</p>
+          <a href="mailto:nfransa19@gmail.com">nfransa19@gmail.com ↗</a>
+          <p>8:00 a. m. – 5:00 p. m.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 Proyecto Antracnosis · Fines educativos</p>
+        <p>La información no sustituye la asesoría agronómica profesional.</p>
+      </div>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

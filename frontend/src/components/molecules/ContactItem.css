@@ -1,0 +1,4 @@
+.contact-item { display: flex; gap: var(--space-4); align-items: flex-start; }
+.contact-item__icon { display: grid; place-items: center; width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%; background: var(--color-surface-tint); color: var(--color-forest-700); }
+.contact-item__label { font-size: var(--text-sm); font-weight: 600; color: var(--color-brand); }
+.contact-item__value { font-size: 0.95rem; color: var(--color-text-muted); overflow-wrap: anywhere; }

@@ -1,0 +1,27 @@
+.blog-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  transition: box-shadow var(--duration) var(--ease-out), transform var(--duration) var(--ease-out);
+}
+.blog-card__media { display: block; aspect-ratio: 16 / 9; background: var(--color-surface-tint); overflow: hidden; }
+.blog-card__media img { width: 100%; height: 100%; object-fit: cover; transition: transform 400ms var(--ease-out); }
+.blog-card__placeholder { display: block; width: 100%; height: 100%; background: linear-gradient(135deg, var(--color-forest-700), var(--color-forest-900)); }
+.blog-card__body { display: flex; flex-direction: column; flex: 1; gap: var(--space-2); padding: var(--space-5); }
+.blog-card__meta { display: flex; justify-content: space-between; align-items: center; }
+.blog-card__read, .blog-card__comments { display: inline-flex; align-items: center; gap: 4px; font-size: var(--text-xs); color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+/* Toda la tarjeta es clicable gracias al pseudo-elemento del enlace del título */
+.blog-card__link::after { content: ''; position: absolute; inset: 0; }
+.blog-card__link:focus-visible { outline: none; }
+.blog-card:has(.blog-card__link:focus-visible) { outline: 2px solid var(--color-brand); outline-offset: 2px; }
+.blog-card__excerpt { flex: 1; }
+.blog-card__footer { display: flex; justify-content: space-between; align-items: center; margin-top: var(--space-2); padding-top: var(--space-3); border-top: 1px solid var(--color-border); font-size: var(--text-xs); color: var(--color-text-muted); }
+@media (hover: hover) {
+  .blog-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); }
+  .blog-card:hover .blog-card__media img { transform: scale(1.03); }
+  .blog-card:hover .blog-card__link { color: var(--color-brand); }
+}

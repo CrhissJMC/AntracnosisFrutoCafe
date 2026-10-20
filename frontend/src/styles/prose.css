@@ -1,0 +1,9 @@
+/* Tipografía del contenido largo (artículos y vista previa del editor) */
+.prose h2 { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 700; line-height: 1.3; color: var(--color-text); margin: var(--space-8) 0 var(--space-3); }
+.prose h3 { font-size: var(--text-lg); font-weight: 600; margin: var(--space-6) 0 var(--space-2); }
+.prose > :first-child { margin-top: 0; }
+.prose p, .prose li { font-size: 1.0625rem; line-height: 1.8; color: #3d423f; }
+.prose p { margin-bottom: var(--space-4); }
+.prose ul { padding-left: var(--space-5); margin-bottom: var(--space-4); }
+.prose a { color: var(--color-brand); text-decoration: underline; text-underline-offset: 3px; }
+.prose strong { color: var(--color-text); }
