@@ -3,7 +3,16 @@ import bcrypt from 'bcryptjs';
 import { pool, withTransaction } from './pool.js';
 import { config } from '../config.js';
 import { readingMinutes } from '../lib/readingTime.js';
-import { SETTINGS, CONTENT_ITEMS, ARTICLES, OBJECTIVES } from './seed-data.js';
+import {
+  SETTINGS,
+  CONTENT_ITEMS,
+  ARTICLES,
+  OBJECTIVES,
+  UNIVERSITY_ITEMS,
+  LEGACY_DEFAULTS,
+  METHOD_ITEMS,
+  REMOVED_SETTINGS,
+} from './seed-data.js';
 
 const log = (msg, extra = {}) => console.log(JSON.stringify({ level: 'info', msg, ...extra }));
 
@@ -57,6 +66,37 @@ async function seed(client) {
     }
     log('seed_articles', { count: ARTICLES.length });
   }
+
+  // Datos de la universidad: se cargan si la sección aún no tiene bloques.
+  const { rows: univ } = await client.query("SELECT 1 FROM content_items WHERE section = 'universidad' LIMIT 1");
+  if (univ.length === 0) {
+    let position = 0;
+    for (const [title, body] of UNIVERSITY_ITEMS) {
+      await client.query("INSERT INTO content_items (section, title, body, position) VALUES ('universidad', $1, $2, $3)", [title, body, ++position]);
+    }
+    log('seed_university_items', { count: UNIVERSITY_ITEMS.length });
+  }
+
+  // Metodología: cada sección se carga si aún no tiene bloques.
+  for (const section of [...new Set(METHOD_ITEMS.map(([s]) => s))]) {
+    const { rows: existing } = await client.query('SELECT 1 FROM content_items WHERE section = $1 LIMIT 1', [section]);
+    if (existing.length) continue;
+    const items = METHOD_ITEMS.filter(([s]) => s === section);
+    for (const [i, [, title, body]] of items.entries()) {
+      await client.query('INSERT INTO content_items (section, title, body, position) VALUES ($1, $2, $3, $4)', [section, title, body, i + 1]);
+    }
+    log('seed_method_items', { section, count: items.length });
+  }
+  await client.query('DELETE FROM settings WHERE key = ANY($1::text[])', [REMOVED_SETTINGS]);
+
+  // Textos por defecto antiguos: se actualizan solo si nadie los editó.
+  for (const [key, oldValues] of Object.entries(LEGACY_DEFAULTS.settings)) {
+    await client.query('UPDATE settings SET value = $3, updated_at = now() WHERE key = $1 AND value = ANY($2::text[])', [key, oldValues, SETTINGS[key]]);
+  }
+  await client.query("UPDATE content_items SET body = $2, updated_at = now() WHERE section = 'equipo' AND body = $1", [
+    LEGACY_DEFAULTS.teamRole.from,
+    LEGACY_DEFAULTS.teamRole.to,
+  ]);
 
   if (await isEmpty(client, 'objectives')) {
     for (const [code, title, description] of OBJECTIVES) {

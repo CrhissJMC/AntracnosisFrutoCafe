@@ -2,7 +2,7 @@ import { Dot, Heading, Text } from '../atoms';
 import './InfoCard.css';
 
 /**
- * Tarjeta genérica: síntomas, servicios, integrantes, misión/visión.
+ * Tarjeta genérica: síntomas, integrantes, misión/visión, métricas, tecnologías.
  * marker: 'dot' | texto (p. ej. "01") — titleTone resalta el título en color de marca.
  */
 export function InfoCard({ marker, markerTone = 'brand', title, titleTone = 'default', text, textTone = 'muted', serifTitle = false }) {

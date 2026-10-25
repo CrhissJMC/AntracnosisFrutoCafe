@@ -2,7 +2,7 @@
 
 Sitio del proyecto sobre la antracnosis en el fruto del café. La aplicación tiene:
 
-- **Base de datos PostgreSQL**, donde vive todo el contenido de la página (textos, síntomas, ciclo, manejo, equipo, servicios y artículos).
+- **Base de datos PostgreSQL**, donde vive todo el contenido de la página (textos, síntomas, ciclo, manejo, equipo, universidad, metodología, trazabilidad y artículos).
 - **Registro e inicio de sesión** con dos roles:
   - **Administrador:** gestiona los artículos del blog, el contenido de cada página, los textos generales, los comentarios, los mensajes de contacto y los usuarios.
   - **Usuario:** se registra y comenta en los artículos del blog. Puede borrar sus propios comentarios.
@@ -74,7 +74,7 @@ Al arrancar, la API crea las tablas (`backend/src/db/schema.sql`) y carga el con
 | `users` | Cuentas, con rol `admin` o `user` (correo único sin distinguir mayúsculas) |
 | `articles` | Artículos del blog (contenido en Markdown sencillo, publicado o borrador) |
 | `comments` | Comentarios: artículo + usuario. Se borran en cascada con el artículo o el usuario |
-| `content_items` | Bloques de las páginas: `sintomas`, `ciclo`, `manejo`, `mision`, `equipo`, `servicios` |
+| `content_items` | Bloques de las páginas: `sintomas`, `ciclo`, `manejo`, `mision`, `equipo`, `universidad`, `problema`, `flujo`, `metricas`, `tecnologias`, `alcance` |
 | `settings` | Textos generales (hero, "¿Qué es?", contacto, pie de página…) |
 | `contact_messages` | Mensajes del formulario de contacto |
 
@@ -99,7 +99,7 @@ frontend/src/
 │   ├── molecules/           ← FormField, Alert, InfoCard, StepItem, ListColumn, BlogCard, CommentItem,
 │   │                          ConfirmButton, ContactItem, StatCard, NavItem, EmptyState,
 │   │                          ObjectiveItem, LogEntry, Panel, Callout, LegendItem, SeciSelect, FormActions
-│   ├── organisms/           ← Navbar, Footer, Hero, PageHero, Section/Grid, secciones de Inicio, TeamSection,
+│   ├── organisms/           ← Navbar, Footer, Hero, PageHero, Section/Grid, secciones de Inicio, CardGridSection/StepsSection/ListColumnsSection, TeamSection, UniversitySection,
 │   │                          BlogGrid, CommentSection, ContactForm, AuthForm, AdminSidebar, DataTable,
 │   │                          ArticleForm, ContentEditor,
 │   │                          CoffeeCycleRing, ObjectiveList, ProgressTimeline, CycleLegend,
@@ -120,7 +120,7 @@ Cada nivel solo usa los niveles inferiores: los átomos usan tokens, las molécu
 
 ## 4. Rutas
 
-**Sitio público:** `/`, `/nosotros`, `/servicios`, `/blog`, `/blog/:slug`, `/contacto`, `/login`, `/registro`
+**Sitio público:** `/`, `/nosotros`, `/metodologia`, `/blog`, `/trazabilidad`, `/blog/:slug`, `/contacto`, `/login`, `/registro`
 
 **Panel (solo admin):** `/admin`, `/admin/articulos`, `/admin/articulos/nuevo`, `/admin/articulos/:id`, `/admin/comentarios`, `/admin/contenido`, `/admin/textos`, `/admin/mensajes`, `/admin/usuarios`
 

@@ -21,3 +21,5 @@ export { ObjectiveList, currentObjectiveId } from './ObjectiveList.jsx';
 export { ProgressNoteForm } from './ProgressNoteForm.jsx';
 export { ProgressTimeline } from './ProgressTimeline.jsx';
 export { TraceabilitySummary } from './TraceabilitySummary.jsx';
+export { UniversitySection } from './UniversitySection.jsx';
+export { CardGridSection, ListColumnsSection, StepsSection } from './ContentSections.jsx';

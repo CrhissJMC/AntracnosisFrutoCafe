@@ -4,7 +4,7 @@ import { SiteProvider } from './context/SiteContext.jsx';
 import { matchPath, RouterProvider, useRouter } from './lib/router.jsx';
 import { HomePage } from './pages/HomePage.jsx';
 import { AboutPage } from './pages/AboutPage.jsx';
-import { ServicesPage } from './pages/ServicesPage.jsx';
+import { MethodologyPage } from './pages/MethodologyPage.jsx';
 import { BlogPage } from './pages/BlogPage.jsx';
 import { ArticlePage } from './pages/ArticlePage.jsx';
 import { ContactPage } from './pages/ContactPage.jsx';
@@ -25,7 +25,8 @@ import { TraceabilityAdminPage } from './pages/admin/TraceabilityAdminPage.jsx';
 const ROUTES = [
   ['/', HomePage],
   ['/nosotros', AboutPage],
-  ['/servicios', ServicesPage],
+  ['/metodologia', MethodologyPage],
+  ['/servicios', MethodologyPage], // enlaces antiguos
   ['/blog', BlogPage],
   ['/blog/:slug', ArticlePage],
   ['/trazabilidad', TraceabilityPage],

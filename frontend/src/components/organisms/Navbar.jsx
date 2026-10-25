@@ -9,7 +9,7 @@ import './Navbar.css';
 export const NAV_LINKS = [
   { to: '/', label: 'Inicio', exact: true },
   { to: '/nosotros', label: 'Nosotros' },
-  { to: '/servicios', label: 'Servicios' },
+  { to: '/metodologia', label: 'Metodología' },
   { to: '/blog', label: 'Blog' },
   { to: '/trazabilidad', label: 'Trazabilidad' },
   { to: '/contacto', label: 'Contacto' },

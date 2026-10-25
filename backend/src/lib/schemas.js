@@ -62,7 +62,10 @@ export const commentSchema = z
   })
   .strict();
 
-export const SECTIONS = ['sintomas', 'ciclo', 'manejo', 'mision', 'equipo', 'servicios'];
+export const SECTIONS = [
+  'sintomas', 'ciclo', 'manejo', 'mision', 'equipo', 'universidad',
+  'problema', 'flujo', 'metricas', 'tecnologias', 'alcance',
+];
 
 export const contentItemSchema = z
   .object({

@@ -1,0 +1,6 @@
+.university__layout { display: grid; gap: var(--space-8); grid-template-columns: minmax(0, 1fr); align-items: start; }
+.university__intro { display: flex; flex-direction: column; gap: var(--space-3); }
+.university__intro .eyebrow { margin-bottom: 0; }
+@media (min-width: 900px) {
+  .university__layout { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: var(--space-12); }
+}

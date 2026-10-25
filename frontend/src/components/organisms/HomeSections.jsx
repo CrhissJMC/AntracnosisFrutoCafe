@@ -1,7 +1,7 @@
 import { Heading } from '../atoms';
-import { InfoCard, ListColumn, StepItem } from '../molecules';
 import { renderMarkdown } from '../../lib/markdown.jsx';
-import { Grid, Section } from './Section.jsx';
+import { CardGridSection, ListColumnsSection, StepsSection } from './ContentSections.jsx';
+import { Section } from './Section.jsx';
 import './HomeSections.css';
 
 export function WhatIsSection({ text }) {
@@ -17,38 +17,7 @@ export function WhatIsSection({ text }) {
   );
 }
 
-export function SymptomsSection({ items }) {
-  return (
-    <Section title="Síntomas en el fruto" tone="alt" id="sintomas">
-      <Grid min={220}>
-        {items.map((i) => (
-          <InfoCard key={i.id} marker="dot" title={i.title} text={i.body} />
-        ))}
-      </Grid>
-    </Section>
-  );
-}
-
-export function CycleSection({ items }) {
-  return (
-    <Section title="Ciclo de la enfermedad" id="ciclo">
-      <Grid as="ol" min={200} gap="lg">
-        {items.map((i, idx) => (
-          <StepItem key={i.id} index={idx + 1} title={i.title} text={i.body} />
-        ))}
-      </Grid>
-    </Section>
-  );
-}
-
-export function ManagementSection({ items }) {
-  return (
-    <Section title="Manejo integrado" tone="dark" id="manejo">
-      <Grid min={200} gap="lg">
-        {items.map((i) => (
-          <ListColumn key={i.id} title={i.title} items={i.body.split('\n').map((l) => l.trim()).filter(Boolean)} />
-        ))}
-      </Grid>
-    </Section>
-  );
-}
+// Las secciones de Inicio son las secciones genéricas con su título y estilo.
+export const SymptomsSection = ({ items }) => <CardGridSection title="Síntomas en el fruto" tone="alt" id="sintomas" items={items} />;
+export const CycleSection = ({ items }) => <StepsSection title="Ciclo de la enfermedad" id="ciclo" items={items} />;
+export const ManagementSection = ({ items }) => <ListColumnsSection title="Manejo integrado" id="manejo" items={items} />;

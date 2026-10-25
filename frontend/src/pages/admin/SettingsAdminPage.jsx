@@ -27,13 +27,23 @@ const GROUPS = [
     ],
   },
   {
-    title: 'Nosotros y servicios',
+    title: 'Nosotros',
     fields: [
       ['nosotros_title', 'Título de Nosotros'],
       ['nosotros_desc', 'Descripción de Nosotros', 'area'],
       ['docente', 'Docente asesor'],
-      ['servicios_title', 'Título de Servicios'],
-      ['servicios_desc', 'Descripción de Servicios', 'area'],
+      ['univ_title', 'Nombre de la universidad'],
+      ['univ_desc', 'Presentación de la universidad', 'area'],
+    ],
+  },
+  {
+    title: 'Metodología',
+    fields: [
+      ['metodo_title', 'Título de la página'],
+      ['metodo_desc', 'Descripción', 'area'],
+      ['metodo_propuesta', 'Propuesta (sección El problema)', 'area'],
+      ['metodo_flujo_nota', 'Nota de partición de datos (Arquitectura)', 'area'],
+      ['metodo_metricas_nota', 'Nota de matriz de confusión (Evaluación)', 'area'],
     ],
   },
   {

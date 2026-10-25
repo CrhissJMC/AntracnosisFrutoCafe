@@ -10,13 +10,22 @@ export const SETTINGS = {
   hero_image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=1600&q=80',
   que_es:
     'La antracnosis es una enfermedad fúngica producida principalmente por *Colletotrichum gloeosporioides* y, en África, por *C. kahawae* (CBD, "Coffee Berry Disease"), la forma más agresiva.\n\nAtaca flores, frutos verdes y maduros, afectando el rendimiento y la calidad de taza al generar granos negros o vinagres.',
-  nosotros_title: 'Un equipo comprometido con el café',
+  nosotros_title: 'Un proyecto del curso de Gestión del Conocimiento',
   nosotros_desc:
-    'Somos estudiantes que investigan cómo prevenir y manejar la antracnosis en el fruto del café.',
+    'Somos estudiantes de Ingeniería de Sistemas de la UNTRM. Este sitio reúne el proyecto que desarrollamos para el curso de Gestión del Conocimiento: un modelo de Deep Learning que detecta antracnosis en frutos de café a partir de imágenes.',
   docente: 'Dr. FUENTES MAZA FRANS',
-  servicios_title: 'Lo que ofrecemos',
-  servicios_desc:
-    'Herramientas y conocimiento para enfrentar la antracnosis de manera responsable.',
+  univ_title: 'Universidad Nacional Toribio Rodríguez de Mendoza de Amazonas',
+  univ_desc:
+    'La UNTRM es una universidad pública con sede en Chachapoyas, Amazonas. Formamos parte de su Escuela Profesional de Ingeniería de Sistemas, y este proyecto nace en el curso de Gestión del Conocimiento: une el análisis de datos y el Deep Learning con la sanidad del café, un cultivo clave para la región.',
+  metodo_title: 'Cómo desarrollamos el proyecto',
+  metodo_desc:
+    'Del problema al modelo: datos, arquitectura, entrenamiento y evaluación de una red neuronal convolucional que detecta antracnosis en frutos de café.',
+  metodo_propuesta:
+    'Proponemos un modelo CNN que clasifique imágenes de frutos como sanos o con antracnosis, como apoyo a la identificación fitosanitaria.',
+  metodo_flujo_nota:
+    'Las fotos del mismo fruto o de la misma sesión no se reparten entre subconjuntos, para que el modelo no se evalúe con imágenes que ya "vio".',
+  metodo_metricas_nota:
+    'Se analiza la matriz de confusión con atención especial a los falsos negativos: frutos afectados clasificados como sanos. No se fija un porcentaje objetivo; el resultado se obtiene de los experimentos.',
   blog_label: 'CUADERNO DE CAMPO · 2026',
   blog_title: 'Ciencia que cuida el café',
   blog_desc:
@@ -32,6 +41,27 @@ export const SETTINGS = {
     'Seguimiento del avance del proyecto: cada etapa del ciclo del café representa un 5 % de lo realizado, y cada cambio queda registrado en la bitácora.',
   traz_general:
     'Desarrollar y evaluar un modelo de Deep Learning basado en redes neuronales convolucionales para detectar antracnosis en frutos de café mediante el análisis de imágenes digitales.',
+};
+
+// Datos de la universidad (Nosotros). [título, detalle]
+export const UNIVERSITY_ITEMS = [
+  ['Creación', 'Creada por Ley N.º 27347 el 18 de septiembre de 2000; inició sus actividades académicas en 2001.'],
+  ['Licenciamiento', 'Primera universidad licenciada por la SUNEDU, que verifica las condiciones básicas de calidad.'],
+  ['Facultad y escuela', 'Facultad de Ingeniería de Sistemas y Mecánica Eléctrica (FISME) · Escuela Profesional de Ingeniería de Sistemas.'],
+  ['Curso', 'Gestión del Conocimiento · décimo ciclo · 2026.'],
+];
+
+// Valores por defecto anteriores: si siguen sin editarse, se actualizan al arrancar.
+export const LEGACY_DEFAULTS = {
+  // clave → valores anteriores que se reemplazan por el actual de SETTINGS
+  settings: {
+    nosotros_title: ['Un equipo comprometido con el café'],
+    nosotros_desc: [
+      'Somos estudiantes que investigan cómo prevenir y manejar la antracnosis en el fruto del café.',
+      'Somos estudiantes de Ingeniería de Sistemas de la Universidad Nacional Toribio Rodríguez de Mendoza de Amazonas (UNTRM) que aplicamos la tecnología al estudio de la antracnosis en el fruto del café.',
+    ],
+  },
+  teamRole: { from: 'Integrante del proyecto', to: 'Estudiante de Ingeniería de Sistemas' },
 };
 
 // Objetivos específicos (presentación del proyecto). [código, título, descripción]
@@ -63,18 +93,46 @@ export const CONTENT_ITEMS = [
   ['mision', 'Visión', 'Ser un referente académico en sanidad vegetal del cultivo de café.'],
   ['mision', 'Método', 'Revisión bibliográfica, observación de campo y análisis de casos reales.'],
   // Equipo
-  ['equipo', 'ARVILDO JULCA ENITH FIORELA', 'Integrante del proyecto'],
-  ['equipo', 'CARUAJULCA SALAZAR DALMER ASUNCION', 'Integrante del proyecto'],
-  ['equipo', 'MAGALLAN CULQUI CRISTHIAN JEFRYE', 'Integrante del proyecto'],
-  ['equipo', 'SILVA AVELLANEDA FRANS NORBERT', 'Integrante del proyecto'],
-  // Servicios
-  ['servicios', 'Diagnóstico visual', 'Orientación para identificar síntomas de antracnosis en cerezas, flores y ramas.'],
-  ['servicios', 'Talleres y capacitación', 'Charlas para productores y estudiantes sobre el ciclo y manejo de la enfermedad.'],
-  ['servicios', 'Guías de manejo integrado', 'Material descargable con prácticas culturales, biológicas y químicas.'],
-  ['servicios', 'Monitoreo de campo', 'Protocolos de muestreo para estimar la incidencia en el cafetal.'],
-  ['servicios', 'Asesoría académica', 'Apoyo en trabajos de investigación sobre fitopatología del café.'],
-  ['servicios', 'Recursos educativos', 'Infografías, fichas técnicas y presentaciones de libre uso.'],
+  ['equipo', 'ARVILDO JULCA ENITH FIORELA', 'Estudiante de Ingeniería de Sistemas'],
+  ['equipo', 'CARUAJULCA SALAZAR DALMER ASUNCION', 'Estudiante de Ingeniería de Sistemas'],
+  ['equipo', 'MAGALLAN CULQUI CRISTHIAN JEFRYE', 'Estudiante de Ingeniería de Sistemas'],
+  ['equipo', 'SILVA AVELLANEDA FRANS NORBERT', 'Estudiante de Ingeniería de Sistemas'],
 ];
+
+// Página Metodología (contenido de la presentación del proyecto). [sección, título, texto]
+// Se carga por sección: solo las secciones que aún no tienen bloques.
+export const METHOD_ITEMS = [
+  // El problema
+  ['problema', 'El café importa', 'Es una actividad productiva clave para muchas comunidades rurales; las enfermedades afectan el rendimiento y la calidad.'],
+  ['problema', 'Antracnosis', 'Enfermedad asociada a hongos del género Colletotrichum que causa lesiones necróticas en los tejidos del fruto.'],
+  ['problema', 'Inspección visual', 'Requiere tiempo y experiencia, y distintos daños pueden verse muy parecidos.'],
+  // Arquitectura experimental (pasos)
+  ['flujo', 'Datos', 'Imágenes de frutos sanos y con antracnosis de fuentes académicas y repositorios confiables, con etiquetas y procedencia. Se revisan duplicados, imágenes dañadas e inconsistencias.'],
+  ['flujo', 'Preprocesamiento', 'Redimensionamiento, normalización y conversión de formato. El aumento de datos se aplica solo al entrenamiento, después de separar los conjuntos.'],
+  ['flujo', 'Modelo CNN', 'Red convolucional para clasificación binaria, con alternativa de transferencia de aprendizaje (MobileNetV2, EfficientNetB0) cuando hay pocos datos.'],
+  ['flujo', 'Entrenamiento y validación', 'Optimizador Adam por lotes y épocas; ajuste de tasa de aprendizaje, tamaño de lote y regularización, con Early Stopping contra el sobreajuste.'],
+  ['flujo', 'Evaluación', 'El conjunto de prueba se reserva para la evaluación final: no se usa para elegir el modelo.'],
+  // Métricas
+  ['metricas', 'Accuracy', 'Aciertos totales sobre todas las imágenes.'],
+  ['metricas', 'Precision', 'Fiabilidad de los positivos: cuántos frutos marcados como enfermos lo están.'],
+  ['metricas', 'Recall', 'Casos reales detectados: cuántos frutos enfermos encuentra el modelo.'],
+  ['metricas', 'F1-score', 'Equilibrio entre precision y recall.'],
+  // Tecnologías
+  ['tecnologias', 'Python', 'Lenguaje de programación.'],
+  ['tecnologias', 'TensorFlow · Keras', 'Construcción y entrenamiento de la CNN.'],
+  ['tecnologias', 'OpenCV', 'Procesamiento de imágenes.'],
+  ['tecnologias', 'NumPy', 'Matrices y operaciones numéricas.'],
+  ['tecnologias', 'Pandas', 'Etiquetas y registros.'],
+  ['tecnologias', 'Scikit-learn', 'Métricas de clasificación.'],
+  ['tecnologias', 'Matplotlib', 'Curvas y gráficos.'],
+  ['tecnologias', 'Google Colab', 'Entorno de ejecución.'],
+  // Alcance (un punto por línea)
+  ['alcance', 'Incluye', 'Recopilación y organización del dataset\nPreprocesamiento de imágenes\nDiseño o adaptación de una CNN\nEntrenamiento, validación y evaluación'],
+  ['alcance', 'No incluye', 'Sensores IoT ni monitoreo ambiental\nAplicaciones móviles ni plataformas empresariales\nProcedimientos de intervención agrícola\nMedición de la reducción de pérdidas de rendimiento'],
+];
+
+// Claves de textos que ya no se usan (se borran al arrancar).
+export const REMOVED_SETTINGS = ['servicios_title', 'servicios_desc'];
 
 const PUBLISHED_AT = '2026-10-19T12:00:00-05:00';
 

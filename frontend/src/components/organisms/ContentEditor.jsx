@@ -4,7 +4,7 @@ import { Alert, ConfirmButton, FormField } from '../molecules';
 import { useForm } from '../../hooks/useForm.js';
 import './ContentEditor.css';
 
-/** Formulario de un bloque de contenido (síntoma, servicio, integrante…). */
+/** Formulario de un bloque de contenido (síntoma, integrante, paso de la metodología…). */
 function ItemForm({ section, item, config, onSave, onCancel }) {
   const form = useForm(
     { title: item?.title ?? '', body: item?.body ?? '', position: item?.position ?? 0 },

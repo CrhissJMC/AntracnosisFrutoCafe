@@ -15,7 +15,7 @@ export function Hero({ label, title, description, image }) {
           {renderInline(description)}
         </Text>
         <div className="hero__actions">
-          <Button to="/servicios">Ver servicios</Button>
+          <Button to="/metodologia">Ver metodología</Button>
           <Button to="/blog" variant="outline-light">
             Leer el blog
           </Button>
