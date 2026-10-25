@@ -25,6 +25,7 @@
 .admin-layout__titles { flex: 1; min-width: 0; }
 .admin-layout__actions { display: flex; gap: var(--space-2); flex-wrap: wrap; }
 .admin-layout__content { padding: var(--space-8); max-width: 1200px; width: 100%; }
+.admin-layout__content--wide { max-width: 1920px; }
 .admin-layout__menu { display: none; margin: -6px 0 0 -10px; }
 .admin-layout__backdrop { position: fixed; inset: 0; z-index: calc(var(--z-drawer) - 1); background: rgba(0, 0, 0, 0.4); animation: fade-in var(--duration) ease; }
 .admin-layout__loading, .admin-layout__denied { min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-4); text-align: center; padding: var(--gutter); }

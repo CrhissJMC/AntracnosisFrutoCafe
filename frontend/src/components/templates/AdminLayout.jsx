@@ -39,7 +39,8 @@ export function AdminGuard({ children }) {
 }
 
 /** Plantilla del panel: barra lateral + cabecera con título y acciones. */
-export function AdminLayout({ title, description, actions, children }) {
+/** `wide`: el contenido usa todo el ancho disponible (para tableros); por defecto se limita a 1200px. */
+export function AdminLayout({ title, description, actions, wide = false, children }) {
   const { logout } = useAuth();
   const { navigate, pathname } = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -68,7 +69,7 @@ export function AdminLayout({ title, description, actions, children }) {
           </div>
           {actions && <div className="admin-layout__actions">{actions}</div>}
         </header>
-        <div className="admin-layout__content page-enter" key={pathname}>
+        <div className={`admin-layout__content ${wide ? 'admin-layout__content--wide' : ''} page-enter`} key={pathname}>
           {children}
         </div>
       </div>
