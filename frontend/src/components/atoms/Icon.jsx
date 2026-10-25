@@ -22,6 +22,7 @@ const PATHS = {
   users: 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21a7 7 0 0 1 14 0M16 3.1a4 4 0 0 1 0 7.8M22 21a7 7 0 0 0-4-6.3',
   inbox: 'M3 13l3-8h12l3 8v6H3v-6zM3 13h5l1 3h6l1-3h5',
   home: 'M3 11l9-7 9 7M5 10v10h14V10',
+  chart: 'M4 20V11M10 20V5M16 20v-6M3 20h18',
 };
 
 export function Icon({ name, size = 20, strokeWidth = 1.8, label, className = '' }) {

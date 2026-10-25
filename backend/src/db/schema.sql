@@ -81,3 +81,35 @@ CREATE TABLE IF NOT EXISTS contact_messages (
   created_at TIMESTAMPTZ   NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS contact_messages_created_idx ON contact_messages (created_at DESC);
+
+-- Trazabilidad del proyecto ----------------------------------------------
+--  Cada objetivo específico tiene su % de avance y un peso; el avance total
+--  es el promedio ponderado. Cada cambio queda registrado en progress_log.
+CREATE TABLE IF NOT EXISTS objectives (
+  id          SERIAL PRIMARY KEY,
+  code        SMALLINT     NOT NULL UNIQUE CHECK (code BETWEEN 1 AND 20),
+  title       VARCHAR(200) NOT NULL CHECK (length(trim(title)) > 0),
+  description TEXT         NOT NULL DEFAULT '',
+  weight      SMALLINT     NOT NULL DEFAULT 25 CHECK (weight BETWEEN 0 AND 100),
+  progress    SMALLINT     NOT NULL DEFAULT 0  CHECK (progress BETWEEN 0 AND 100),
+  updated_at  TIMESTAMPTZ  NOT NULL DEFAULT now()
+);
+
+-- Bitácora: solo se añaden registros (no se editan). objective_id NULL = nota general.
+CREATE TABLE IF NOT EXISTS progress_log (
+  id                SERIAL PRIMARY KEY,
+  objective_id      INTEGER       REFERENCES objectives(id) ON DELETE SET NULL,
+  previous_progress SMALLINT      CHECK (previous_progress BETWEEN 0 AND 100),
+  new_progress      SMALLINT      CHECK (new_progress BETWEEN 0 AND 100),
+  note              VARCHAR(2000) NOT NULL DEFAULT '',
+  seci_phase        VARCHAR(20)
+                    CHECK (seci_phase IN ('socializacion', 'externalizacion', 'combinacion', 'internalizacion')),
+  author_id         INTEGER       REFERENCES users(id) ON DELETE SET NULL,
+  author_name       VARCHAR(100)  NOT NULL DEFAULT '',  -- se guarda el nombre por si el usuario se borra
+  created_at        TIMESTAMPTZ   NOT NULL DEFAULT now(),
+  -- O es un cambio de avance (ambos valores) o es una nota (ninguno, y con texto)
+  CHECK ((previous_progress IS NULL) = (new_progress IS NULL)),
+  CHECK (new_progress IS NOT NULL OR length(trim(note)) > 0)
+);
+CREATE INDEX IF NOT EXISTS progress_log_created_idx   ON progress_log (created_at DESC, id DESC);
+CREATE INDEX IF NOT EXISTS progress_log_objective_idx ON progress_log (objective_id);

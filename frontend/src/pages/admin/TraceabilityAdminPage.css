@@ -1,0 +1,7 @@
+/* Solo la distribución de la página; los componentes traen sus propios estilos. */
+.traz-admin { display: grid; gap: var(--space-5); grid-template-columns: minmax(0, 1fr); align-items: start; }
+@media (min-width: 1200px) { .traz-admin { grid-template-columns: minmax(0, 1fr) minmax(320px, 400px); } }
+.traz-admin__main { display: flex; flex-direction: column; gap: var(--space-5); min-width: 0; }
+.traz-admin__h { margin-bottom: var(--space-4); }
+.traz-admin__hint { margin: calc(-1 * var(--space-2)) 0 var(--space-4); }
+@media (min-width: 1200px) { .traz-admin__log { position: sticky; top: var(--space-4); max-height: calc(100dvh - 2 * var(--space-4)); overflow-y: auto; } }

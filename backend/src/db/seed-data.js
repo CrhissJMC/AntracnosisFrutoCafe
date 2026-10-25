@@ -27,7 +27,20 @@ export const SETTINGS = {
   footer_tagline:
     'Investigación y conocimiento para el cuidado del fruto del café y la sanidad del cafetal.',
   footer_note: 'La información no sustituye la asesoría agronómica profesional.',
+  traz_title: 'Del botón floral al grano tostado',
+  traz_desc:
+    'Seguimiento del avance del proyecto: cada etapa del ciclo del café representa un 5 % de lo realizado, y cada cambio queda registrado en la bitácora.',
+  traz_general:
+    'Desarrollar y evaluar un modelo de Deep Learning basado en redes neuronales convolucionales para detectar antracnosis en frutos de café mediante el análisis de imágenes digitales.',
 };
+
+// Objetivos específicos (presentación del proyecto). [código, título, descripción]
+export const OBJECTIVES = [
+  [1, 'Recopilar y preparar las imágenes', 'Dataset de frutos sanos y con antracnosis: fuentes confiables, revisión de duplicados, redimensionamiento, normalización y partición.'],
+  [2, 'Implementar la arquitectura CNN', 'Diseño o adaptación de una red convolucional para clasificación binaria, con alternativa de transferencia de aprendizaje (MobileNetV2, EfficientNetB0).'],
+  [3, 'Entrenar y validar el modelo', 'Entrenamiento con Adam por lotes y épocas, ajuste de hiperparámetros y control del sobreajuste con Early Stopping en conjuntos independientes.'],
+  [4, 'Determinar el desempeño', 'Evaluación final con accuracy, precision, recall, F1-score y matriz de confusión, con atención a los falsos negativos.'],
+];
 
 export const CONTENT_ITEMS = [
   // Síntomas

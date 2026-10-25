@@ -25,3 +25,8 @@ export function Checkbox({ label, className = '', ...rest }) {
     </label>
   );
 }
+
+/** Deslizador (input range). `color` tiñe la barra y el control. */
+export const Range = forwardRef(function Range({ color, className = '', ...rest }, ref) {
+  return <input ref={ref} type="range" className={`range ${className}`} style={color ? { accentColor: color } : undefined} {...rest} />;
+});

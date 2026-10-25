@@ -94,13 +94,17 @@ Al arrancar, la API crea las tablas (`backend/src/db/schema.sql`) y carga el con
 frontend/src/
 ├── styles/tokens.css        ← design tokens: colores, tipografía, espaciado, capas
 ├── components/
-│   ├── atoms/               ← Button, Input, Textarea, Select, Heading, Text, Tag, Badge, Icon, Avatar, Logo, Link, Spinner
+│   ├── atoms/               ← Button, Input, Textarea, Select, Heading, Text, Tag, Badge, Dot, Icon, Avatar, Logo, Link, Spinner,
+│   │                          Range, ProgressBar, NumberBadge, CycleStage (figuras SVG del ciclo del café)
 │   ├── molecules/           ← FormField, Alert, InfoCard, StepItem, ListColumn, BlogCard, CommentItem,
-│   │                          ConfirmButton, ContactItem, StatCard, NavItem, EmptyState
+│   │                          ConfirmButton, ContactItem, StatCard, NavItem, EmptyState,
+│   │                          ObjectiveItem, LogEntry, Panel, Callout, LegendItem, SeciSelect, FormActions
 │   ├── organisms/           ← Navbar, Footer, Hero, PageHero, Section/Grid, secciones de Inicio, TeamSection,
 │   │                          BlogGrid, CommentSection, ContactForm, AuthForm, AdminSidebar, DataTable,
-│   │                          ArticleForm, ContentEditor
-│   └── templates/           ← MainLayout, AuthLayout, AdminLayout (+ AdminGuard)
+│   │                          ArticleForm, ContentEditor,
+│   │                          CoffeeCycleRing, ObjectiveList, ProgressTimeline, CycleLegend,
+│   │                          TraceabilitySummary, ObjectiveEditor, ProgressNoteForm
+│   └── templates/           ← MainLayout, AuthLayout, AdminLayout (+ AdminGuard), TraceabilityLayout
 ├── pages/                   ← páginas = plantillas + datos reales de la API
 │   └── admin/
 ├── context/                 ← sesión (AuthContext) y contenido del sitio (SiteContext)

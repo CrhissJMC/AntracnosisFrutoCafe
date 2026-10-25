@@ -1,0 +1,3 @@
+.progress-timeline { list-style: none; position: relative; }
+.progress-timeline::before { content: ''; position: absolute; left: 5px; top: 6px; bottom: 6px; width: 2px; background: var(--color-surface-tint); }
+.progress-timeline__more { margin-top: var(--space-1); }

@@ -1,0 +1,46 @@
+.coffee-ring { margin: 0; width: 100%; max-width: 440px; margin-inline: auto; }
+.coffee-ring--compact { max-width: 220px; }
+.coffee-ring svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+.coffee-ring__track { fill: none; stroke: #ebe5d6; stroke-width: 8; stroke-linecap: round; }
+.coffee-ring__arc { fill: none; stroke-width: 8; stroke-linecap: round; }
+
+.coffee-ring__stage { transition: opacity var(--duration) ease, filter var(--duration) ease; }
+.coffee-ring__stage--off { opacity: 0.26; filter: grayscale(1); }
+.coffee-ring__stage--on,
+.coffee-ring__stage--current {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: coffee-stage-in 520ms var(--ease-out) both;
+  animation-delay: calc(var(--i) * 45ms);
+}
+.coffee-ring__halo {
+  fill: none;
+  stroke: var(--color-brand);
+  stroke-width: 1.6;
+  stroke-dasharray: 3 4;
+  opacity: 0.7;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: coffee-halo 2.4s ease-in-out infinite;
+}
+
+.coffee-ring__value { font-family: var(--font-serif); font-size: 76px; font-weight: 700; fill: var(--color-forest-700); }
+.coffee-ring__unit { font-size: 36px; fill: var(--color-text-muted); }
+.coffee-ring__label { font-size: 15px; letter-spacing: 0.12em; text-transform: uppercase; fill: var(--color-text-muted); }
+.coffee-ring__stage-name { font-size: 14px; font-weight: 600; fill: var(--color-brand); }
+.coffee-ring--compact .coffee-ring__value { font-size: 90px; }
+.coffee-ring--compact .coffee-ring__label { font-size: 20px; }
+.coffee-ring__caption { text-align: center; font-size: var(--text-sm); color: var(--color-text-muted); margin-top: var(--space-2); }
+
+@keyframes coffee-stage-in {
+  from { opacity: 0; transform: scale(0.4); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes coffee-halo {
+  0%, 100% { transform: scale(1); opacity: 0.75; }
+  50% { transform: scale(1.12); opacity: 0.35; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .coffee-ring__stage--on, .coffee-ring__stage--current, .coffee-ring__halo { animation: none; }
+}

@@ -12,6 +12,7 @@ import contentRoutes from './routes/content.js';
 import settingsRoutes from './routes/settings.js';
 import messageRoutes from './routes/messages.js';
 import adminRoutes from './routes/admin.js';
+import traceabilityRoutes from './routes/traceability.js';
 
 export function createApp() {
   const app = express();
@@ -70,6 +71,7 @@ export function createApp() {
   app.use('/api/settings', settingsRoutes);
   app.use('/api/messages', messageRoutes);
   app.use('/api/admin', adminRoutes);
+  app.use('/api/traceability', traceabilityRoutes);
 
   app.use('/api', (req, res, next) => next(new HttpError(404, 'Ruta no encontrada')));
   app.use(errorHandler);

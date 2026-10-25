@@ -1,0 +1,5 @@
+.cycle-legend { display: grid; gap: var(--space-6); grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.cycle-legend__title { font-weight: 600; margin-bottom: var(--space-3); }
+.cycle-legend__list { list-style: none; display: flex; flex-direction: column; gap: var(--space-2); font-size: var(--text-sm); margin-bottom: var(--space-3); }
+.cycle-legend__seci { color: var(--color-text-muted); }
+.cycle-legend__seci strong { color: var(--color-text); }

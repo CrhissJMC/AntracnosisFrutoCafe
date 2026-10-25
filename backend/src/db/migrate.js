@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import { pool, withTransaction } from './pool.js';
 import { config } from '../config.js';
 import { readingMinutes } from '../lib/readingTime.js';
-import { SETTINGS, CONTENT_ITEMS, ARTICLES } from './seed-data.js';
+import { SETTINGS, CONTENT_ITEMS, ARTICLES, OBJECTIVES } from './seed-data.js';
 
 const log = (msg, extra = {}) => console.log(JSON.stringify({ level: 'info', msg, ...extra }));
 
@@ -56,6 +56,13 @@ async function seed(client) {
       );
     }
     log('seed_articles', { count: ARTICLES.length });
+  }
+
+  if (await isEmpty(client, 'objectives')) {
+    for (const [code, title, description] of OBJECTIVES) {
+      await client.query('INSERT INTO objectives (code, title, description) VALUES ($1, $2, $3)', [code, title, description]);
+    }
+    log('seed_objectives', { count: OBJECTIVES.length });
   }
 
   // Sincroniza el tiempo de lectura con el contenido real de cada artículo.

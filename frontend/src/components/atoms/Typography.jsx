@@ -22,6 +22,6 @@ export function Text({ as: Tag = 'p', size = 'md', tone = 'muted', className = '
 }
 
 /** Etiqueta pequeña en mayúsculas sobre los títulos ("NOSOTROS", "CONTACTO"). */
-export function Eyebrow({ tone = 'muted', className = '', children }) {
-  return <p className={`eyebrow tone--${tone} ${className}`}>{children}</p>;
+export function Eyebrow({ as: Tag = 'p', tone = 'muted', className = '', children }) {
+  return <Tag className={`eyebrow tone--${tone} ${className}`}>{children}</Tag>;
 }

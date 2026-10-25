@@ -1,0 +1,2 @@
+.form-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--space-3); }
+.form-actions .alert { flex: 1; min-width: 220px; }

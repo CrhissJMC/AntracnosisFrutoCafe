@@ -9,6 +9,8 @@ export function Badge({ tone = 'neutral', children }) {
   return <span className={`badge badge--${tone}`}>{children}</span>;
 }
 
-export function Dot({ tone = 'brand' }) {
-  return <span className={`dot dot--${tone}`} aria-hidden="true" />;
+/** Punto de color. `color` y `size` (px) son opcionales para leyendas y líneas de tiempo. */
+export function Dot({ tone = 'brand', color, size, className = '' }) {
+  const style = color || size ? { background: color, width: size, height: size } : undefined;
+  return <span className={`dot dot--${tone} ${className}`} style={style} aria-hidden="true" />;
 }

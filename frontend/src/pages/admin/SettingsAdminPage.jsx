@@ -37,6 +37,14 @@ const GROUPS = [
     ],
   },
   {
+    title: 'Trazabilidad',
+    fields: [
+      ['traz_title', 'Título de la página'],
+      ['traz_desc', 'Descripción', 'area'],
+      ['traz_general', 'Objetivo general del proyecto', 'area'],
+    ],
+  },
+  {
     title: 'Blog',
     fields: [
       ['blog_label', 'Etiqueta superior'],

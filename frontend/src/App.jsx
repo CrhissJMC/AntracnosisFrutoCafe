@@ -18,6 +18,8 @@ import { ContentAdminPage } from './pages/admin/ContentAdminPage.jsx';
 import { SettingsAdminPage } from './pages/admin/SettingsAdminPage.jsx';
 import { MessagesAdminPage } from './pages/admin/MessagesAdminPage.jsx';
 import { UsersAdminPage } from './pages/admin/UsersAdminPage.jsx';
+import { TraceabilityPage } from './pages/TraceabilityPage.jsx';
+import { TraceabilityAdminPage } from './pages/admin/TraceabilityAdminPage.jsx';
 
 // Tabla de rutas: patrón → página
 const ROUTES = [
@@ -26,6 +28,7 @@ const ROUTES = [
   ['/servicios', ServicesPage],
   ['/blog', BlogPage],
   ['/blog/:slug', ArticlePage],
+  ['/trazabilidad', TraceabilityPage],
   ['/contacto', ContactPage],
   ['/login', LoginPage],
   ['/registro', RegisterPage],
@@ -33,6 +36,7 @@ const ROUTES = [
   ['/admin/articulos', ArticlesAdminPage],
   ['/admin/articulos/:id', ArticleEditPage],
   ['/admin/comentarios', CommentsAdminPage],
+  ['/admin/trazabilidad', TraceabilityAdminPage],
   ['/admin/contenido', ContentAdminPage],
   ['/admin/textos', SettingsAdminPage],
   ['/admin/mensajes', MessagesAdminPage],

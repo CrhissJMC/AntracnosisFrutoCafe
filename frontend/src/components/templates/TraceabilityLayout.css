@@ -1,0 +1,14 @@
+.traz-layout { background: #f7f3ea; }
+.traz-layout__grid { display: grid; gap: var(--space-6); grid-template-columns: minmax(0, 1fr); grid-template-areas: 'ring' 'objectives' 'log'; align-items: start; }
+.traz-layout__ring { grid-area: ring; display: flex; flex-direction: column; align-items: center; gap: var(--space-4); min-width: 0; }
+.traz-layout__ring > * { max-width: 440px; }
+.traz-layout__objectives { grid-area: objectives; min-width: 0; }
+.traz-layout__log { grid-area: log; min-width: 0; }
+.traz-layout__legend { margin-top: var(--space-8); padding-top: var(--space-6); border-top: 1px solid var(--color-border); }
+
+@media (min-width: 760px) {
+  .traz-layout__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-areas: 'ring ring' 'objectives log'; }
+}
+@media (min-width: 1100px) {
+  .traz-layout__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr) minmax(0, 1fr); grid-template-areas: 'objectives ring log'; }
+}

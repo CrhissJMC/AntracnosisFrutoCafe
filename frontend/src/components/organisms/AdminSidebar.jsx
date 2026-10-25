@@ -7,6 +7,7 @@ export const ADMIN_LINKS = [
   { to: '/admin', label: 'Resumen', icon: 'grid', exact: true },
   { to: '/admin/articulos', label: 'Artículos del blog', icon: 'doc' },
   { to: '/admin/comentarios', label: 'Comentarios', icon: 'chat' },
+  { to: '/admin/trazabilidad', label: 'Trazabilidad', icon: 'chart' },
   { to: '/admin/contenido', label: 'Contenido de páginas', icon: 'layers' },
   { to: '/admin/textos', label: 'Textos del sitio', icon: 'settings' },
   { to: '/admin/mensajes', label: 'Mensajes', icon: 'inbox' },

@@ -1,0 +1,2 @@
+.traz-page__loading { display: grid; place-items: center; min-height: 320px; }
+.traz-page__updated { text-align: center; font-size: var(--text-xs); }

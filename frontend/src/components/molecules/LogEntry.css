@@ -1,0 +1,12 @@
+.log-entry { position: relative; display: flex; gap: var(--space-3); padding-bottom: var(--space-4); }
+.log-entry__dot { position: relative; flex-shrink: 0; margin-top: 4px; box-shadow: 0 0 0 3px var(--color-surface); }
+.log-entry__body { flex: 1; min-width: 0; }
+.log-entry__head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-1) var(--space-2); font-size: var(--text-xs); color: var(--color-text-muted); }
+.log-entry__target { font-weight: 600; color: var(--color-text); }
+.log-entry__change { font-size: var(--text-sm); font-weight: 700; font-variant-numeric: tabular-nums; margin-top: 2px; }
+.log-entry__change.is-up { color: var(--color-success-text); }
+.log-entry__change.is-down { color: var(--color-danger-text); }
+.log-entry__change.is-note { color: var(--color-text-muted); font-weight: 600; }
+.log-entry__note { font-size: var(--text-sm); color: var(--color-text); margin-top: 2px; overflow-wrap: anywhere; white-space: pre-line; }
+.log-entry__foot { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin-top: var(--space-2); }
+.log-entry__author { font-size: var(--text-xs); color: var(--color-text-muted); }

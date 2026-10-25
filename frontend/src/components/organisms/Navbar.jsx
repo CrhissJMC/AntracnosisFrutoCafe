@@ -11,6 +11,7 @@ export const NAV_LINKS = [
   { to: '/nosotros', label: 'Nosotros' },
   { to: '/servicios', label: 'Servicios' },
   { to: '/blog', label: 'Blog' },
+  { to: '/trazabilidad', label: 'Trazabilidad' },
   { to: '/contacto', label: 'Contacto' },
 ];
 
