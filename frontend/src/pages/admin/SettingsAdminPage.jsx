@@ -43,7 +43,10 @@ const GROUPS = [
       ['metodo_desc', 'Descripción', 'area'],
       ['metodo_propuesta', 'Propuesta (sección El problema)', 'area'],
       ['metodo_flujo_nota', 'Nota de partición de datos (Arquitectura)', 'area'],
-      ['metodo_metricas_nota', 'Nota de matriz de confusión (Evaluación)', 'area'],
+      ['metodo_metricas_nota', 'Meta del proyecto (Evaluación)', 'area'],
+      ['metodo_repo_title', 'Título del recuadro del repositorio'],
+      ['metodo_repo_text', 'Texto del recuadro del repositorio', 'area'],
+      ['metodo_repo_url', 'Enlace al repositorio (https://…)'],
     ],
   },
   {

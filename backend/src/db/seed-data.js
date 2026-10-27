@@ -13,7 +13,7 @@ export const SETTINGS = {
   nosotros_title: 'Un proyecto del curso de Gestión del Conocimiento',
   nosotros_desc:
     'Somos estudiantes de Ingeniería de Sistemas de la UNTRM. Este sitio reúne el proyecto que desarrollamos para el curso de Gestión del Conocimiento: un modelo de Deep Learning que detecta antracnosis en frutos de café a partir de imágenes.',
-  docente: 'Dr. FUENTES MAZA FRANS',
+  docente: 'Mg. FUENTES MAZA FRANS',
   univ_title: 'Universidad Nacional Toribio Rodríguez de Mendoza de Amazonas',
   univ_desc:
     'La UNTRM es una universidad pública con sede en Chachapoyas, Amazonas. Formamos parte de su Escuela Profesional de Ingeniería de Sistemas, y este proyecto nace en el curso de Gestión del Conocimiento: une el análisis de datos y el Deep Learning con la sanidad del café, un cultivo clave para la región.',
@@ -21,11 +21,11 @@ export const SETTINGS = {
   metodo_desc:
     'Del problema al modelo: datos, arquitectura, entrenamiento y evaluación de una red neuronal convolucional que detecta antracnosis en frutos de café.',
   metodo_propuesta:
-    'Proponemos un modelo CNN que clasifique imágenes de frutos como sanos o con antracnosis, como apoyo a la identificación fitosanitaria.',
+    'Proponemos un sistema de gestión del conocimiento que combina una red neuronal convolucional, que clasifica cada fruto como sano, con infección incipiente o con infección avanzada, con la validación de un experto y la difusión de recomendaciones de manejo.',
   metodo_flujo_nota:
-    'Las fotos del mismo fruto o de la misma sesión no se reparten entre subconjuntos, para que el modelo no se evalúe con imágenes que ya "vio".',
+    'División estratificada de 70 % para entrenamiento, 15 % para validación y 15 % para prueba, con semilla fija. Las imágenes casi idénticas no quedan en conjuntos distintos y el conjunto de prueba solo se usa en la evaluación final.',
   metodo_metricas_nota:
-    'Se analiza la matriz de confusión con atención especial a los falsos negativos: frutos afectados clasificados como sanos. No se fija un porcentaje objetivo; el resultado se obtiene de los experimentos.',
+    'Meta: recall de al menos 85 % en la clase de infección incipiente, porque un fruto enfermo clasificado como sano cuesta más que una falsa alarma. También se mide el tiempo de respuesta (máximo 3 segundos) y se generan mapas Grad-CAM para comprobar que el modelo se fije en las lesiones y no en el fondo.',
   blog_label: 'CUADERNO DE CAMPO · 2026',
   blog_title: 'Ciencia que cuida el café',
   blog_desc:
@@ -36,11 +36,15 @@ export const SETTINGS = {
   footer_tagline:
     'Investigación y conocimiento para el cuidado del fruto del café y la sanidad del cafetal.',
   footer_note: 'La información no sustituye la asesoría agronómica profesional.',
+  metodo_repo_title: '¿Quieres más detalles del proyecto?',
+  metodo_repo_text:
+    'Todo el código del sitio, el esquema de la base de datos, la configuración de Docker y la documentación técnica están disponibles en el repositorio del proyecto en GitHub.',
+  metodo_repo_url: 'https://github.com/CrhissJMC/AntracnosisFrutoCafe',
   traz_title: 'Del botón floral al grano tostado',
   traz_desc:
     'Seguimiento del avance del proyecto: cada etapa del ciclo del café representa un 5 % de lo realizado, y cada cambio queda registrado en la bitácora.',
   traz_general:
-    'Desarrollar y evaluar un modelo de Deep Learning basado en redes neuronales convolucionales para detectar antracnosis en frutos de café mediante el análisis de imágenes digitales.',
+    'Desarrollar un sistema de gestión del conocimiento que utilice un modelo de deep learning para detectar la antracnosis en frutos de café mediante imágenes digitales, y que permita registrar, validar y compartir el conocimiento técnico sobre la enfermedad.',
 };
 
 // Datos de la universidad (Nosotros). [título, detalle]
@@ -55,6 +59,11 @@ export const UNIVERSITY_ITEMS = [
 export const LEGACY_DEFAULTS = {
   // clave → valores anteriores que se reemplazan por el actual de SETTINGS
   settings: {
+    docente: ['Dr. FUENTES MAZA FRANS'],
+    traz_general: ['Desarrollar y evaluar un modelo de Deep Learning basado en redes neuronales convolucionales para detectar antracnosis en frutos de café mediante el análisis de imágenes digitales.'],
+    metodo_propuesta: ['Proponemos un modelo CNN que clasifique imágenes de frutos como sanos o con antracnosis, como apoyo a la identificación fitosanitaria.'],
+    metodo_flujo_nota: ['Las fotos del mismo fruto o de la misma sesión no se reparten entre subconjuntos, para que el modelo no se evalúe con imágenes que ya "vio".'],
+    metodo_metricas_nota: ['Se analiza la matriz de confusión con atención especial a los falsos negativos: frutos afectados clasificados como sanos. No se fija un porcentaje objetivo; el resultado se obtiene de los experimentos.'],
     nosotros_title: ['Un equipo comprometido con el café'],
     nosotros_desc: [
       'Somos estudiantes que investigan cómo prevenir y manejar la antracnosis en el fruto del café.',
@@ -62,14 +71,17 @@ export const LEGACY_DEFAULTS = {
     ],
   },
   teamRole: { from: 'Integrante del proyecto', to: 'Estudiante de Ingeniería de Sistemas' },
+  // Objetivos anteriores (presentación inicial): se reemplazan si siguen sin cambios.
+  objectiveTitles: ['Recopilar y preparar las imágenes', 'Implementar la arquitectura CNN', 'Entrenar y validar el modelo', 'Determinar el desempeño'],
 };
 
 // Objetivos específicos (presentación del proyecto). [código, título, descripción]
 export const OBJECTIVES = [
-  [1, 'Recopilar y preparar las imágenes', 'Dataset de frutos sanos y con antracnosis: fuentes confiables, revisión de duplicados, redimensionamiento, normalización y partición.'],
-  [2, 'Implementar la arquitectura CNN', 'Diseño o adaptación de una red convolucional para clasificación binaria, con alternativa de transferencia de aprendizaje (MobileNetV2, EfficientNetB0).'],
-  [3, 'Entrenar y validar el modelo', 'Entrenamiento con Adam por lotes y épocas, ajuste de hiperparámetros y control del sobreajuste con Early Stopping en conjuntos independientes.'],
-  [4, 'Determinar el desempeño', 'Evaluación final con accuracy, precision, recall, F1-score y matriz de confusión, con atención a los falsos negativos.'],
+  [1, 'Preparar el conjunto de datos', 'Depurar, verificar y dividir las imágenes de frutos de café proporcionadas por el docente, clasificadas en sano, con infección incipiente y con infección avanzada.'],
+  [2, 'Entrenar el modelo de deep learning', 'Entrenar y comparar redes neuronales convolucionales mediante transferencia de aprendizaje para reconocer los patrones visuales de la enfermedad en la piel del fruto.'],
+  [3, 'Maximizar la sensibilidad del diagnóstico', 'Ajustar los hiperparámetros y el umbral de decisión del modelo para alcanzar un recall mínimo de 85 % en frutos con infección incipiente.'],
+  [4, 'Implementar los módulos de gestión del conocimiento', 'Desarrollar la validación experta, la base de recomendaciones y el tablero de incidencia, integrados con el clasificador en la aplicación web.'],
+  [5, 'Validar el sistema', 'Evaluar el desempeño del modelo con imágenes tomadas en campo y la usabilidad del sistema con técnicos y productores.'],
 ];
 
 export const CONTENT_ITEMS = [
@@ -102,6 +114,46 @@ export const CONTENT_ITEMS = [
 // Página Metodología (contenido de la presentación del proyecto). [sección, título, texto]
 // Se carga por sección: solo las secciones que aún no tienen bloques.
 export const METHOD_ITEMS = [
+  // El problema
+  ['problema', 'El café importa', 'Es una actividad productiva clave para muchas comunidades rurales; las enfermedades afectan el rendimiento y la calidad de la cosecha.'],
+  ['problema', 'Antracnosis', 'Enfermedad causada por hongos del género Colletotrichum: produce lesiones oscuras y hundidas que pueden necrosar, tumbar o momificar la cereza.'],
+  ['problema', 'Detección tardía', 'Las primeras lesiones son pequeñas y suelen pasar inadvertidas; cuando el daño es evidente, el hongo ya avanzó y el control llega tarde.'],
+  ['problema', 'Conocimiento concentrado', 'Reconocer una infección temprana depende del criterio de pocos especialistas, y ese conocimiento no se registra de forma sistemática.'],
+  // Estado sanitario del fruto (criterio visual · acción sugerida)
+  ['clases', 'Fruto sano', 'Piel de color uniforme según su madurez, sin manchas ni hundimientos. Acción: continuar con el monitoreo regular.'],
+  ['clases', 'Infección incipiente', 'Una o pocas manchas pequeñas, oscuras o ligeramente hundidas. Acción: avisar al técnico y aplicar el manejo de forma focalizada.'],
+  ['clases', 'Infección avanzada', 'Lesiones necróticas extensas y hundidas, deformación o momificación. Acción: retirar los frutos afectados y aplicar el control indicado por el agrónomo.'],
+  // Arquitectura experimental (pasos)
+  ['flujo', 'Datos', 'Imágenes de frutos proporcionadas por el docente: inventario por categoría, eliminación de duplicados y fotos borrosas, y revisión de etiquetas.'],
+  ['flujo', 'Preprocesamiento', 'Recorte, redimensionamiento a 224 × 224 píxeles y normalización. El aumento de datos (rotaciones, volteos, brillo y contraste) se aplica solo al entrenamiento.'],
+  ['flujo', 'Modelos', 'EfficientNet-B0 como modelo principal y MobileNetV2 como alternativa más ligera, ambos preentrenados y ajustados con transferencia de aprendizaje.'],
+  ['flujo', 'Entrenamiento', 'Transferencia de aprendizaje en dos fases con Adam, pesos por clase y parada temprana según el recall; luego se ajusta el umbral de decisión para reducir los falsos negativos.'],
+  ['flujo', 'Evaluación', 'Matriz de confusión, métricas por clase y mapas Grad-CAM en el conjunto de prueba, y una prueba final con fotos tomadas en campo.'],
+  // Métricas
+  ['metricas', 'Recall (sensibilidad)', 'De los frutos realmente enfermos, cuántos detecta el modelo. Es la métrica prioritaria.'],
+  ['metricas', 'Precisión', 'De los frutos que el modelo marca como enfermos, cuántos lo están de verdad.'],
+  ['metricas', 'F1-score', 'Equilibrio entre precisión y recall en una sola cifra.'],
+  ['metricas', 'Exactitud', 'Aciertos totales. Puede ser engañosa si las clases están desbalanceadas, por eso no se usa sola.'],
+  // Tecnologías
+  ['tecnologias', 'Python', 'Entrenamiento e inferencia del modelo.'],
+  ['tecnologias', 'TensorFlow · Keras', 'Construcción y entrenamiento de la CNN.'],
+  ['tecnologias', 'Google Colab', 'GPU gratuita para entrenar y reentrenar.'],
+  ['tecnologias', 'scikit-learn', 'Matriz de confusión, recall, precisión y F1.'],
+  ['tecnologias', 'OpenCV', 'Recorte, redimensionado y normalización de imágenes.'],
+  ['tecnologias', 'Pandas · NumPy', 'Análisis exploratorio y gestión de metadatos.'],
+  ['tecnologias', 'FastAPI', 'Servicio interno que ejecuta el modelo y Grad-CAM.'],
+  ['tecnologias', 'React · Vite', 'Sitio del proyecto y pantallas del módulo de diagnóstico.'],
+  ['tecnologias', 'Node.js · Express', 'API del sitio: sesión, perfiles y datos.'],
+  ['tecnologias', 'PostgreSQL', 'Base de datos del sitio y del módulo.'],
+  ['tecnologias', 'Docker', 'Levanta la base de datos, la API, el modelo y la web.'],
+  ['tecnologias', 'Cloudflare Tunnel', 'URL pública HTTPS sin abrir puertos.'],
+  // Alcance (un punto por línea)
+  ['alcance', 'Incluye', 'Clasificación de imágenes de frutos individuales en tres categorías\nEntrenamiento y comparación de CNN con transferencia de aprendizaje\nMódulo web de diagnóstico, validación experta y tablero de incidencia\nPruebas con fotos tomadas en campo y pruebas de usabilidad'],
+  ['alcance', 'No incluye', 'Análisis de hojas, ramas o plantas completas\nSensores de temperatura y humedad (trabajo futuro)\nReemplazo del diagnóstico de laboratorio\nServicios de nube pagados: el sistema se ejecuta en la PC del equipo'],
+];
+
+// Versión anterior de la Metodología: una sección se reemplaza solo si sigue igual a esta.
+export const LEGACY_METHOD_ITEMS = [
   // El problema
   ['problema', 'El café importa', 'Es una actividad productiva clave para muchas comunidades rurales; las enfermedades afectan el rendimiento y la calidad.'],
   ['problema', 'Antracnosis', 'Enfermedad asociada a hongos del género Colletotrichum que causa lesiones necróticas en los tejidos del fruto.'],
@@ -286,3 +338,12 @@ Toma fotografías de las lesiones antes de tocar el fruto. Si recolectas muestra
 Los registros de campo son el punto de partida, no el diagnóstico final. Si la incidencia supera el 10 % de los frutos evaluados o si las lesiones tienen características poco habituales, lleva muestras a un laboratorio de diagnóstico fitopatológico. El técnico podrá confirmar el agente causal y orientar el manejo más adecuado para tu situación.`,
   },
 ].map((a) => ({ ...a, published_at: PUBLISHED_AT }));
+
+// Versiones anteriores de la Metodología. Una sección se actualiza solo si sigue igual a alguna.
+// v2 (tercer avance) incluía una CNN entrenada desde cero como línea base, que se descartó.
+export const LEGACY_METHOD_VERSIONS = [
+  LEGACY_METHOD_ITEMS,
+  METHOD_ITEMS.map((i) =>
+    i[0] === 'flujo' && i[1] === 'Modelos' ? [i[0], i[1], 'EfficientNet-B0 como modelo principal, MobileNetV2 como alternativa ligera y una CNN sencilla entrenada desde cero como línea base.'] : i,
+  ),
+];

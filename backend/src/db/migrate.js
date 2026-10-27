@@ -11,6 +11,7 @@ import {
   UNIVERSITY_ITEMS,
   LEGACY_DEFAULTS,
   METHOD_ITEMS,
+  LEGACY_METHOD_VERSIONS,
   REMOVED_SETTINGS,
 } from './seed-data.js';
 
@@ -77,15 +78,25 @@ async function seed(client) {
     log('seed_university_items', { count: UNIVERSITY_ITEMS.length });
   }
 
-  // Metodología: cada sección se carga si aún no tiene bloques.
+  // Metodología: cada sección se carga si está vacía, o se actualiza si sigue
+  // exactamente igual a la versión anterior (así no se pisan ediciones del admin).
+  const sameItems = (rows, items) =>
+    rows.length === items.length && rows.every((r, i) => r.title === items[i][1] && r.body === items[i][2]);
   for (const section of [...new Set(METHOD_ITEMS.map(([s]) => s))]) {
-    const { rows: existing } = await client.query('SELECT 1 FROM content_items WHERE section = $1 LIMIT 1', [section]);
-    if (existing.length) continue;
     const items = METHOD_ITEMS.filter(([s]) => s === section);
+    const previousVersions = LEGACY_METHOD_VERSIONS.map((v) => v.filter(([s]) => s === section));
+    const { rows: existing } = await client.query(
+      'SELECT title, body FROM content_items WHERE section = $1 ORDER BY position, id',
+      [section],
+    );
+    const matchesPrevious = previousVersions.some((p) => p.length && sameItems(existing, p));
+    if (existing.length && !matchesPrevious) continue;
+    if (sameItems(existing, items)) continue;
+    await client.query('DELETE FROM content_items WHERE section = $1', [section]);
     for (const [i, [, title, body]] of items.entries()) {
       await client.query('INSERT INTO content_items (section, title, body, position) VALUES ($1, $2, $3, $4)', [section, title, body, i + 1]);
     }
-    log('seed_method_items', { section, count: items.length });
+    log(existing.length ? 'update_method_items' : 'seed_method_items', { section, count: items.length });
   }
   await client.query('DELETE FROM settings WHERE key = ANY($1::text[])', [REMOVED_SETTINGS]);
 
@@ -98,11 +109,27 @@ async function seed(client) {
     LEGACY_DEFAULTS.teamRole.to,
   ]);
 
-  if (await isEmpty(client, 'objectives')) {
+  // Objetivos: se cargan si no hay; si siguen siendo los de la presentación inicial
+  // (mismos títulos, sin avances registrados), se reemplazan por los del tercer avance.
+  const weight = Math.round(100 / OBJECTIVES.length);
+  const { rows: currentObjectives } = await client.query('SELECT code, title FROM objectives ORDER BY code');
+  const { rows: logRows } = await client.query('SELECT 1 FROM progress_log LIMIT 1');
+  const oldTitles = LEGACY_DEFAULTS.objectiveTitles;
+  const isLegacy =
+    currentObjectives.length === oldTitles.length &&
+    currentObjectives.every((o, i) => o.title === oldTitles[i]) &&
+    logRows.length === 0;
+  if (currentObjectives.length === 0 || isLegacy) {
+    await client.query('DELETE FROM objectives');
     for (const [code, title, description] of OBJECTIVES) {
-      await client.query('INSERT INTO objectives (code, title, description) VALUES ($1, $2, $3)', [code, title, description]);
+      await client.query('INSERT INTO objectives (code, title, description, weight) VALUES ($1, $2, $3, $4)', [
+        code,
+        title,
+        description,
+        weight,
+      ]);
     }
-    log('seed_objectives', { count: OBJECTIVES.length });
+    log(isLegacy ? 'update_objectives' : 'seed_objectives', { count: OBJECTIVES.length });
   }
 
   // Sincroniza el tiempo de lectura con el contenido real de cada artículo.

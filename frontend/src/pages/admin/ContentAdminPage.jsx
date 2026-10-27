@@ -23,6 +23,7 @@ const SECTIONS = {
   universidad: { label: 'Universidad', page: 'Nosotros', singular: 'dato', titleLabel: 'Título', bodyLabel: 'Detalle' },
   equipo: { label: 'Equipo', page: 'Nosotros', singular: 'integrante', titleLabel: 'Nombre completo', bodyLabel: 'Rol' },
   problema: { label: 'Problema', page: 'Metodología', singular: 'bloque', titleLabel: 'Título', bodyLabel: 'Descripción' },
+  clases: { label: 'Estado del fruto', page: 'Metodología', singular: 'clase', titleLabel: 'Clase', bodyLabel: 'Criterio visual y acción sugerida' },
   flujo: { label: 'Arquitectura', page: 'Metodología', singular: 'paso', titleLabel: 'Paso', bodyLabel: 'Descripción' },
   metricas: { label: 'Métricas', page: 'Metodología', singular: 'métrica', titleLabel: 'Métrica', bodyLabel: 'Qué mide' },
   tecnologias: { label: 'Tecnologías', page: 'Metodología', singular: 'tecnología', titleLabel: 'Herramienta', bodyLabel: 'Uso' },

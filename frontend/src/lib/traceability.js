@@ -27,16 +27,20 @@ export const STAGES = [
 export const STAGE_PERCENT = 100 / STAGES.length;
 
 /** Color de cada objetivo (por código): floración, fruto verde, cereza madura, grano tostado. */
-const OBJECTIVE_COLORS = ['#8fae4e', '#c2a336', '#b8322a', '#6e4524'];
+const OBJECTIVE_COLORS = ['#8fae4e', '#c2a336', '#d9792f', '#b8322a', '#6e4524'];
 export const objectiveColor = (code) => OBJECTIVE_COLORS[(code - 1) % OBJECTIVE_COLORS.length];
 
-/** Tramo del ciclo que representa cada objetivo (con pesos iguales). */
+/** Tramo del ciclo que representa cada objetivo (5 objetivos con pesos iguales = 4 etapas cada uno). */
 export const PHASES = [
-  { code: 1, stages: '1–5', name: 'Floración' },
-  { code: 2, stages: '6–10', name: 'Fruto verde' },
-  { code: 3, stages: '11–15', name: 'Maduración' },
-  { code: 4, stages: '16–20', name: 'Grano y tostado' },
+  { code: 1, stages: '1–4', name: 'Floración' },
+  { code: 2, stages: '5–8', name: 'Fruto verde' },
+  { code: 3, stages: '9–12', name: 'Maduración' },
+  { code: 4, stages: '13–16', name: 'Cosecha y beneficio' },
+  { code: 5, stages: '17–20', name: 'Grano y tostado' },
 ];
+
+/** Colores del semáforo del diagnóstico: sano, infección incipiente, infección avanzada. */
+export const HEALTH_COLORS = ['#3f8f4a', '#d9a521', '#b8322a'];
 
 /** Etapas completas y etapa en curso para un % total. */
 export function stageState(total) {

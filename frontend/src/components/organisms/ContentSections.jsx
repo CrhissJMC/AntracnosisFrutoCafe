@@ -9,8 +9,8 @@ import './ContentSections.css';
  * `children` se muestra debajo de la rejilla (p. ej., una nota destacada).
  */
 
-/** Tarjetas. marker: 'dot' | 'number' | null */
-export function CardGridSection({ title, items, marker = 'dot', min = 220, tone = 'default', id, children }) {
+/** Tarjetas. marker: 'dot' | 'number' | null · markerColors: color del punto por posición (p. ej., semáforo). */
+export function CardGridSection({ title, items, marker = 'dot', markerColors, min = 220, tone = 'default', id, children }) {
   return (
     <Section title={title} tone={tone} id={id}>
       <Grid min={min}>
@@ -18,6 +18,7 @@ export function CardGridSection({ title, items, marker = 'dot', min = 220, tone 
           <InfoCard
             key={i.id}
             marker={marker === 'number' ? pad2(idx + 1) : marker}
+            markerColor={markerColors?.[idx]}
             markerTone="muted"
             title={i.title}
             titleTone={marker ? 'default' : 'brand'}

@@ -74,7 +74,7 @@ Al arrancar, la API crea las tablas (`backend/src/db/schema.sql`) y carga el con
 | `users` | Cuentas, con rol `admin` o `user` (correo único sin distinguir mayúsculas) |
 | `articles` | Artículos del blog (contenido en Markdown sencillo, publicado o borrador) |
 | `comments` | Comentarios: artículo + usuario. Se borran en cascada con el artículo o el usuario |
-| `content_items` | Bloques de las páginas: `sintomas`, `ciclo`, `manejo`, `mision`, `equipo`, `universidad`, `problema`, `flujo`, `metricas`, `tecnologias`, `alcance` |
+| `content_items` | Bloques de las páginas: `sintomas`, `ciclo`, `manejo`, `mision`, `equipo`, `universidad`, `problema`, `clases`, `flujo`, `metricas`, `tecnologias`, `alcance` |
 | `settings` | Textos generales (hero, "¿Qué es?", contacto, pie de página…) |
 | `contact_messages` | Mensajes del formulario de contacto |
 
@@ -101,7 +101,7 @@ frontend/src/
 │   │                          ObjectiveItem, LogEntry, Panel, Callout, LegendItem, SeciSelect, FormActions
 │   ├── organisms/           ← Navbar, Footer, Hero, PageHero, Section/Grid, secciones de Inicio, CardGridSection/StepsSection/ListColumnsSection, TeamSection, UniversitySection,
 │   │                          BlogGrid, CommentSection, ContactForm, AuthForm, AdminSidebar, DataTable,
-│   │                          ArticleForm, ContentEditor,
+│   │                          ArticleForm, ContentEditor, CallToAction,
 │   │                          CoffeeCycleRing, ObjectiveList, ProgressTimeline, CycleLegend,
 │   │                          TraceabilitySummary, ObjectiveEditor, ProgressNoteForm
 │   └── templates/           ← MainLayout, AuthLayout, AdminLayout (+ AdminGuard), TraceabilityLayout

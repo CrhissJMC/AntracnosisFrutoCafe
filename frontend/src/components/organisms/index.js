@@ -23,3 +23,4 @@ export { ProgressTimeline } from './ProgressTimeline.jsx';
 export { TraceabilitySummary } from './TraceabilitySummary.jsx';
 export { UniversitySection } from './UniversitySection.jsx';
 export { CardGridSection, ListColumnsSection, StepsSection } from './ContentSections.jsx';
+export { CallToAction } from './CallToAction.jsx';

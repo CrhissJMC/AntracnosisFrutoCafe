@@ -3,14 +3,21 @@ import { z } from 'zod';
 import { query, withTransaction } from '../db/pool.js';
 import { asyncHandler } from '../lib/http.js';
 import { requireAdmin } from '../middleware/auth.js';
+import { httpUrl } from '../lib/schemas.js';
 import { SETTINGS } from '../db/seed-data.js';
 
 const router = Router();
 
 // Solo se aceptan las claves conocidas (evita que se inyecten claves arbitrarias).
 const KEYS = Object.keys(SETTINGS);
+// Las claves que guardan un enlace o una imagen solo aceptan http(s) (evita enlaces `javascript:`).
+const isLinkKey = (k) => /(_url|_image)$/.test(k);
 const settingsSchema = z
-  .object(Object.fromEntries(KEYS.map((k) => [k, z.string().max(5000).optional()])))
+  .object(
+    Object.fromEntries(
+      KEYS.map((k) => [k, (isLinkKey(k) ? z.union([z.literal(''), httpUrl]) : z.string().max(5000)).optional()]),
+    ),
+  )
   .strict();
 
 async function readAll() {
