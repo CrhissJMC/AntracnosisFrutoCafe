@@ -123,3 +123,24 @@ CREATE TABLE IF NOT EXISTS progress_log (
 );
 CREATE INDEX IF NOT EXISTS progress_log_created_idx   ON progress_log (created_at DESC, id DESC);
 CREATE INDEX IF NOT EXISTS progress_log_objective_idx ON progress_log (objective_id);
+
+-- Matriz de trazabilidad de requisitos ------------------------------------
+--  Cada requisito se vincula a un objetivo, al módulo que lo atiende y a su
+--  caso de prueba. Cada cambio de estado se registra en progress_log.
+CREATE TABLE IF NOT EXISTS requirements (
+  id           SERIAL PRIMARY KEY,
+  code         VARCHAR(10)  NOT NULL UNIQUE CHECK (code ~ '^(RF|RNF)[0-9]{2}$'),
+  kind         VARCHAR(3)   NOT NULL CHECK (kind IN ('RF', 'RNF')),
+  title        VARCHAR(120) NOT NULL CHECK (length(trim(title)) > 0),
+  description  VARCHAR(500) NOT NULL DEFAULT '',
+  objective_id INTEGER      REFERENCES objectives(id) ON DELETE SET NULL,
+  module       VARCHAR(80)  NOT NULL DEFAULT '',
+  test_case    VARCHAR(60)  NOT NULL DEFAULT '',
+  priority     VARCHAR(5)   CHECK (priority IN ('Alta', 'Media', 'Baja')),
+  status       VARCHAR(12)  NOT NULL DEFAULT 'pendiente'
+               CHECK (status IN ('pendiente', 'disenado', 'implementado', 'probado')),
+  position     INTEGER      NOT NULL DEFAULT 0,
+  updated_at   TIMESTAMPTZ  NOT NULL DEFAULT now(),
+  CHECK (code LIKE kind || '%')
+);
+CREATE INDEX IF NOT EXISTS requirements_objective_idx ON requirements (objective_id);

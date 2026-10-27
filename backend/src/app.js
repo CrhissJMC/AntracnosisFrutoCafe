@@ -13,6 +13,7 @@ import settingsRoutes from './routes/settings.js';
 import messageRoutes from './routes/messages.js';
 import adminRoutes from './routes/admin.js';
 import traceabilityRoutes from './routes/traceability.js';
+import diagnosisRoutes from './routes/diagnosis.js';
 
 export function createApp() {
   const app = express();
@@ -22,7 +23,10 @@ export function createApp() {
   // Así el rate limit usa la IP real de cada visitante.
   app.set('trust proxy', Number(process.env.TRUST_PROXY_HOPS) || 1);
   app.use(helmet());
-  app.use(express.json({ limit: '200kb' }));
+  // Las fotos del diagnóstico llegan en el cuerpo (data URL): esa ruta admite hasta 12 MB; el resto, 200 KB.
+  const jsonSmall = express.json({ limit: '200kb' });
+  const jsonImages = express.json({ limit: '12mb' });
+  app.use((req, res, next) => (req.path === '/api/diagnostico/analizar' ? jsonImages : jsonSmall)(req, res, next));
   app.use(cookieParser());
 
   // Id de petición + log estructurado de cada respuesta
@@ -72,6 +76,7 @@ export function createApp() {
   app.use('/api/messages', messageRoutes);
   app.use('/api/admin', adminRoutes);
   app.use('/api/traceability', traceabilityRoutes);
+  app.use('/api/diagnostico', diagnosisRoutes);
 
   app.use('/api', (req, res, next) => next(new HttpError(404, 'Ruta no encontrada')));
   app.use(errorHandler);

@@ -18,3 +18,4 @@
 .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
 .dot--brand { background: var(--color-brand); }
 .dot--forest { background: var(--color-forest-700); }
+.badge--info { background: var(--color-info-bg); color: var(--color-info-text); }

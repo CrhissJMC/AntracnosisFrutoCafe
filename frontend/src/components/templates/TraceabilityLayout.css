@@ -4,6 +4,7 @@
 .traz-layout__ring > * { max-width: 440px; }
 .traz-layout__objectives { grid-area: objectives; min-width: 0; }
 .traz-layout__log { grid-area: log; min-width: 0; }
+.traz-layout__matrix { margin-top: var(--space-8); }
 .traz-layout__legend { margin-top: var(--space-8); padding-top: var(--space-6); border-top: 1px solid var(--color-border); }
 
 @media (min-width: 760px) {

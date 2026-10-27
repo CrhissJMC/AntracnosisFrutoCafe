@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button, Heading, Icon, Spinner, Text } from '../../components/atoms';
-import { Alert, ConfirmButton } from '../../components/molecules';
-import { ObjectiveEditor, ProgressNoteForm, ProgressTimeline, TraceabilitySummary } from '../../components/organisms';
+import { Alert, ConfirmButton, RequirementStatusSelect } from '../../components/molecules';
+import { ObjectiveEditor, ProgressNoteForm, ProgressTimeline, RequirementMatrix, TraceabilitySummary } from '../../components/organisms';
 import { AdminLayout } from '../../components/templates';
 import { useAsync } from '../../hooks/useAsync.js';
 import { api } from '../../lib/api.js';
@@ -16,6 +16,14 @@ export function TraceabilityAdminPage() {
 
   const save = async (id, body) => state.setData(await api.patch(`/traceability/objectives/${id}`, body));
   const addNote = async (body) => state.setData(await api.post('/traceability/log', body));
+  const setRequirementStatus = async (id, status) => {
+    setError('');
+    try {
+      state.setData(await api.patch(`/traceability/requirements/${id}`, { status }));
+    } catch (err) {
+      setError(err.message);
+    }
+  };
   const remove = async (id) => {
     setError('');
     try {
@@ -61,6 +69,19 @@ export function TraceabilityAdminPage() {
                   Agregar nota sin cambiar el avance
                 </Heading>
                 <ProgressNoteForm objectives={d.objectives} onAdd={addNote} />
+              </section>
+
+              <section className="admin-card">
+                <Heading as="h2" size="md" className="traz-admin__h">
+                  Matriz de trazabilidad de requisitos
+                </Heading>
+                <Text size="sm" className="traz-admin__hint">
+                  Al cambiar el estado de un requisito, el cambio queda registrado en la bitácora del objetivo al que pertenece.
+                </Text>
+                <RequirementMatrix
+                  requirements={d.requirements ?? []}
+                  renderStatus={(r) => <RequirementStatusSelect requirement={r} onChange={setRequirementStatus} />}
+                />
               </section>
             </div>
 

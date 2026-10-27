@@ -56,3 +56,20 @@ export const SECI = {
   combinacion: { label: 'Combinación', hint: 'Explícito → explícito: integrar datos y resultados' },
   internalizacion: { label: 'Internalización', hint: 'Explícito → tácito: aprender de los resultados' },
 };
+
+/** Estados de la matriz de requisitos, en orden de avance (peso 0 → 1). */
+export const REQUIREMENT_STATUS = {
+  pendiente: { label: 'Pendiente', tone: 'neutral', weight: 0 },
+  disenado: { label: 'Diseñado', tone: 'warning', weight: 1 / 3 },
+  implementado: { label: 'Implementado', tone: 'info', weight: 2 / 3 },
+  probado: { label: 'Probado', tone: 'success', weight: 1 },
+};
+
+/** Conteo por estado y avance ponderado (0–100) de una lista de requisitos. */
+export function requirementSummary(requirements) {
+  const counts = Object.fromEntries(Object.keys(REQUIREMENT_STATUS).map((k) => [k, 0]));
+  for (const r of requirements) counts[r.status] = (counts[r.status] ?? 0) + 1;
+  const total = requirements.length;
+  const score = requirements.reduce((s, r) => s + (REQUIREMENT_STATUS[r.status]?.weight ?? 0), 0);
+  return { counts, total, progress: total ? Math.round((100 * score) / total) : 0 };
+}

@@ -34,6 +34,8 @@ services:
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Define ADMIN_PASSWORD en el archivo .env}
       # 1 = solo nginx; 2 = nginx + túnel de Cloudflare
       TRUST_PROXY_HOPS: ${TRUST_PROXY_HOPS:-1}
+      # Servicio de los modelos (solo si se levanta con el perfil ml)
+      ML_SERVICE_URL: http://ml:8000
     depends_on:
       db:
         condition: service_healthy
@@ -46,6 +48,16 @@ services:
     depends_on:
       api:
         condition: service_healthy
+
+  # Servicio de inferencia de los modelos (Python + TensorFlow). Es pesado, por eso
+  # solo arranca con:  docker compose --profile ml up -d
+  # Los modelos entrenados (.keras) se copian en ml/modelos/ (ver ml/README.md).
+  ml:
+    build: ./ml
+    restart: unless-stopped
+    profiles: ["ml"]
+    volumes:
+      - ./ml/modelos:/models:ro
 
   # Túnel público temporal (Cloudflare Quick Tunnel, sin cuenta).
   # Solo arranca con:  docker compose --profile tunnel up -d

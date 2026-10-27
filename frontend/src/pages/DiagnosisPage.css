@@ -1,0 +1,8 @@
+.dx-form { display: flex; flex-direction: column; gap: var(--space-6); }
+.dx-form__step { display: flex; flex-direction: column; gap: var(--space-3); }
+.dx-form__title { display: flex; align-items: center; gap: var(--space-2); font-weight: 600; }
+.dx-form__title span { width: 24px; height: 24px; border-radius: 50%; display: inline-grid; place-items: center; background: var(--color-forest-700); color: var(--color-text-inverse); font-size: var(--text-xs); }
+.dx-form__submit { display: flex; flex-direction: column; gap: var(--space-2); }
+.dx-form__error { font-size: var(--text-sm); color: var(--color-danger-text); }
+.dx-form__privacy { font-size: var(--text-xs); }
+.dx-form__login { display: flex; gap: var(--space-2); margin-top: var(--space-3); flex-wrap: wrap; }

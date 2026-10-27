@@ -2,3 +2,7 @@ node_modules/
 dist/
 .env
 *.log
+
+# Modelos entrenados (pesados y dependen del dataset): no se suben a Git
+ml/modelos/*
+!ml/modelos/.gitkeep

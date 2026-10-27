@@ -46,6 +46,8 @@ Usa el `ADMIN_EMAIL` y el `ADMIN_PASSWORD` del archivo `.env`. Al entrar llegas 
 | Compartir por internet (túnel Cloudflare) | `docker compose --profile tunnel up -d` |
 | Ver la URL pública del túnel | `docker compose logs tunnel` (busca `trycloudflare.com`) |
 | Cerrar el túnel | `docker compose stop tunnel` |
+| Encender el servicio de los modelos (diagnóstico) | `docker compose --profile ml up -d --build` |
+| Agregar los modelos entrenados | copiar los `.keras` en `ml/modelos/` (ver [ml/README.md](ml/README.md)) |
 
 > El túnel es temporal: la URL cambia cada vez que se reinicia y solo funciona mientras tu PC y Docker estén encendidos. Con el túnel, pon `TRUST_PROXY_HOPS=2` en `.env`.
 
@@ -57,7 +59,7 @@ Para ver la base de datos con pgAdmin o DBeaver, conéctate a `localhost:5433` c
 
 ```
 Navegador ──► web (nginx :8080) ──► /api/* ──► api (Node + Express :4000) ──► db (PostgreSQL 16)
-                 └─ sirve la app React compilada
+                 └─ sirve la app React compilada        └──► ml (Python + TensorFlow :8000, interno)
 ```
 
 | Servicio | Carpeta | Tecnología |
@@ -65,6 +67,7 @@ Navegador ──► web (nginx :8080) ──► /api/* ──► api (Node + Exp
 | `web` | `frontend/` | React 18 + Vite, servido con nginx |
 | `api` | `backend/` | Node 20, Express, `pg`, JWT en cookie httpOnly, validación con zod |
 | `db` | — | PostgreSQL 16 con volumen persistente `db-data` |
+| `ml` | `ml/` | Python 3.11, FastAPI y TensorFlow: ejecuta EfficientNet-B0 y MobileNetV2 y calcula Grad-CAM (perfil `ml`) |
 
 Al arrancar, la API crea las tablas (`backend/src/db/schema.sql`) y carga el contenido original de la página (`backend/src/db/seed-data.js`) **solo si las tablas están vacías**. Nunca sobrescribe lo que el administrador haya editado.
 
@@ -98,13 +101,15 @@ frontend/src/
 │   │                          Range, ProgressBar, NumberBadge, CycleStage (figuras SVG del ciclo del café)
 │   ├── molecules/           ← FormField, Alert, InfoCard, StepItem, ListColumn, BlogCard, CommentItem,
 │   │                          ConfirmButton, ContactItem, StatCard, NavItem, EmptyState,
-│   │                          ObjectiveItem, LogEntry, Panel, Callout, LegendItem, SeciSelect, FormActions
+│   │                          ObjectiveItem, LogEntry, Panel, Callout, LegendItem, SeciSelect, FormActions,
+│   │                          RequirementStatusSelect, ChipList, ModelOption, HealthLight, ProbabilityList, ImageFrame
 │   ├── organisms/           ← Navbar, Footer, Hero, PageHero, Section/Grid, secciones de Inicio, CardGridSection/StepsSection/ListColumnsSection, TeamSection, UniversitySection,
 │   │                          BlogGrid, CommentSection, ContactForm, AuthForm, AdminSidebar, DataTable,
 │   │                          ArticleForm, ContentEditor, CallToAction,
 │   │                          CoffeeCycleRing, ObjectiveList, ProgressTimeline, CycleLegend,
-│   │                          TraceabilitySummary, ObjectiveEditor, ProgressNoteForm
-│   └── templates/           ← MainLayout, AuthLayout, AdminLayout (+ AdminGuard), TraceabilityLayout
+│   │                          TraceabilitySummary, ObjectiveEditor, ProgressNoteForm, RequirementMatrix,
+│   │                          ImageCapture, ModelPicker, DiagnosisResult, DiagnosisPanel
+│   └── templates/           ← MainLayout, AuthLayout, AdminLayout (+ AdminGuard), TraceabilityLayout, DiagnosisLayout
 ├── pages/                   ← páginas = plantillas + datos reales de la API
 │   └── admin/
 ├── context/                 ← sesión (AuthContext) y contenido del sitio (SiteContext)
@@ -120,7 +125,7 @@ Cada nivel solo usa los niveles inferiores: los átomos usan tokens, las molécu
 
 ## 4. Rutas
 
-**Sitio público:** `/`, `/nosotros`, `/metodologia`, `/blog`, `/trazabilidad`, `/blog/:slug`, `/contacto`, `/login`, `/registro`
+**Sitio público:** `/`, `/nosotros`, `/metodologia`, `/blog`, `/diagnostico`, `/trazabilidad`, `/blog/:slug`, `/contacto`, `/login`, `/registro`
 
 **Panel (solo admin):** `/admin`, `/admin/articulos`, `/admin/articulos/nuevo`, `/admin/articulos/:id`, `/admin/comentarios`, `/admin/contenido`, `/admin/textos`, `/admin/mensajes`, `/admin/usuarios`
 

@@ -1,0 +1,10 @@
+.req-matrix { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+.req-matrix__summary { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3) var(--space-6); }
+.req-matrix__progress { flex: 1 1 260px; display: flex; flex-direction: column; gap: var(--space-2); }
+.req-matrix__total { font-size: var(--text-sm); color: var(--color-text-muted); }
+.req-matrix__total strong { font-size: var(--text-lg); color: var(--color-text); font-variant-numeric: tabular-nums; }
+.req-matrix__counts { list-style: none; display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.req-matrix__filters { display: flex; flex-wrap: wrap; gap: var(--space-1); }
+.req-matrix__code { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.req-matrix__legend { font-size: var(--text-xs); color: var(--color-text-muted); }
+.req-matrix .cell-sub { margin-top: 2px; }

@@ -43,10 +43,27 @@ function totalProgress(objectives) {
   return Math.round(objectives.reduce((s, o) => s + o.progress * o.weight, 0) / weights);
 }
 
+export const REQUIREMENT_STATUSES = ['pendiente', 'disenado', 'implementado', 'probado'];
+const STATUS_LABEL = { pendiente: 'Pendiente', disenado: 'Diseñado', implementado: 'Implementado', probado: 'Probado' };
+
+const requirementUpdateSchema = z
+  .object({
+    status: z.enum(REQUIREMENT_STATUSES, { message: 'Estado no válido' }),
+    note: note.optional().default(''),
+  })
+  .strict();
+
 async function readState(limit = 100) {
-  const [objectives, log] = await Promise.all([
+  const [objectives, log, requirements] = await Promise.all([
     query('SELECT id, code, title, description, weight, progress, updated_at FROM objectives ORDER BY code'),
     query(`${LOG_SELECT} ORDER BY l.created_at DESC, l.id DESC LIMIT $1`, [limit]),
+    query(
+      `SELECT r.id, r.code, r.kind, r.title, r.description, r.module, r.test_case, r.priority, r.status, r.updated_at,
+              o.code AS objective_code
+         FROM requirements r
+         LEFT JOIN objectives o ON o.id = r.objective_id
+        ORDER BY r.kind, r.position, r.code`,
+    ),
   ]);
   const rows = objectives.rows;
   const updatedAt = [...rows.map((o) => o.updated_at), ...log.rows.map((l) => l.created_at)]
@@ -57,6 +74,7 @@ async function readState(limit = 100) {
     total: totalProgress(rows),
     updated_at: updatedAt ? new Date(updatedAt).toISOString() : null,
     log: log.rows,
+    requirements: requirements.rows,
   };
 }
 
@@ -105,6 +123,35 @@ router.patch(
           [id, data.note, data.seci_phase, req.user.id, req.user.name],
         );
       }
+    });
+
+    res.json(await readState());
+  }),
+);
+
+// PATCH /api/traceability/requirements/:id — admin: cambia el estado de un requisito y lo registra en la bitácora
+router.patch(
+  '/requirements/:id',
+  requireAdmin,
+  asyncHandler(async (req, res) => {
+    const id = parseId(req.params.id, 'Requisito');
+    const data = requirementUpdateSchema.parse(req.body);
+
+    await withTransaction(async (client) => {
+      const { rows } = await client.query(
+        'SELECT code, title, status, objective_id FROM requirements WHERE id = $1 FOR UPDATE',
+        [id],
+      );
+      const r = rows[0];
+      if (!r) throw notFound('Requisito');
+      if (r.status === data.status) return;
+
+      await client.query('UPDATE requirements SET status = $2, updated_at = now() WHERE id = $1', [id, data.status]);
+      const text = `${r.code} · ${r.title}: ${STATUS_LABEL[r.status]} → ${STATUS_LABEL[data.status]}`;
+      await client.query(
+        `INSERT INTO progress_log (objective_id, note, author_id, author_name) VALUES ($1, $2, $3, $4)`,
+        [r.objective_id, data.note ? `${text}. ${data.note}` : text, req.user.id, req.user.name],
+      );
     });
 
     res.json(await readState());

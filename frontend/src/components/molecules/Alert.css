@@ -15,3 +15,4 @@
 .alert--error { background: var(--color-danger-bg); border-color: var(--color-danger-border); color: var(--color-danger-text); }
 .alert--info { background: var(--color-info-bg); border-color: var(--color-border); color: var(--color-info-text); }
 @keyframes alert-in { from { opacity: 0; transform: translateY(-4px); } }
+.alert--warning { background: #fdf3e1; border-color: #f0d29a; color: #6b4600; }

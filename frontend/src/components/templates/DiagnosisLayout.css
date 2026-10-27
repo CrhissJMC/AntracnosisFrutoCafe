@@ -1,0 +1,10 @@
+.dx-layout { display: grid; gap: var(--space-5); grid-template-columns: minmax(0, 1fr); align-items: start; }
+.dx-layout__card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-6); min-width: 0; }
+.dx-layout__result { container: dx / inline-size; }
+@media (min-width: 900px) {
+  .dx-layout { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); }
+  .dx-layout__result { position: sticky; top: calc(var(--navbar-h) + var(--space-4)); }
+}
+@media (max-width: 600px) {
+  .dx-layout__card { padding: var(--space-4); }
+}

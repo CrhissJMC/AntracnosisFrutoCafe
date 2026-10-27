@@ -1,0 +1,10 @@
+.dx-panel { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+.dx-panel--center { min-height: 320px; align-items: center; justify-content: center; color: var(--color-text-muted); font-size: var(--text-sm); }
+.dx-panel__note { font-size: var(--text-xs); color: var(--color-text-muted); }
+.dx-panel__agree { display: inline-flex; align-items: center; gap: var(--space-2); }
+.dx-panel__compare { display: grid; gap: var(--space-5); grid-template-columns: minmax(0, 1fr); }
+.dx-panel__col + .dx-panel__col { padding-top: var(--space-5); border-top: 1px solid var(--color-border); }
+@container dx (min-width: 620px) {
+  .dx-panel__compare { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dx-panel__col + .dx-panel__col { padding-top: 0; border-top: 0; padding-left: var(--space-5); border-left: 1px solid var(--color-border); }
+}

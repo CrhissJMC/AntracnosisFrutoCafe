@@ -1,6 +1,6 @@
 import { Spinner, Text } from '../components/atoms';
 import { Alert, Callout, Panel } from '../components/molecules';
-import { CoffeeCycleRing, CycleLegend, ObjectiveList, PageHero, ProgressTimeline } from '../components/organisms';
+import { CoffeeCycleRing, CycleLegend, ObjectiveList, PageHero, ProgressTimeline, RequirementMatrix } from '../components/organisms';
 import { TraceabilityLayout } from '../components/templates';
 import { useSite } from '../context/SiteContext.jsx';
 import { useAsync } from '../hooks/useAsync.js';
@@ -41,6 +41,13 @@ export function TraceabilityPage() {
         d && (
           <Panel title="Bitácora de avance">
             <ProgressTimeline log={d.log} />
+          </Panel>
+        )
+      }
+      matrix={
+        d?.requirements?.length > 0 && (
+          <Panel title="Matriz de trazabilidad de requisitos">
+            <RequirementMatrix requirements={d.requirements} />
           </Panel>
         )
       }

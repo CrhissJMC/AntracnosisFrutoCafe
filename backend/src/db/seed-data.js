@@ -347,3 +347,28 @@ export const LEGACY_METHOD_VERSIONS = [
     i[0] === 'flujo' && i[1] === 'Modelos' ? [i[0], i[1], 'EfficientNet-B0 como modelo principal, MobileNetV2 como alternativa ligera y una CNN sencilla entrenada desde cero como línea base.'] : i,
   ),
 ];
+
+// Matriz de trazabilidad de requisitos (tercer avance, Tablas 8, 9, 13 y 18).
+// [código, requisito, descripción, objetivo, módulo, caso de prueba, prioridad, estado]
+// Estado: pendiente · disenado (prototipo o especificación) · implementado · probado
+export const REQUIREMENTS = [
+  ['RF01', 'Ingesta de imagen del fruto', 'Cargar desde la PC o tomar con el teléfono una fotografía centrada en un fruto individual.', 4, 'Nuevo diagnóstico', 'CP01', 'Alta', 'disenado'],
+  ['RF02', 'Preprocesamiento', 'Recortar, redimensionar a 224 × 224 píxeles y normalizar el color y el contraste de la imagen.', 2, 'Servicio del modelo', 'CP02', 'Alta', 'disenado'],
+  ['RF03', 'Clasificación con CNN', 'Clasificar el fruto como sano, con infección incipiente o con infección avanzada (EfficientNet-B0 o MobileNetV2).', 2, 'Servicio del modelo', 'CP03', 'Alta', 'disenado'],
+  ['RF04', 'Diagnóstico visual inmediato', 'Mostrar la categoría, el nivel de confianza, el semáforo y la recomendación asociada.', 4, 'Nuevo diagnóstico', 'CP04', 'Alta', 'disenado'],
+  ['RF05', 'Registro de capturas', 'Guardar la foto con su diagnóstico, fecha, hora, coordenadas, parcela y versión del modelo.', 4, 'Nuevo diagnóstico · Historial', 'CP05', 'Alta', 'disenado'],
+  ['RF06', 'Validación experta', 'Permitir que el agrónomo confirme o corrija un diagnóstico y lo comente.', 4, 'Validación', 'CP06', 'Alta', 'disenado'],
+  ['RF07', 'Base de conocimiento', 'Publicar en el blog fichas de manejo vinculadas a cada categoría, y consultarlas y comentarlas.', 4, 'Blog', 'CP07', 'Media', 'disenado'],
+  ['RF08', 'Tablero de incidencia', 'Mostrar indicadores de incidencia por parcela, zona y periodo.', 4, 'Tablero', 'CP08', 'Media', 'disenado'],
+  ['RF09', 'Reentrenamiento y versionado', 'Reentrenar el modelo con imágenes validadas y registrar sus métricas por versión.', 2, 'Panel · Modelo de diagnóstico', 'CP09', 'Media', 'disenado'],
+  ['RF10', 'Gestión de usuarios y parcelas', 'Asignar perfiles del módulo (productor, técnico, agrónomo, gerencia) y registrar parcelas.', 4, 'Panel · Usuarios', 'CP10', 'Alta', 'disenado'],
+  ['RNF01', 'Sensibilidad del modelo', 'Recall de al menos 85 % en la clase de infección incipiente, medido en el conjunto de prueba.', 3, 'Modelo', 'Evaluación en el conjunto de prueba', null, 'pendiente'],
+  ['RNF02', 'Tiempo de respuesta', 'El diagnóstico tarda como máximo 3 segundos desde el envío de la foto.', 4, 'Servicio del modelo', 'Prueba de rendimiento (30 imágenes)', null, 'pendiente'],
+  ['RNF03', 'Ejecución local', 'El sistema se ejecuta en contenedores Docker en la PC del equipo, sin servicios de nube pagados.', 4, 'Infraestructura', 'Despliegue con Docker Compose', null, 'implementado'],
+  ['RNF04', 'Tolerancia a la iluminación', 'El recall en fotos de campo con sombra o sol directo no baja más de 10 puntos respecto del conjunto de prueba.', 5, 'Modelo', 'Prueba con fotos de campo', null, 'pendiente'],
+  ['RNF05', 'Interfaz simplificada', 'Resultado con semáforo: verde (sano), amarillo (incipiente) y rojo (avanzado).', 4, 'Nuevo diagnóstico', 'CP04', null, 'disenado'],
+  ['RNF06', 'Seguridad', 'Acceso con usuario y contraseña cifrada; permisos según rol y perfil.', 4, 'Sitio y API', 'Prueba de permisos por rol', null, 'implementado'],
+  ['RNF07', 'Mantenibilidad', 'Código modular, documentado y versionado en GitHub.', 4, 'Repositorio', 'Revisión del repositorio', null, 'implementado'],
+  ['RNF08', 'Trazabilidad del diagnóstico', 'Cada diagnóstico registra la versión del modelo que lo generó.', 4, 'Base de datos', 'CP05', null, 'disenado'],
+  ['RNF09', 'Diseño adaptable', 'Las pantallas se usan sin desplazamiento horizontal de 360 a 1440 px y conservan el estilo del sitio.', 4, 'Sitio', 'Prueba en 360, 768 y 1280 px', null, 'implementado'],
+];

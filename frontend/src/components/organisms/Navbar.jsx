@@ -11,6 +11,7 @@ export const NAV_LINKS = [
   { to: '/nosotros', label: 'Nosotros' },
   { to: '/metodologia', label: 'Metodología' },
   { to: '/blog', label: 'Blog' },
+  { to: '/diagnostico', label: 'Diagnóstico' },
   { to: '/trazabilidad', label: 'Trazabilidad' },
   { to: '/contacto', label: 'Contacto' },
 ];

@@ -19,6 +19,7 @@ import { SettingsAdminPage } from './pages/admin/SettingsAdminPage.jsx';
 import { MessagesAdminPage } from './pages/admin/MessagesAdminPage.jsx';
 import { UsersAdminPage } from './pages/admin/UsersAdminPage.jsx';
 import { TraceabilityPage } from './pages/TraceabilityPage.jsx';
+import { DiagnosisPage } from './pages/DiagnosisPage.jsx';
 import { TraceabilityAdminPage } from './pages/admin/TraceabilityAdminPage.jsx';
 
 // Tabla de rutas: patrón → página
@@ -29,6 +30,7 @@ const ROUTES = [
   ['/servicios', MethodologyPage], // enlaces antiguos
   ['/blog', BlogPage],
   ['/blog/:slug', ArticlePage],
+  ['/diagnostico', DiagnosisPage],
   ['/trazabilidad', TraceabilityPage],
   ['/contacto', ContactPage],
   ['/login', LoginPage],

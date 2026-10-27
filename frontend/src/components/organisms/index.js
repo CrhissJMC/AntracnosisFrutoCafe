@@ -24,3 +24,8 @@ export { TraceabilitySummary } from './TraceabilitySummary.jsx';
 export { UniversitySection } from './UniversitySection.jsx';
 export { CardGridSection, ListColumnsSection, StepsSection } from './ContentSections.jsx';
 export { CallToAction } from './CallToAction.jsx';
+export { RequirementMatrix, RequirementStatusBadge } from './RequirementMatrix.jsx';
+export { DiagnosisPanel } from './DiagnosisPanel.jsx';
+export { DiagnosisResult } from './DiagnosisResult.jsx';
+export { ImageCapture } from './ImageCapture.jsx';
+export { COMPARE, ModelPicker } from './ModelPicker.jsx';

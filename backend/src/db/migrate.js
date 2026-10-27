@@ -13,6 +13,7 @@ import {
   METHOD_ITEMS,
   LEGACY_METHOD_VERSIONS,
   REMOVED_SETTINGS,
+  REQUIREMENTS,
 } from './seed-data.js';
 
 const log = (msg, extra = {}) => console.log(JSON.stringify({ level: 'info', msg, ...extra }));
@@ -130,6 +131,18 @@ async function seed(client) {
       ]);
     }
     log(isLegacy ? 'update_objectives' : 'seed_objectives', { count: OBJECTIVES.length });
+  }
+
+  // Matriz de requisitos: se carga si está vacía (cada requisito, ligado a su objetivo por código).
+  if (await isEmpty(client, 'requirements')) {
+    for (const [i, [code, title, description, objectiveCode, module, testCase, priority, status]] of REQUIREMENTS.entries()) {
+      await client.query(
+        `INSERT INTO requirements (code, kind, title, description, objective_id, module, test_case, priority, status, position)
+         VALUES ($1, $2, $3, $4, (SELECT id FROM objectives WHERE code = $5), $6, $7, $8, $9, $10)`,
+        [code, code.startsWith('RNF') ? 'RNF' : 'RF', title, description, objectiveCode, module, testCase, priority, status, i + 1],
+      );
+    }
+    log('seed_requirements', { count: REQUIREMENTS.length });
   }
 
   // Sincroniza el tiempo de lectura con el contenido real de cada artículo.
