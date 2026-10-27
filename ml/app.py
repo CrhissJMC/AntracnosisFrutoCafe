@@ -25,7 +25,9 @@ warnings.filterwarnings("ignore", message="The structure of `inputs` doesn't mat
 
 MODELS_DIR = Path(os.getenv("MODELS_DIR", "/models"))
 MAX_IMAGE_BYTES = 8 * 1024 * 1024
-DEFAULT_CLASSES = ["sano", "incipiente", "avanzado"]
+# Clases del modelo (sano y antracnosis). "revisar" no es una clase: es la zona entre los dos umbrales.
+DEFAULT_CLASSES = ["sano", "antracnosis"]
+DEFAULT_THRESHOLDS = (0.35, 0.65)
 
 # Modelos que el sitio conoce. Cada uno se carga desde MODELS_DIR/<id>.keras y,
 # opcionalmente, MODELS_DIR/<id>.json con su configuración (ver ml/README.md).
@@ -44,12 +46,17 @@ def _config(model_id):
         "classes": DEFAULT_CLASSES,
         "input_size": 224,
         "preprocess": CATALOG[model_id]["preprocess"],
-        "umbral_sano": None,
+        "umbral_inferior": DEFAULT_THRESHOLDS[0],
+        "umbral_superior": DEFAULT_THRESHOLDS[1],
         "gradcam_layer": None,
     }
     meta = MODELS_DIR / f"{model_id}.json"
     if meta.exists():
         cfg.update(json.loads(meta.read_text(encoding="utf-8")))
+    if not 0 <= float(cfg["umbral_inferior"]) < float(cfg["umbral_superior"]) <= 1:
+        # Umbrales invertidos o fuera de rango: se usan los de por defecto en vez de dar resultados absurdos.
+        log.warning(f"umbrales_invalidos {model_id}")
+        cfg["umbral_inferior"], cfg["umbral_superior"] = DEFAULT_THRESHOLDS
     return cfg
 
 
@@ -98,13 +105,23 @@ def _prepare(img, cfg):
     return img, x
 
 
-def _decide(probs, classes, umbral_sano):
-    """Clase final. Con umbral: un fruto solo es 'sano' si su probabilidad supera el umbral (reduce falsos negativos)."""
-    order = np.argsort(probs)[::-1]
-    best = int(order[0])
-    if umbral_sano is not None and classes[best] == "sano" and probs[best] < float(umbral_sano) and len(order) > 1:
-        best = int(order[1])
-    return best
+def _disease_output(probs, classes):
+    """Índice de la salida con la probabilidad de antracnosis.
+    Admite una neurona sigmoide (una sola salida) o una softmax con la clase 'antracnosis'."""
+    if probs.size == 1:
+        return 0
+    if "antracnosis" not in classes or len(classes) != probs.size:
+        raise HTTPException(500, "La configuración del modelo no indica la salida de la clase antracnosis")
+    return classes.index("antracnosis")
+
+
+def _decide(p, low, high):
+    """Resultado según los dos umbrales de la versión: sano, revisar (el modelo no está seguro) o antracnosis."""
+    if p < float(low):
+        return "sano"
+    if p >= float(high):
+        return "antracnosis"
+    return "revisar"
 
 
 def _gradcam(model, x, class_index, layer_name):
@@ -178,10 +195,13 @@ def predict(body: PredictIn):
         model, cfg, _ = entry
         start = time.perf_counter()
         shown, x = _prepare(img, cfg)
-        probs = np.asarray(model(x, training=False)[0], dtype="float64")
-        classes = cfg["classes"]
-        best = _decide(probs, classes, cfg["umbral_sano"])
-        cam = _gradcam(model, x, best, cfg["gradcam_layer"]) if body.gradcam else None
+        probs = np.asarray(model(x, training=False)[0], dtype="float64").ravel()
+        disease = _disease_output(probs, cfg["classes"])
+        p = float(probs[disease])
+        low, high = float(cfg["umbral_inferior"]), float(cfg["umbral_superior"])
+        result = _decide(p, low, high)
+        # El mapa siempre resalta la evidencia de antracnosis: dónde ve lesiones la red.
+        cam = _gradcam(model, x, disease, cfg["gradcam_layer"]) if body.gradcam else None
         elapsed = int((time.perf_counter() - start) * 1000)
         results.append(
             {
@@ -189,12 +209,13 @@ def predict(body: PredictIn):
                 "name": CATALOG[model_id]["name"],
                 "available": True,
                 "version": cfg["version"],
-                "class": classes[best],
-                "confidence": round(float(probs[best]), 4),
-                "probabilities": {c: round(float(p), 4) for c, p in zip(classes, probs)},
+                "class": result,
+                "probability": round(p, 4),
+                "thresholds": {"inferior": low, "superior": high},
+                "probabilities": {"sano": round(1 - p, 4), "antracnosis": round(p, 4)},
                 "gradcam": _overlay(shown, cam) if cam is not None else None,
                 "time_ms": elapsed,
             }
         )
-        log.info(f"prediccion {model_id} {classes[best]} {elapsed}ms")
+        log.info(f"prediccion {model_id} {result} p={p:.3f} {elapsed}ms")
     return {"results": results}

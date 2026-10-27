@@ -1,12 +1,12 @@
 import { Badge, Heading, ProgressBar, Text } from '../atoms';
 import { Alert, HealthLight, ImageFrame, ProbabilityList } from '../molecules';
-import { LOW_CONFIDENCE, healthClass } from '../../lib/diagnosis.js';
+import { healthClass } from '../../lib/diagnosis.js';
 import './DiagnosisResult.css';
 
 const pct = (p) => `${Math.round(p * 100)} %`;
 const seconds = (ms) => `${(ms / 1000).toLocaleString('es-PE', { maximumFractionDigits: 1 })} s`;
 
-/** Resultado de un modelo: semáforo, clase, confianza, probabilidades, Grad-CAM y descripción. */
+/** Resultado de un modelo: semáforo, resultado, probabilidad de antracnosis con sus umbrales, Grad-CAM y descripción. */
 export function DiagnosisResult({ result, photo, descriptions = {}, compact = false }) {
   if (!result.available) {
     return (
@@ -18,7 +18,7 @@ export function DiagnosisResult({ result, photo, descriptions = {}, compact = fa
   }
   const cls = healthClass(result.class);
   const info = descriptions[result.class] ?? {};
-  const low = result.confidence < LOW_CONFIDENCE;
+  const { inferior, superior } = result.thresholds ?? {};
 
   return (
     <article className={`dx-result ${compact ? 'dx-result--compact' : ''}`} style={{ '--dx-color': cls?.color }}>
@@ -36,15 +36,21 @@ export function DiagnosisResult({ result, photo, descriptions = {}, compact = fa
           {cls?.label ?? result.class}
         </Heading>
         <div className="dx-result__conf">
-          <span>Confianza del modelo</span>
-          <strong>{pct(result.confidence)}</strong>
+          <span>Probabilidad de antracnosis</span>
+          <strong>{pct(result.probability)}</strong>
         </div>
-        <ProgressBar value={result.confidence * 100} color={cls?.color} label="Confianza del modelo" />
+        <ProgressBar value={result.probability * 100} color={cls?.color} label="Probabilidad de antracnosis" />
+        {inferior != null && (
+          <p className="dx-result__thresholds">
+            Sano bajo {pct(inferior)} · Revisar entre ambos · Antracnosis desde {pct(superior)}
+          </p>
+        )}
       </div>
 
-      {low && (
+      {result.class === 'revisar' && (
         <Alert tone="warning">
-          Resultado dudoso: la confianza es baja. Toma otra foto siguiendo la guía de captura.
+          El modelo no está seguro: la probabilidad quedó entre los dos umbrales. Toma otra foto siguiendo la guía de captura;
+          el caso queda para que lo revise un especialista.
         </Alert>
       )}
 

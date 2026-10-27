@@ -39,7 +39,7 @@ export const PHASES = [
   { code: 5, stages: '17–20', name: 'Grano y tostado' },
 ];
 
-/** Colores del semáforo del diagnóstico: sano, infección incipiente, infección avanzada. */
+/** Colores del semáforo del diagnóstico: sano (verde), revisar (ámbar), antracnosis (rojo). */
 export const HEALTH_COLORS = ['#3f8f4a', '#d9a521', '#b8322a'];
 
 /** Etapas completas y etapa en curso para un % total. */

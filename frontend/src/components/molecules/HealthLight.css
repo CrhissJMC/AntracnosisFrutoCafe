@@ -3,3 +3,6 @@
 .health-light__seg.is-on { opacity: 1; color: var(--color-text); font-weight: 700; border-color: var(--seg-color); box-shadow: inset 0 0 0 1px var(--seg-color); background: var(--color-surface); }
 .health-light__dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 .health-light__seg:not(.is-on) .health-light__dot { filter: grayscale(1); opacity: 0.5; }
+@media (max-width: 600px) {
+  .health-light__seg { gap: var(--space-1); padding-inline: var(--space-1); }
+}

@@ -19,7 +19,7 @@ Sin este servicio, la página **Diagnóstico** sigue funcionando y avisa que el 
 
 ## Agregar los modelos entrenados
 
-1. Entrena en Google Colab (ver el ejemplo de abajo).
+1. Entrena en la PC del equipo con la GPU, dentro de WSL2 (ver el ejemplo de abajo).
 2. Copia los archivos a la carpeta `ml/modelos/` con **estos nombres exactos**:
 
    | Modelo | Archivo | Configuración (opcional) |
@@ -39,10 +39,11 @@ Todos los campos son opcionales:
 ```json
 {
   "version": "v1",
-  "classes": ["sano", "incipiente", "avanzado"],
+  "classes": ["sano", "antracnosis"],
   "input_size": 224,
   "preprocess": "none",
-  "umbral_sano": 0.7,
+  "umbral_inferior": 0.35,
+  "umbral_superior": 0.65,
   "gradcam_layer": "top_conv"
 }
 ```
@@ -50,15 +51,16 @@ Todos los campos son opcionales:
 | Campo | Qué hace | Valor por defecto |
 |---|---|---|
 | `version` | Se muestra en el resultado y queda registrada (RNF08) | `v1` |
-| `classes` | Orden de las salidas del modelo. **Debe coincidir con el orden del entrenamiento** | `sano, incipiente, avanzado` |
+| `classes` | Orden de las salidas si el modelo termina en softmax. Con una sola neurona sigmoide se ignora: la salida es la probabilidad de antracnosis | `sano, antracnosis` |
 | `input_size` | Tamaño de entrada en píxeles | `224` |
 | `preprocess` | `none` (el modelo recibe 0–255), `mobilenet_v2` (escala a −1…1) o `rescale` (0…1) | EfficientNet: `none` · MobileNetV2: `mobilenet_v2` |
-| `umbral_sano` | Un fruto solo se clasifica como sano si esa probabilidad supera el umbral (reduce falsos negativos) | sin umbral |
+| `umbral_inferior` | Por debajo de esta probabilidad de antracnosis el fruto es **sano** | `0.35` |
+| `umbral_superior` | Desde esta probabilidad el fruto es **antracnosis**; entre ambos umbrales el resultado es **revisar** (el modelo no está seguro) | `0.65` |
 | `gradcam_layer` | Capa convolucional para Grad-CAM. Si se omite, se usa la última capa convolucional | automática |
 
-Si el entrenamiento solo tiene **dos clases**, usa `"classes": ["sano", "avanzado"]` o adapta las clases del sitio.
+Los umbrales se fijan con el conjunto de validación: el superior, para alcanzar el recall de 85 % en antracnosis (RNF01); la zona intermedia envía los casos dudosos al especialista en lugar de darlos por sanos. Si el inferior no es menor que el superior, el servicio usa los valores por defecto.
 
-## Ejemplo de exportación en Colab
+## Ejemplo de exportación
 
 Crea la red base con `input_tensor=` para que sus capas queden al nivel superior del modelo:
 así el Grad-CAM funciona sin configuración extra.
@@ -71,12 +73,12 @@ base = keras.applications.EfficientNetB0(include_top=False, weights="imagenet", 
 base.trainable = False                      # fase 1: solo la cabeza
 x = keras.layers.GlobalAveragePooling2D()(base.output)
 x = keras.layers.Dropout(0.3)(x)
-outputs = keras.layers.Dense(3, activation="softmax")(x)
+outputs = keras.layers.Dense(1, activation="sigmoid")(x)  # probabilidad de antracnosis
 model = keras.Model(inputs, outputs)
 
 # ... entrenamiento (fase 1 y fase 2) ...
 
-model.save("efficientnet_b0.keras")         # descárgalo y cópialo en ml/modelos/
+model.save("efficientnet_b0.keras")         # cópialo en ml/modelos/
 ```
 
 Para MobileNetV2 es igual, con `keras.applications.MobileNetV2` y guardando `mobilenet_v2.keras`.
@@ -88,4 +90,4 @@ deja `"preprocess": "mobilenet_v2"`; si lo incluiste como capa dentro del modelo
 | Método | Ruta | Uso |
 |---|---|---|
 | GET | `/health` | Qué modelos están disponibles y su versión |
-| POST | `/predict` | `{ "image": "data:image/jpeg;base64,…", "models": ["efficientnet_b0"] }` → clase, confianza, probabilidades, Grad-CAM y tiempo |
+| POST | `/predict` | `{ "image": "data:image/jpeg;base64,…", "models": ["efficientnet_b0"] }` → resultado (sano, revisar o antracnosis), probabilidad de antracnosis, umbrales, Grad-CAM y tiempo |

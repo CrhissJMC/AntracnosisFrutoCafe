@@ -132,6 +132,12 @@ async function seed(client) {
     }
     log(isLegacy ? 'update_objectives' : 'seed_objectives', { count: OBJECTIVES.length });
   }
+  // Descripciones de objetivos anteriores: se actualizan solo si nadie las editó.
+  for (const [code, , description] of OBJECTIVES) {
+    const previous = LEGACY_DEFAULTS.objectiveDescriptions[code];
+    if (!previous) continue;
+    await client.query('UPDATE objectives SET description = $3, updated_at = now() WHERE code = $1 AND description = $2', [code, previous, description]);
+  }
 
   // Matriz de requisitos: se carga si está vacía (cada requisito, ligado a su objetivo por código).
   if (await isEmpty(client, 'requirements')) {
@@ -143,6 +149,12 @@ async function seed(client) {
       );
     }
     log('seed_requirements', { count: REQUIREMENTS.length });
+  }
+  // Descripciones de requisitos anteriores (tres clases, perfiles antiguos): igual que los objetivos.
+  for (const [code, , description] of REQUIREMENTS) {
+    const previous = LEGACY_DEFAULTS.requirementDescriptions[code];
+    if (!previous) continue;
+    await client.query('UPDATE requirements SET description = $3, updated_at = now() WHERE code = $1 AND description = $2', [code, previous, description]);
   }
 
   // Sincroniza el tiempo de lectura con el contenido real de cada artículo.

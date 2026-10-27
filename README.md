@@ -39,7 +39,7 @@ El repositorio contiene el sitio del proyecto (React + Node.js + PostgreSQL), el
 | Nosotros | `/nosotros` | El proyecto como trabajo del curso, la UNTRM (creación, licenciamiento, FISME, curso), equipo y docente |
 | Metodología | `/metodologia` | El problema, estado sanitario del fruto (semáforo), arquitectura experimental, evaluación, tecnologías, alcance y enlace a este repositorio |
 | Blog | `/blog` | Artículos sobre sanidad del café; los usuarios registrados comentan (base de conocimiento) |
-| **Diagnóstico** | `/diagnostico` | Tomar o subir la foto de un fruto, elegir el modelo y ver el resultado con semáforo, confianza, Grad-CAM y recomendación |
+| **Diagnóstico** | `/diagnostico` | Tomar o subir la foto de un fruto, elegir el modelo y ver el resultado con semáforo (sano, revisar o antracnosis), probabilidad, Grad-CAM y recomendación |
 | **Trazabilidad** | `/trazabilidad` | Avance del proyecto: anillo del ciclo del café, objetivos, bitácora con fases SECI y matriz de requisitos |
 | Contacto | `/contacto` | Formulario de contacto |
 
@@ -62,7 +62,7 @@ Esta sección vincula cada parte del informe del **tercer avance** con lo que ya
 |---|---|---|
 | 1 | Preparar el conjunto de datos | Trazabilidad · tramo «Floración» del ciclo |
 | 2 | Entrenar el modelo de deep learning | Trazabilidad · tramo «Fruto verde» |
-| 3 | Maximizar la sensibilidad (recall ≥ 85 % en infección incipiente) | Trazabilidad · tramo «Maduración» |
+| 3 | Maximizar la sensibilidad (recall ≥ 85 % en la clase antracnosis) | Trazabilidad · tramo «Maduración» |
 | 4 | Implementar los módulos de gestión del conocimiento | Trazabilidad · tramo «Cosecha y beneficio» |
 | 5 | Validar el sistema | Trazabilidad · tramo «Grano y tostado» |
 
@@ -154,7 +154,7 @@ Para ver la base de datos con pgAdmin o DBeaver, conéctate a `localhost:5433` c
 ### La pantalla (`/diagnostico`)
 1. **Fotografía del fruto:** guía de captura (un solo fruto, fondo uniforme, 10–20 cm, sin contraluz), arrastrar y soltar, **Tomar foto** (abre la cámara del teléfono) y **Subir foto**. Antes de enviarla, la foto se reduce a 1024 px y se le quitan los metadatos, incluida la ubicación GPS.
 2. **Modelo** (siempre visible): **EfficientNet-B0** por defecto, **MobileNetV2** (más rápido) o **Comparar ambos**.
-3. **Resultado:** semáforo (sano / incipiente / avanzado), clase, confianza, probabilidad de cada clase, foto junto al mapa **Grad-CAM** y la descripción «qué se observa / qué hacer», tomada de Metodología → Estado sanitario del fruto. Si la confianza es menor de 60 %, se recomienda tomar otra foto. Con «Comparar ambos» se muestran los dos resultados y si coinciden.
+3. **Resultado:** semáforo verde (sano), ámbar (revisar) o rojo (antracnosis), probabilidad de antracnosis con los umbrales de la versión, foto junto al mapa **Grad-CAM** y la descripción «qué se observa / qué hacer», tomada de Metodología → Estado sanitario del fruto. «Revisar» no es una clase: aparece cuando la probabilidad queda entre los dos umbrales, y pide otra foto y la revisión de un especialista. Con «Comparar ambos» se muestran los dos resultados y si coinciden.
 
 Analizar requiere iniciar sesión.
 
@@ -162,13 +162,13 @@ Analizar requiere iniciar sesión.
 - Python 3.11 + FastAPI + TensorFlow (CPU). Solo lo llama la API del sitio por la red interna de Docker; **no se expone a internet**.
 - Se enciende con `docker compose --profile ml up -d --build`. Sin él, la página avisa que el servicio no está activo.
 - **Agregar los modelos entrenados:** copiar `efficientnet_b0.keras` y `mobilenet_v2.keras` en `ml/modelos/`. Se cargan solos en el primer análisis, sin reiniciar nada. Mientras no existan, la página indica «Aún no entrenado».
-- Configuración opcional por modelo (`<modelo>.json`): versión, orden de clases, preprocesamiento, **umbral de decisión para la clase «sano»** (reduce falsos negativos, RNF01) y capa de Grad-CAM.
+- Configuración opcional por modelo (`<modelo>.json`): versión, orden de clases, preprocesamiento, **umbrales inferior y superior** sobre la probabilidad de antracnosis (sano, revisar o antracnosis; RNF01 y RNF05) y capa de Grad-CAM. El modelo puede terminar en una neurona sigmoide o en una softmax con las clases sano y antracnosis.
 - Los archivos `.keras` **no se suben a Git**.
 
-La guía completa, con un ejemplo de exportación desde Google Colab, está en **[ml/README.md](ml/README.md)**.
+La guía completa, con un ejemplo de exportación del modelo, está en **[ml/README.md](ml/README.md)**.
 
 ### Datos
-La búsqueda de datasets (37 conjuntos evaluados por relevancia, acceso y tamaño) está documentada en el archivo de avances del equipo. Solo un conjunto de libre acceso tiene antracnosis confirmada en fruto de café y ninguno separa la infección incipiente de la avanzada. Por eso el informe (4.3.1) prevé ajustar a dos clases o etiquetar una muestra por severidad.
+La búsqueda de datasets (37 conjuntos evaluados por relevancia, acceso y tamaño) está documentada en el archivo de avances del equipo. Solo un conjunto de libre acceso tiene antracnosis confirmada en fruto de café y ninguno separa la infección incipiente de la avanzada. Por eso el modelo usa dos clases (sano y antracnosis) y no estima la severidad (informe, 1.6 y 4.3.1).
 
 ---
 
@@ -308,10 +308,10 @@ El servicio `ml` expone `GET /health` y `POST /predict` **solo en la red interna
 | Hecho | Pendiente |
 |---|---|
 | Sitio con blog, panel y contenido editable | Descargar, filtrar y dividir el dataset (70/15/15) |
-| Trazabilidad con SECI y matriz de requisitos | Entrenar EfficientNet-B0 y MobileNetV2 en Google Colab (`cuadernos/`) |
+| Trazabilidad con SECI y matriz de requisitos | Entrenar EfficientNet-B0 y MobileNetV2 con la GPU de la PC en WSL2 (`cuadernos/`) |
 | Pantalla «Nuevo diagnóstico» con selector y comparación de modelos | Tablas del módulo: registro de capturas, validación, versiones del modelo |
-| Servicio `ml/` con Grad-CAM y umbral de decisión | Pantallas Historial, Validación, Tablero y Modelo |
-| Publicación con Docker y túnel de Cloudflare | Perfiles del módulo (productor, técnico, agrónomo, gerencia) |
+| Servicio `ml/` con Grad-CAM y dos umbrales (sano, revisar, antracnosis) | Pantallas Historial, Validación, Tablero y Modelo |
+| Publicación con Docker y túnel de Cloudflare | Perfiles del módulo (productor, propietario, especialista) |
 | | Pruebas: casos CP01–CP10, rendimiento, usabilidad (SUS) y fotos de campo |
 
 ### Historial de cambios
@@ -321,6 +321,7 @@ El servicio `ml` expone `GET /health` y `POST /predict` **solo en la red interna
 | 24/10/2026 | Página de Trazabilidad con anillo del ciclo del café y bitácora SECI |
 | 25/10/2026 | Panel de Trazabilidad a pantalla completa; UNTRM en Nosotros; Servicios reemplazado por Metodología |
 | 26/10/2026 | Contenido alineado con el tercer avance; enlace al repositorio; módulo de diagnóstico; matriz de requisitos |
+| 27/10/2026 | Versión final del tercer avance: diagnóstico con sano, revisar y antracnosis; datasets públicos; objetivos, requisitos, tecnologías y alcance actualizados |
 
 ---
 

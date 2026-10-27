@@ -21,11 +21,11 @@ export const SETTINGS = {
   metodo_desc:
     'Del problema al modelo: datos, arquitectura, entrenamiento y evaluación de una red neuronal convolucional que detecta antracnosis en frutos de café.',
   metodo_propuesta:
-    'Proponemos un sistema de gestión del conocimiento que combina una red neuronal convolucional, que clasifica cada fruto como sano, con infección incipiente o con infección avanzada, con la validación de un experto y la difusión de recomendaciones de manejo.',
+    'Proponemos DiagnostiCafé, un sistema web de gestión del conocimiento con cinco componentes: la captura de la foto del fruto, el diagnóstico automático con una red neuronal convolucional (sano, revisar o antracnosis), la memoria institucional de cada captura, una red de conocimiento en la que un especialista valida los diagnósticos y publica fichas de manejo, y un tablero de incidencia por parcela.',
   metodo_flujo_nota:
-    'División estratificada de 70 % para entrenamiento, 15 % para validación y 15 % para prueba, con semilla fija. Las imágenes casi idénticas no quedan en conjuntos distintos y el conjunto de prueba solo se usa en la evaluación final.',
+    'División estratificada de 70 % para entrenamiento, 15 % para validación y 15 % para prueba, con semilla fija. Los recortes de una misma foto quedan siempre en el mismo conjunto y el conjunto de prueba solo se usa en la evaluación final.',
   metodo_metricas_nota:
-    'Meta: recall de al menos 85 % en la clase de infección incipiente, porque un fruto enfermo clasificado como sano cuesta más que una falsa alarma. También se mide el tiempo de respuesta (máximo 3 segundos) y se generan mapas Grad-CAM para comprobar que el modelo se fije en las lesiones y no en el fondo.',
+    'Meta: recall de al menos 85 % en la clase antracnosis, porque un fruto enfermo clasificado como sano cuesta más que una falsa alarma. También se mide el tiempo de respuesta (máximo 3 segundos) y se generan mapas Grad-CAM para comprobar que el modelo se fije en las lesiones y no en el fondo.',
   blog_label: 'CUADERNO DE CAMPO · 2026',
   blog_title: 'Ciencia que cuida el café',
   blog_desc:
@@ -44,7 +44,7 @@ export const SETTINGS = {
   traz_desc:
     'Seguimiento del avance del proyecto: cada etapa del ciclo del café representa un 5 % de lo realizado, y cada cambio queda registrado en la bitácora.',
   traz_general:
-    'Desarrollar un sistema de gestión del conocimiento que utilice un modelo de deep learning para detectar la antracnosis en frutos de café mediante imágenes digitales, y que permita registrar, validar y compartir el conocimiento técnico sobre la enfermedad.',
+    'Desarrollar un sistema web de gestión del conocimiento que utilice un modelo de deep learning para detectar la antracnosis en frutos de café mediante imágenes digitales, y que permita registrar, validar y compartir el conocimiento técnico sobre la enfermedad en la empresa cafetalera El Alizal, del distrito de Shipasbamba (Bongará, Amazonas).',
 };
 
 // Datos de la universidad (Nosotros). [título, detalle]
@@ -60,10 +60,22 @@ export const LEGACY_DEFAULTS = {
   // clave → valores anteriores que se reemplazan por el actual de SETTINGS
   settings: {
     docente: ['Dr. FUENTES MAZA FRANS'],
-    traz_general: ['Desarrollar y evaluar un modelo de Deep Learning basado en redes neuronales convolucionales para detectar antracnosis en frutos de café mediante el análisis de imágenes digitales.'],
-    metodo_propuesta: ['Proponemos un modelo CNN que clasifique imágenes de frutos como sanos o con antracnosis, como apoyo a la identificación fitosanitaria.'],
-    metodo_flujo_nota: ['Las fotos del mismo fruto o de la misma sesión no se reparten entre subconjuntos, para que el modelo no se evalúe con imágenes que ya "vio".'],
-    metodo_metricas_nota: ['Se analiza la matriz de confusión con atención especial a los falsos negativos: frutos afectados clasificados como sanos. No se fija un porcentaje objetivo; el resultado se obtiene de los experimentos.'],
+    traz_general: [
+      'Desarrollar y evaluar un modelo de Deep Learning basado en redes neuronales convolucionales para detectar antracnosis en frutos de café mediante el análisis de imágenes digitales.',
+      'Desarrollar un sistema de gestión del conocimiento que utilice un modelo de deep learning para detectar la antracnosis en frutos de café mediante imágenes digitales, y que permita registrar, validar y compartir el conocimiento técnico sobre la enfermedad.',
+    ],
+    metodo_propuesta: [
+      'Proponemos un modelo CNN que clasifique imágenes de frutos como sanos o con antracnosis, como apoyo a la identificación fitosanitaria.',
+      'Proponemos un sistema de gestión del conocimiento que combina una red neuronal convolucional, que clasifica cada fruto como sano, con infección incipiente o con infección avanzada, con la validación de un experto y la difusión de recomendaciones de manejo.',
+    ],
+    metodo_flujo_nota: [
+      'Las fotos del mismo fruto o de la misma sesión no se reparten entre subconjuntos, para que el modelo no se evalúe con imágenes que ya "vio".',
+      'División estratificada de 70 % para entrenamiento, 15 % para validación y 15 % para prueba, con semilla fija. Las imágenes casi idénticas no quedan en conjuntos distintos y el conjunto de prueba solo se usa en la evaluación final.',
+    ],
+    metodo_metricas_nota: [
+      'Se analiza la matriz de confusión con atención especial a los falsos negativos: frutos afectados clasificados como sanos. No se fija un porcentaje objetivo; el resultado se obtiene de los experimentos.',
+      'Meta: recall de al menos 85 % en la clase de infección incipiente, porque un fruto enfermo clasificado como sano cuesta más que una falsa alarma. También se mide el tiempo de respuesta (máximo 3 segundos) y se generan mapas Grad-CAM para comprobar que el modelo se fije en las lesiones y no en el fondo.',
+    ],
     nosotros_title: ['Un equipo comprometido con el café'],
     nosotros_desc: [
       'Somos estudiantes que investigan cómo prevenir y manejar la antracnosis en el fruto del café.',
@@ -73,15 +85,34 @@ export const LEGACY_DEFAULTS = {
   teamRole: { from: 'Integrante del proyecto', to: 'Estudiante de Ingeniería de Sistemas' },
   // Objetivos anteriores (presentación inicial): se reemplazan si siguen sin cambios.
   objectiveTitles: ['Recopilar y preparar las imágenes', 'Implementar la arquitectura CNN', 'Entrenar y validar el modelo', 'Determinar el desempeño'],
+  // Descripciones anteriores de los objetivos (código → texto): se actualizan si siguen sin editarse.
+  objectiveDescriptions: {
+    1: 'Depurar, verificar y dividir las imágenes de frutos de café proporcionadas por el docente, clasificadas en sano, con infección incipiente y con infección avanzada.',
+    2: 'Entrenar y comparar redes neuronales convolucionales mediante transferencia de aprendizaje para reconocer los patrones visuales de la enfermedad en la piel del fruto.',
+    3: 'Ajustar los hiperparámetros y el umbral de decisión del modelo para alcanzar un recall mínimo de 85 % en frutos con infección incipiente.',
+    4: 'Desarrollar la validación experta, la base de recomendaciones y el tablero de incidencia, integrados con el clasificador en la aplicación web.',
+    5: 'Evaluar el desempeño del modelo con imágenes tomadas en campo y la usabilidad del sistema con técnicos y productores.',
+  },
+  // Descripciones anteriores de la matriz de requisitos (código → texto): igual que los objetivos.
+  requirementDescriptions: {
+    RF03: 'Clasificar el fruto como sano, con infección incipiente o con infección avanzada (EfficientNet-B0 o MobileNetV2).',
+    RF04: 'Mostrar la categoría, el nivel de confianza, el semáforo y la recomendación asociada.',
+    RF06: 'Permitir que el agrónomo confirme o corrija un diagnóstico y lo comente.',
+    RF08: 'Mostrar indicadores de incidencia por parcela, zona y periodo.',
+    RF10: 'Asignar perfiles del módulo (productor, técnico, agrónomo, gerencia) y registrar parcelas.',
+    RNF01: 'Recall de al menos 85 % en la clase de infección incipiente, medido en el conjunto de prueba.',
+    RNF03: 'El sistema se ejecuta en contenedores Docker en la PC del equipo, sin servicios de nube pagados.',
+    RNF05: 'Resultado con semáforo: verde (sano), amarillo (incipiente) y rojo (avanzado).',
+  },
 };
 
-// Objetivos específicos (presentación del proyecto). [código, título, descripción]
+// Objetivos específicos (tercer avance, sección 1.4.2). [código, título, descripción]
 export const OBJECTIVES = [
-  [1, 'Preparar el conjunto de datos', 'Depurar, verificar y dividir las imágenes de frutos de café proporcionadas por el docente, clasificadas en sano, con infección incipiente y con infección avanzada.'],
-  [2, 'Entrenar el modelo de deep learning', 'Entrenar y comparar redes neuronales convolucionales mediante transferencia de aprendizaje para reconocer los patrones visuales de la enfermedad en la piel del fruto.'],
-  [3, 'Maximizar la sensibilidad del diagnóstico', 'Ajustar los hiperparámetros y el umbral de decisión del modelo para alcanzar un recall mínimo de 85 % en frutos con infección incipiente.'],
-  [4, 'Implementar los módulos de gestión del conocimiento', 'Desarrollar la validación experta, la base de recomendaciones y el tablero de incidencia, integrados con el clasificador en la aplicación web.'],
-  [5, 'Validar el sistema', 'Evaluar el desempeño del modelo con imágenes tomadas en campo y la usabilidad del sistema con técnicos y productores.'],
+  [1, 'Preparar el conjunto de datos', 'Reunir, depurar y dividir imágenes digitales de frutos de café sanos y con antracnosis procedentes de conjuntos de datos públicos.'],
+  [2, 'Entrenar el modelo de deep learning', 'Entrenar y comparar dos redes neuronales convolucionales preentrenadas, EfficientNet-B0 y MobileNetV2, mediante transferencia de aprendizaje para reconocer los patrones visuales de la enfermedad en la piel del fruto.'],
+  [3, 'Maximizar la sensibilidad del diagnóstico', 'Ajustar los hiperparámetros y los umbrales de decisión del modelo para alcanzar un recall mínimo de 85 % en frutos con antracnosis.'],
+  [4, 'Implementar los módulos de gestión del conocimiento', 'Desarrollar la validación experta, la base de conocimiento y el tablero de incidencia, integrados con el clasificador en el sitio web del proyecto.'],
+  [5, 'Validar el sistema', 'Evaluar el desempeño del modelo con un conjunto de prueba independiente y con fotos de la finca, y la usabilidad del sistema con estudiantes y docentes de la UNTRM.'],
 ];
 
 export const CONTENT_ITEMS = [
@@ -121,20 +152,50 @@ export const METHOD_ITEMS = [
   ['problema', 'Conocimiento concentrado', 'Reconocer una infección temprana depende del criterio de pocos especialistas, y ese conocimiento no se registra de forma sistemática.'],
   // Estado sanitario del fruto (criterio visual · acción sugerida)
   ['clases', 'Fruto sano', 'Piel de color uniforme según su madurez, sin manchas ni hundimientos. Acción: continuar con el monitoreo regular.'],
-  ['clases', 'Infección incipiente', 'Una o pocas manchas pequeñas, oscuras o ligeramente hundidas. Acción: avisar al técnico y aplicar el manejo de forma focalizada.'],
-  ['clases', 'Infección avanzada', 'Lesiones necróticas extensas y hundidas, deformación o momificación. Acción: retirar los frutos afectados y aplicar el control indicado por el agrónomo.'],
+  ['clases', 'Revisar', 'No es una clase: la probabilidad de antracnosis queda entre los dos umbrales y el modelo no está seguro. Acción: tomar otra foto y esperar la validación del especialista.'],
+  ['clases', 'Fruto con antracnosis', 'Una o más lesiones oscuras, hundidas o necróticas; frutos deformados o momificados. Acción: retirar los frutos afectados y aplicar el manejo de la ficha del blog.'],
   // Arquitectura experimental (pasos)
-  ['flujo', 'Datos', 'Imágenes de frutos proporcionadas por el docente: inventario por categoría, eliminación de duplicados y fotos borrosas, y revisión de etiquetas.'],
+  ['flujo', 'Datos', 'Conjuntos públicos de imágenes: Coffee berry disease (646 fotos de frutos sanos y con antracnosis) como fuente principal, y Croppie y Coffee Fruit Maturity para sumar frutos sanos. Se recorta cada fruto, se unifican las etiquetas en sano y antracnosis, y se eliminan duplicados y fotos borrosas.'],
   ['flujo', 'Preprocesamiento', 'Recorte, redimensionamiento a 224 × 224 píxeles y normalización. El aumento de datos (rotaciones, volteos, brillo y contraste) se aplica solo al entrenamiento.'],
   ['flujo', 'Modelos', 'EfficientNet-B0 como modelo principal y MobileNetV2 como alternativa más ligera, ambos preentrenados y ajustados con transferencia de aprendizaje.'],
-  ['flujo', 'Entrenamiento', 'Transferencia de aprendizaje en dos fases con Adam, pesos por clase y parada temprana según el recall; luego se ajusta el umbral de decisión para reducir los falsos negativos.'],
-  ['flujo', 'Evaluación', 'Matriz de confusión, métricas por clase y mapas Grad-CAM en el conjunto de prueba, y una prueba final con fotos tomadas en campo.'],
+  ['flujo', 'Entrenamiento', 'Transferencia de aprendizaje en dos fases con Adam, pesos por clase y parada temprana según el recall. Una neurona sigmoide entrega la probabilidad de antracnosis y dos umbrales la convierten en sano, revisar o antracnosis.'],
+  ['flujo', 'Evaluación', 'Matriz de confusión, recall, precisión y F1, porcentaje de casos «revisar» y mapas Grad-CAM en el conjunto de prueba, y una prueba local con al menos 100 fotos de frutos tomadas en la finca.'],
   // Métricas
   ['metricas', 'Recall (sensibilidad)', 'De los frutos realmente enfermos, cuántos detecta el modelo. Es la métrica prioritaria.'],
   ['metricas', 'Precisión', 'De los frutos que el modelo marca como enfermos, cuántos lo están de verdad.'],
   ['metricas', 'F1-score', 'Equilibrio entre precisión y recall en una sola cifra.'],
   ['metricas', 'Exactitud', 'Aciertos totales. Puede ser engañosa si las clases están desbalanceadas, por eso no se usa sola.'],
   // Tecnologías
+  ['tecnologias', 'Python', 'Entrenamiento e inferencia del modelo.'],
+  ['tecnologias', 'TensorFlow · Keras', 'Construcción y entrenamiento de la CNN.'],
+  ['tecnologias', 'WSL2 · CUDA', 'Entrenamiento con la GPU RTX 4060 de la PC del equipo.'],
+  ['tecnologias', 'scikit-learn', 'Matriz de confusión, recall, precisión y F1.'],
+  ['tecnologias', 'OpenCV', 'Recorte, redimensionado y normalización de imágenes.'],
+  ['tecnologias', 'Pandas · NumPy', 'Análisis exploratorio y gestión de metadatos.'],
+  ['tecnologias', 'FastAPI', 'Servicio interno que ejecuta el modelo y Grad-CAM.'],
+  ['tecnologias', 'React · Vite', 'Sitio del proyecto y pantallas del módulo de diagnóstico.'],
+  ['tecnologias', 'Node.js · Express', 'API del sitio: sesión, perfiles y datos.'],
+  ['tecnologias', 'PostgreSQL', 'Base de datos del sitio y del módulo.'],
+  ['tecnologias', 'Docker', 'Levanta la base de datos, la API, el modelo y la web.'],
+  ['tecnologias', 'nginx', 'Sirve la interfaz y reenvía /api a la API.'],
+  ['tecnologias', 'Cloudflare Tunnel', 'URL pública HTTPS sin abrir puertos.'],
+  ['tecnologias', 'Git · GitHub', 'Control de versiones del código y de los scripts de la base de datos.'],
+  // Alcance (un punto por línea)
+  ['alcance', 'Incluye', 'Clasificación de frutos individuales en sano o antracnosis, con el estado «revisar» para los casos dudosos\nEntrenamiento y comparación de EfficientNet-B0 y MobileNetV2 con transferencia de aprendizaje\nMódulo web de diagnóstico, validación experta y tablero de incidencia para productor, propietario, especialista y administrador\nPrueba local con fotos de la finca y prueba de usabilidad (SUS), de octubre a diciembre de 2026'],
+  ['alcance', 'No incluye', 'Análisis de hojas, ramas o plantas completas\nEstimación de la severidad (infección incipiente o avanzada)\nSensores de temperatura y humedad (trabajo futuro)\nReemplazo del diagnóstico de laboratorio\nServicios de nube pagados: el sistema se ejecuta en la PC del equipo'],
+];
+
+// v3: versión anterior de las secciones que cambiaron con la entrega final del tercer avance
+// (tres clases, datos del docente y Google Colab). Solo se guardan las secciones que cambiaron.
+const METHOD_ITEMS_V3 = [
+  ['clases', 'Fruto sano', 'Piel de color uniforme según su madurez, sin manchas ni hundimientos. Acción: continuar con el monitoreo regular.'],
+  ['clases', 'Infección incipiente', 'Una o pocas manchas pequeñas, oscuras o ligeramente hundidas. Acción: avisar al técnico y aplicar el manejo de forma focalizada.'],
+  ['clases', 'Infección avanzada', 'Lesiones necróticas extensas y hundidas, deformación o momificación. Acción: retirar los frutos afectados y aplicar el control indicado por el agrónomo.'],
+  ['flujo', 'Datos', 'Imágenes de frutos proporcionadas por el docente: inventario por categoría, eliminación de duplicados y fotos borrosas, y revisión de etiquetas.'],
+  ['flujo', 'Preprocesamiento', 'Recorte, redimensionamiento a 224 × 224 píxeles y normalización. El aumento de datos (rotaciones, volteos, brillo y contraste) se aplica solo al entrenamiento.'],
+  ['flujo', 'Modelos', 'EfficientNet-B0 como modelo principal y MobileNetV2 como alternativa más ligera, ambos preentrenados y ajustados con transferencia de aprendizaje.'],
+  ['flujo', 'Entrenamiento', 'Transferencia de aprendizaje en dos fases con Adam, pesos por clase y parada temprana según el recall; luego se ajusta el umbral de decisión para reducir los falsos negativos.'],
+  ['flujo', 'Evaluación', 'Matriz de confusión, métricas por clase y mapas Grad-CAM en el conjunto de prueba, y una prueba final con fotos tomadas en campo.'],
   ['tecnologias', 'Python', 'Entrenamiento e inferencia del modelo.'],
   ['tecnologias', 'TensorFlow · Keras', 'Construcción y entrenamiento de la CNN.'],
   ['tecnologias', 'Google Colab', 'GPU gratuita para entrenar y reentrenar.'],
@@ -147,7 +208,6 @@ export const METHOD_ITEMS = [
   ['tecnologias', 'PostgreSQL', 'Base de datos del sitio y del módulo.'],
   ['tecnologias', 'Docker', 'Levanta la base de datos, la API, el modelo y la web.'],
   ['tecnologias', 'Cloudflare Tunnel', 'URL pública HTTPS sin abrir puertos.'],
-  // Alcance (un punto por línea)
   ['alcance', 'Incluye', 'Clasificación de imágenes de frutos individuales en tres categorías\nEntrenamiento y comparación de CNN con transferencia de aprendizaje\nMódulo web de diagnóstico, validación experta y tablero de incidencia\nPruebas con fotos tomadas en campo y pruebas de usabilidad'],
   ['alcance', 'No incluye', 'Análisis de hojas, ramas o plantas completas\nSensores de temperatura y humedad (trabajo futuro)\nReemplazo del diagnóstico de laboratorio\nServicios de nube pagados: el sistema se ejecuta en la PC del equipo'],
 ];
@@ -343,7 +403,8 @@ Los registros de campo son el punto de partida, no el diagnóstico final. Si la 
 // v2 (tercer avance) incluía una CNN entrenada desde cero como línea base, que se descartó.
 export const LEGACY_METHOD_VERSIONS = [
   LEGACY_METHOD_ITEMS,
-  METHOD_ITEMS.map((i) =>
+  METHOD_ITEMS_V3,
+  METHOD_ITEMS_V3.map((i) =>
     i[0] === 'flujo' && i[1] === 'Modelos' ? [i[0], i[1], 'EfficientNet-B0 como modelo principal, MobileNetV2 como alternativa ligera y una CNN sencilla entrenada desde cero como línea base.'] : i,
   ),
 ];
@@ -354,19 +415,19 @@ export const LEGACY_METHOD_VERSIONS = [
 export const REQUIREMENTS = [
   ['RF01', 'Ingesta de imagen del fruto', 'Cargar desde la PC o tomar con el teléfono una fotografía centrada en un fruto individual.', 4, 'Nuevo diagnóstico', 'CP01', 'Alta', 'disenado'],
   ['RF02', 'Preprocesamiento', 'Recortar, redimensionar a 224 × 224 píxeles y normalizar el color y el contraste de la imagen.', 2, 'Servicio del modelo', 'CP02', 'Alta', 'disenado'],
-  ['RF03', 'Clasificación con CNN', 'Clasificar el fruto como sano, con infección incipiente o con infección avanzada (EfficientNet-B0 o MobileNetV2).', 2, 'Servicio del modelo', 'CP03', 'Alta', 'disenado'],
-  ['RF04', 'Diagnóstico visual inmediato', 'Mostrar la categoría, el nivel de confianza, el semáforo y la recomendación asociada.', 4, 'Nuevo diagnóstico', 'CP04', 'Alta', 'disenado'],
+  ['RF03', 'Clasificación con CNN', 'Clasificar el fruto como sano o con antracnosis (EfficientNet-B0 o MobileNetV2) y marcar como «revisar» los casos de baja confianza.', 2, 'Servicio del modelo', 'CP03', 'Alta', 'disenado'],
+  ['RF04', 'Diagnóstico visual inmediato', 'Mostrar el resultado, la probabilidad, el semáforo y la ficha de manejo asociada.', 4, 'Nuevo diagnóstico', 'CP04', 'Alta', 'disenado'],
   ['RF05', 'Registro de capturas', 'Guardar la foto con su diagnóstico, fecha, hora, coordenadas, parcela y versión del modelo.', 4, 'Nuevo diagnóstico · Historial', 'CP05', 'Alta', 'disenado'],
-  ['RF06', 'Validación experta', 'Permitir que el agrónomo confirme o corrija un diagnóstico y lo comente.', 4, 'Validación', 'CP06', 'Alta', 'disenado'],
+  ['RF06', 'Validación experta', 'Permitir que el especialista confirme o corrija un diagnóstico y lo comente.', 4, 'Validación', 'CP06', 'Alta', 'disenado'],
   ['RF07', 'Base de conocimiento', 'Publicar en el blog fichas de manejo vinculadas a cada categoría, y consultarlas y comentarlas.', 4, 'Blog', 'CP07', 'Media', 'disenado'],
-  ['RF08', 'Tablero de incidencia', 'Mostrar indicadores de incidencia por parcela, zona y periodo.', 4, 'Tablero', 'CP08', 'Media', 'disenado'],
+  ['RF08', 'Tablero de incidencia', 'Mostrar indicadores de incidencia por parcela y periodo.', 4, 'Tablero', 'CP08', 'Media', 'disenado'],
   ['RF09', 'Reentrenamiento y versionado', 'Reentrenar el modelo con imágenes validadas y registrar sus métricas por versión.', 2, 'Panel · Modelo de diagnóstico', 'CP09', 'Media', 'disenado'],
-  ['RF10', 'Gestión de usuarios y parcelas', 'Asignar perfiles del módulo (productor, técnico, agrónomo, gerencia) y registrar parcelas.', 4, 'Panel · Usuarios', 'CP10', 'Alta', 'disenado'],
-  ['RNF01', 'Sensibilidad del modelo', 'Recall de al menos 85 % en la clase de infección incipiente, medido en el conjunto de prueba.', 3, 'Modelo', 'Evaluación en el conjunto de prueba', null, 'pendiente'],
+  ['RF10', 'Gestión de usuarios y parcelas', 'Asignar perfiles del módulo (productor, propietario o especialista) y registrar las parcelas.', 4, 'Panel · Usuarios', 'CP10', 'Alta', 'disenado'],
+  ['RNF01', 'Sensibilidad del modelo', 'Recall de al menos 85 % en la clase antracnosis, medido en el conjunto de prueba.', 3, 'Modelo', 'Evaluación en el conjunto de prueba', null, 'pendiente'],
   ['RNF02', 'Tiempo de respuesta', 'El diagnóstico tarda como máximo 3 segundos desde el envío de la foto.', 4, 'Servicio del modelo', 'Prueba de rendimiento (30 imágenes)', null, 'pendiente'],
-  ['RNF03', 'Ejecución local', 'El sistema se ejecuta en contenedores Docker en la PC del equipo, sin servicios de nube pagados.', 4, 'Infraestructura', 'Despliegue con Docker Compose', null, 'implementado'],
+  ['RNF03', 'Ejecución local', 'El sistema se ejecuta en contenedores Docker y el modelo se entrena con la GPU de la PC del equipo, sin servicios de nube pagados.', 4, 'Infraestructura', 'Despliegue con Docker Compose', null, 'implementado'],
   ['RNF04', 'Tolerancia a la iluminación', 'El recall en fotos de campo con sombra o sol directo no baja más de 10 puntos respecto del conjunto de prueba.', 5, 'Modelo', 'Prueba con fotos de campo', null, 'pendiente'],
-  ['RNF05', 'Interfaz simplificada', 'Resultado con semáforo: verde (sano), amarillo (incipiente) y rojo (avanzado).', 4, 'Nuevo diagnóstico', 'CP04', null, 'disenado'],
+  ['RNF05', 'Interfaz simplificada', 'Resultado con semáforo: verde (sano), ámbar (revisar: el modelo no está seguro) y rojo (antracnosis).', 4, 'Nuevo diagnóstico', 'CP04', null, 'disenado'],
   ['RNF06', 'Seguridad', 'Acceso con usuario y contraseña cifrada; permisos según rol y perfil.', 4, 'Sitio y API', 'Prueba de permisos por rol', null, 'implementado'],
   ['RNF07', 'Mantenibilidad', 'Código modular, documentado y versionado en GitHub.', 4, 'Repositorio', 'Revisión del repositorio', null, 'implementado'],
   ['RNF08', 'Trazabilidad del diagnóstico', 'Cada diagnóstico registra la versión del modelo que lo generó.', 4, 'Base de datos', 'CP05', null, 'disenado'],

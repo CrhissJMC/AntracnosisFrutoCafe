@@ -20,7 +20,7 @@ export function DiagnosisPanel({ status, error, response, photo, descriptions })
         <Alert tone={error?.unavailable ? 'info' : 'error'}>{error?.message}</Alert>
         {error?.unavailable && (
           <p className="dx-panel__note">
-            Cuando el equipo entrene los modelos en Google Colab y los copie en el servidor, este botón mostrará el diagnóstico aquí.
+            Cuando el equipo entrene los modelos y los copie en el servidor, este botón mostrará el diagnóstico aquí.
           </p>
         )}
       </div>
@@ -48,7 +48,7 @@ export function DiagnosisPanel({ status, error, response, photo, descriptions })
             <Icon name={agree ? 'check' : 'alert'} size={16} />
             {agree
               ? `Ambos modelos coinciden: ${healthClass(ready[0].class)?.label.toLowerCase()}.`
-              : 'Los modelos no coinciden: conviene que el agrónomo revise este caso.'}
+              : 'Los modelos no coinciden: conviene que el especialista revise este caso.'}
           </span>
         </Callout>
       )}

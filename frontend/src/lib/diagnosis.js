@@ -1,16 +1,16 @@
 // Datos y utilidades del módulo de diagnóstico.
 import { HEALTH_COLORS } from './traceability.js';
 
-/** Clases sanitarias del fruto, en el orden del semáforo. */
+/**
+ * Resultados del diagnóstico, en el orden del semáforo. El modelo solo tiene dos clases (sano y
+ * antracnosis); «revisar» es el estado de los casos cuya probabilidad queda entre los dos umbrales.
+ */
 export const HEALTH_CLASSES = [
   { id: 'sano', label: 'Fruto sano', short: 'Sano', color: HEALTH_COLORS[0] },
-  { id: 'incipiente', label: 'Infección incipiente', short: 'Incipiente', color: HEALTH_COLORS[1] },
-  { id: 'avanzado', label: 'Infección avanzada', short: 'Avanzado', color: HEALTH_COLORS[2] },
+  { id: 'revisar', label: 'Revisar', short: 'Revisar', color: HEALTH_COLORS[1] },
+  { id: 'antracnosis', label: 'Fruto con antracnosis', short: 'Antracnosis', color: HEALTH_COLORS[2] },
 ];
 export const healthClass = (id) => HEALTH_CLASSES.find((c) => c.id === id);
-
-/** Por debajo de esta confianza se recomienda tomar otra foto. */
-export const LOW_CONFIDENCE = 0.6;
 
 export const CAPTURE_GUIDE = [
   { icon: 'target', label: 'Un solo fruto' },

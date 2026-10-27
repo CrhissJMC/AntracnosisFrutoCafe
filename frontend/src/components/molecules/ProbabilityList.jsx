@@ -4,11 +4,11 @@ import './ProbabilityList.css';
 
 const pct = (p) => `${Math.round((p ?? 0) * 100)} %`;
 
-/** Probabilidad que el modelo asignó a cada clase sanitaria. */
+/** Probabilidad que el modelo asignó a cada clase (sano y antracnosis; «revisar» no es una clase). */
 export function ProbabilityList({ probabilities = {} }) {
   return (
     <dl className="prob-list">
-      {HEALTH_CLASSES.map((c) => (
+      {HEALTH_CLASSES.filter((c) => c.id in probabilities).map((c) => (
         <div key={c.id} className="prob-list__row">
           <dt>{c.short}</dt>
           <dd>

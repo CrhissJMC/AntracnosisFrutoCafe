@@ -4,5 +4,6 @@
 .dx-result__class { color: var(--dx-color, var(--color-text)); margin-bottom: var(--space-2); }
 .dx-result__conf { display: flex; justify-content: space-between; font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--space-1); }
 .dx-result__conf strong { color: var(--color-text); font-variant-numeric: tabular-nums; }
+.dx-result__thresholds { margin-top: var(--space-1); font-size: var(--text-xs); color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
 .dx-result__images { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
 .dx-result__desc { display: flex; flex-direction: column; gap: var(--space-1); padding-left: var(--space-3); border-left: 3px solid var(--dx-color, var(--color-border)); }
