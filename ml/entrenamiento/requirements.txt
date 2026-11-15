@@ -1,0 +1,4 @@
+# Entrenamiento con GPU (Linux o WSL2 con drivers NVIDIA). Sin GPU, cambia por tensorflow-cpu==2.18.0
+tensorflow[and-cuda]==2.18.0
+numpy==1.26.4
+pillow==11.1.0

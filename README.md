@@ -77,7 +77,7 @@ El avance de cada objetivo se actualiza desde el panel y cada cambio queda en la
 | 1.3 Propuesta · red de conocimiento | Blog con comentarios; validación experta | 🟡 Blog listo, validación pendiente |
 | 1.3 Propuesta · tablero de incidencia | Pestaña Tablero | ⏳ Pendiente |
 | 2.2.1 Modelo SECI | Bitácora de Trazabilidad: cada registro lleva su fase SECI | ✅ Implementado |
-| 2.7.2 Transferencia de aprendizaje (EfficientNet-B0, MobileNetV2) | `ml/app.py` carga ambos modelos; selector en `/diagnostico` | ✅ Integración lista |
+| 2.7.2 Transferencia de aprendizaje (EfficientNet-B0, MobileNetV2) | `ml/entrenamiento/modelos.py` define ambas redes; `ml/app.py` las carga; selector en `/diagnostico` | ✅ Implementado (sin entrenar) |
 | 2.7.4 Métricas (recall, precisión, F1) | Metodología → Evaluación; `ml/` devuelve probabilidades por clase | ✅ |
 | 2.7.5 Explicabilidad (Grad-CAM) | `ml/app.py` genera el mapa Grad-CAM de cada predicción | ✅ |
 | 3.4 TIC (React, Node, PostgreSQL, Docker, Cloudflare) | Toda la arquitectura (sección 6) | ✅ |
@@ -87,7 +87,7 @@ El avance de cada objetivo se actualiza desde el panel y cada cambio queda en la
 | 4.2.3 Modelo de datos (Anexo 5) | Tablas del sitio, de trazabilidad y de requisitos; las del módulo, pendientes (sección 7) | 🟡 Parcial |
 | 4.3.4 Pantalla «Nuevo diagnóstico» (Figura 6) | `/diagnostico` | ✅ |
 | 4.3.4 Historial, Validación, Tablero y Modelo (Figuras 7–10) | — | ⏳ Pendiente |
-| 4.3.6 Estructura del repositorio (Tabla 16) | `ml/`, `ml/modelos/` fuera de Git, servicio `ml` en `docker-compose.yml` | ✅ · `cuadernos/` pendiente |
+| 4.3.6 Estructura del repositorio (Tabla 16) | `ml/`, `ml/modelos/` fuera de Git, servicio `ml` en `docker-compose.yml` | ✅ · entrenamiento en `ml/entrenamiento/` |
 | 4.4 Publicación con túnel de Cloudflare | `docker compose --profile tunnel up -d` | ✅ |
 
 ### Diferencias con el informe
@@ -308,7 +308,7 @@ El servicio `ml` expone `GET /health` y `POST /predict` **solo en la red interna
 | Hecho | Pendiente |
 |---|---|
 | Sitio con blog, panel y contenido editable | Descargar, filtrar y dividir el dataset (70/15/15) |
-| Trazabilidad con SECI y matriz de requisitos | Entrenar EfficientNet-B0 y MobileNetV2 con la GPU de la PC en WSL2 (`cuadernos/`) |
+| Trazabilidad con SECI y matriz de requisitos | Entrenar EfficientNet-B0 y MobileNetV2 con la GPU de la PC en WSL2 con `ml/entrenamiento/entrenar.py` |
 | Pantalla «Nuevo diagnóstico» con selector y comparación de modelos | Tablas del módulo: registro de capturas, validación, versiones del modelo |
 | Servicio `ml/` con Grad-CAM y dos umbrales (sano, revisar, antracnosis) | Pantallas Historial, Validación, Tablero y Modelo |
 | Publicación con Docker y túnel de Cloudflare | Perfiles del módulo (productor, propietario, especialista) |
@@ -322,6 +322,7 @@ El servicio `ml` expone `GET /health` y `POST /predict` **solo en la red interna
 | 25/10/2026 | Panel de Trazabilidad a pantalla completa; UNTRM en Nosotros; Servicios reemplazado por Metodología |
 | 26/10/2026 | Contenido alineado con el tercer avance; enlace al repositorio; módulo de diagnóstico; matriz de requisitos |
 | 27/10/2026 | Versión final del tercer avance: diagnóstico con sano, revisar y antracnosis; datasets públicos; objetivos, requisitos, tecnologías y alcance actualizados |
+| 15/11/2026 | Definición de EfficientNet-B0 y MobileNetV2, script de entrenamiento (división 70/15/15 por grupo, dos fases, umbrales con validación) y exportación de las redes sin entrenar para probar el sistema |
 
 ---
 

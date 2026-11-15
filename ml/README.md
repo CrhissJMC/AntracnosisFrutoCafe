@@ -60,30 +60,52 @@ Todos los campos son opcionales:
 
 Los umbrales se fijan con el conjunto de validación: el superior, para alcanzar el recall de 85 % en antracnosis (RNF01); la zona intermedia envía los casos dudosos al especialista en lugar de darlos por sanos. Si el inferior no es menor que el superior, el servicio usa los valores por defecto.
 
-## Ejemplo de exportación
+## Modelos y entrenamiento (`ml/entrenamiento/`)
 
-Crea la red base con `input_tensor=` para que sus capas queden al nivel superior del modelo:
-así el Grad-CAM funciona sin configuración extra.
+| Archivo | Qué hace |
+|---|---|
+| `modelos.py` | Define las dos redes: base de ImageNet (EfficientNet-B0 o MobileNetV2) + `GlobalAveragePooling → Dropout(0.3) → Dense(1, sigmoide)`. El preprocesamiento va dentro del modelo (`"preprocess": "none"`) |
+| `exportar_sin_entrenar.py` | Guarda las dos redes **sin entrenar** en `ml/modelos/` (versión `sin-entrenar`) para probar el sistema de punta a punta. Sus predicciones no significan nada |
+| `entrenar.py` | División 70/15/15 por grupo, aumento de datos, entrenamiento en dos fases, pesos de clase, umbrales con validación, métricas con prueba |
+| `requirements.txt` | Dependencias para entrenar con GPU (WSL2) |
 
-```python
-import keras
+### Datos de entrada
+Una imagen por fruto, en dos carpetas (se admiten subcarpetas por fuente):
 
-inputs = keras.Input((224, 224, 3))
-base = keras.applications.EfficientNetB0(include_top=False, weights="imagenet", input_tensor=inputs)
-base.trainable = False                      # fase 1: solo la cabeza
-x = keras.layers.GlobalAveragePooling2D()(base.output)
-x = keras.layers.Dropout(0.3)(x)
-outputs = keras.layers.Dense(1, activation="sigmoid")(x)  # probabilidad de antracnosis
-model = keras.Model(inputs, outputs)
-
-# ... entrenamiento (fase 1 y fase 2) ...
-
-model.save("efficientnet_b0.keras")         # cópialo en ml/modelos/
+```
+datos/
+  sano/          zenodo/Maduros/..., coffee_berry/...
+  antracnosis/   coffee_berry/...
 ```
 
-Para MobileNetV2 es igual, con `keras.applications.MobileNetV2` y guardando `mobilenet_v2.keras`.
-Si en el entrenamiento aplicaste `keras.applications.mobilenet_v2.preprocess_input` fuera del modelo,
-deja `"preprocess": "mobilenet_v2"`; si lo incluiste como capa dentro del modelo, usa `"preprocess": "none"`.
+Para que la división no mezcle imágenes casi iguales entre entrenamiento y prueba, todo un **grupo** va al mismo conjunto:
+los cuadros de un video (`IMG_0832.MOV_111.jpg`) y los recortes de una misma foto, que deben nombrarse `foto__1.jpg`, `foto__2.jpg`.
+
+### Entrenar
+```powershell
+# con GPU, dentro de WSL2
+pip install -r ml/entrenamiento/requirements.txt
+cd ml/entrenamiento
+python entrenar.py --datos /ruta/a/datos --modelo efficientnet_b0 --version v1
+python entrenar.py --datos /ruta/a/datos --modelo mobilenet_v2 --version v1
+```
+
+Sin GPU se puede usar la imagen del servicio (en CPU, más lento):
+```powershell
+docker run --rm -u root -v "${PWD}\ml\entrenamiento:/ent:ro" -v "C:\ruta\datos:/datos:ro" -v "${PWD}\ml\modelos:/salida" -w /ent antracnosis-ml python entrenar.py --datos /datos --modelo mobilenet_v2 --salida /salida
+```
+
+Cada entrenamiento deja en `ml/modelos/`: `<modelo>.keras`, `<modelo>.json` (con los umbrales elegidos),
+`<modelo>_metricas.json` (matriz de confusión, recall, precisión, F1 y % «revisar» en validación y prueba) y
+`<modelo>_division.csv` (a qué conjunto fue cada imagen). Los umbrales se eligen con validación:
+el superior es el mayor que mantiene recall ≥ 85 % (RNF01) y el inferior deja como «sano» como máximo el 2 % de los frutos con antracnosis.
+
+### Probar el sistema sin entrenar
+```powershell
+docker compose --profile ml build ml
+docker run --rm -u root -v "${PWD}\ml\entrenamiento:/ent:ro" -v "${PWD}\ml\modelos:/salida" -w /ent antracnosis-ml python exportar_sin_entrenar.py --salida /salida
+docker compose --profile ml up -d
+```
 
 ## API interna
 
