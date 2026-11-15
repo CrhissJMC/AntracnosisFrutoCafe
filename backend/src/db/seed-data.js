@@ -144,6 +144,16 @@ export const CONTENT_ITEMS = [
 
 // Página Metodología (contenido de la presentación del proyecto). [sección, título, texto]
 // Se carga por sección: solo las secciones que aún no tienen bloques.
+// Metodología · «Qué estamos haciendo ahora» (15/11/2026). Al cambiar, mover esta versión a una
+// lista anterior en LEGACY_METHOD_VERSIONS para que la página se actualice si nadie la editó.
+const ESTADO_ITEMS = [
+  ['estado', 'Datos reunidos y depurados', 'Hecho. 3 840 imágenes de un fruto cada una (768 con antracnosis y 3 072 sanas) de tres conjuntos públicos, divididas en 70 % entrenamiento, 15 % validación y 15 % prueba sin repartir una misma foto entre conjuntos.'],
+  ['estado', 'Modelos preliminares (v0) entrenados', 'Hecho. EfficientNet-B0 y MobileNetV2 se entrenaron con la GPU de la PC del equipo y ya se usan en la página Diagnóstico. En el conjunto de prueba ambos alcanzan una AUC de 0,96 (sin entrenar: 0,23 y 0,41), con recall de 0,82 y 0,89 y precisión de 0,73 y 0,68 en la clase antracnosis; la diferencia con el entrenamiento es pequeña, así que no memorizaron las fotos.'],
+  ['estado', 'Revisión de lo que aprendió el modelo', 'En curso. Ambos reconocen bien los frutos fotografiados en el cafetal, pero casi ningún fruto sano fotografiado sobre fondo claro sale como «sano», y los mapas Grad-CAM muestran que a veces se fijan en el fondo. Por eso la v0 es solo preliminar.'],
+  ['estado', 'Revisión de etiquetas con un especialista', 'Pendiente. Confirmar o corregir las 559 imágenes de antracnosis de la fuente principal y sumar frutos sanos sobre fondo claro antes de entrenar la versión v1.'],
+  ['estado', 'Módulos y validación en campo', 'Pendiente. Registro de capturas, historial, validación experta y tablero de incidencia; prueba con al menos 100 fotos de la finca, casos de prueba y encuesta de usabilidad (SUS).'],
+];
+
 export const METHOD_ITEMS = [
   // El problema
   ['problema', 'El café importa', 'Es una actividad productiva clave para muchas comunidades rurales; las enfermedades afectan el rendimiento y la calidad de la cosecha.'],
@@ -155,17 +165,53 @@ export const METHOD_ITEMS = [
   ['clases', 'Revisar', 'No es una clase: la probabilidad de antracnosis queda entre los dos umbrales y el modelo no está seguro. Acción: tomar otra foto y esperar la validación del especialista.'],
   ['clases', 'Fruto con antracnosis', 'Una o más lesiones oscuras, hundidas o necróticas; frutos deformados o momificados. Acción: retirar los frutos afectados y aplicar el manejo de la ficha del blog.'],
   // Arquitectura experimental (pasos)
-  ['flujo', 'Datos', 'Conjuntos públicos de imágenes: Coffee berry disease (646 fotos de frutos sanos y con antracnosis) como fuente principal, y Croppie y Coffee Fruit Maturity para sumar frutos sanos. Se recorta cada fruto, se unifican las etiquetas en sano y antracnosis, y se eliminan duplicados y fotos borrosas.'],
+  ['flujo', 'Datos', 'Tres conjuntos públicos (CC BY 4.0): Coffee berry disease y coffee cherry 20251206 de Roboflow, con frutos sanos y con lesiones, y Cherry Coffee Bean de Zenodo, con frutos sanos en cinco estados de madurez. Se recorta un fruto por imagen, se unifican las etiquetas en sano y antracnosis, se descartan frutos pequeños, fotos borrosas y duplicados, y se limitan los sanos a cuatro por cada fruto con antracnosis: 3 840 imágenes (768 con antracnosis).'],
   ['flujo', 'Preprocesamiento', 'Recorte, redimensionamiento a 224 × 224 píxeles y normalización. El aumento de datos (rotaciones, volteos, brillo y contraste) se aplica solo al entrenamiento.'],
   ['flujo', 'Modelos', 'EfficientNet-B0 como modelo principal y MobileNetV2 como alternativa más ligera, ambos preentrenados y ajustados con transferencia de aprendizaje.'],
-  ['flujo', 'Entrenamiento', 'Transferencia de aprendizaje en dos fases con Adam, pesos por clase y parada temprana según el recall. Una neurona sigmoide entrega la probabilidad de antracnosis y dos umbrales la convierten en sano, revisar o antracnosis.'],
-  ['flujo', 'Evaluación', 'Matriz de confusión, recall, precisión y F1, porcentaje de casos «revisar» y mapas Grad-CAM en el conjunto de prueba, y una prueba local con al menos 100 fotos de frutos tomadas en la finca.'],
+  ['flujo', 'Entrenamiento', 'Transferencia de aprendizaje en dos fases con Adam (primero solo la cabeza y luego las últimas capas de la red), pesos por clase y parada temprana según la AUC de validación, con la GPU RTX 4060 de la PC del equipo. Una neurona sigmoide entrega la probabilidad de antracnosis y dos umbrales, elegidos con validación, la convierten en sano, revisar o antracnosis.'],
+  ['flujo', 'Evaluación', 'Matriz de confusión, recall, precisión, F1, AUC y porcentaje de casos «revisar» en el conjunto de prueba, comparados con la línea base de las redes sin entrenar para comprobar que el modelo aprendió, y la diferencia entre entrenamiento y prueba para descartar que haya memorizado. Luego, mapas Grad-CAM y una prueba local con al menos 100 fotos de frutos tomadas en la finca.'],
   // Métricas
   ['metricas', 'Recall (sensibilidad)', 'De los frutos realmente enfermos, cuántos detecta el modelo. Es la métrica prioritaria.'],
   ['metricas', 'Precisión', 'De los frutos que el modelo marca como enfermos, cuántos lo están de verdad.'],
   ['metricas', 'F1-score', 'Equilibrio entre precisión y recall en una sola cifra.'],
   ['metricas', 'Exactitud', 'Aciertos totales. Puede ser engañosa si las clases están desbalanceadas, por eso no se usa sola.'],
   // Tecnologías
+  ['tecnologias', 'Python', 'Entrenamiento e inferencia del modelo.'],
+  ['tecnologias', 'TensorFlow · Keras', 'Construcción y entrenamiento de la CNN.'],
+  ['tecnologias', 'Docker · CUDA', 'Entrenamiento con la GPU RTX 4060 de la PC del equipo, en un contenedor con TensorFlow y cuDNN.'],
+  ['tecnologias', 'NumPy', 'Matriz de confusión, recall, precisión, F1, AUC y detección de fotos borrosas y duplicadas.'],
+  ['tecnologias', 'Pillow', 'Recorte de cada fruto, redimensionado y lectura de las imágenes.'],
+  ['tecnologias', 'FastAPI', 'Servicio interno que ejecuta el modelo y Grad-CAM.'],
+  ['tecnologias', 'React · Vite', 'Sitio del proyecto y pantallas del módulo de diagnóstico.'],
+  ['tecnologias', 'Node.js · Express', 'API del sitio: sesión, perfiles y datos.'],
+  ['tecnologias', 'PostgreSQL', 'Base de datos del sitio y del módulo.'],
+  ['tecnologias', 'Docker', 'Levanta la base de datos, la API, el modelo y la web.'],
+  ['tecnologias', 'nginx', 'Sirve la interfaz y reenvía /api a la API.'],
+  ['tecnologias', 'Cloudflare Tunnel', 'URL pública HTTPS sin abrir puertos.'],
+  ['tecnologias', 'Git · GitHub', 'Control de versiones del código y de los scripts de la base de datos.'],
+  // Alcance (un punto por línea)
+  ['alcance', 'Incluye', 'Clasificación de frutos individuales en sano o antracnosis, con el estado «revisar» para los casos dudosos\nEntrenamiento y comparación de EfficientNet-B0 y MobileNetV2 con transferencia de aprendizaje\nMódulo web de diagnóstico, validación experta y tablero de incidencia para productor, propietario, especialista y administrador\nPrueba local con fotos de la finca y prueba de usabilidad (SUS), de octubre a diciembre de 2026'],
+  ['alcance', 'No incluye', 'Análisis de hojas, ramas o plantas completas\nEstimación de la severidad (infección incipiente o avanzada)\nSensores de temperatura y humedad (trabajo futuro)\nReemplazo del diagnóstico de laboratorio\nServicios de nube pagados: el sistema se ejecuta en la PC del equipo'],
+  // Qué estamos haciendo ahora (pasos, en orden)
+  ...ESTADO_ITEMS,
+  // Limitaciones
+  ['limitaciones', 'Etiquetas sin verificar', 'La principal fuente con antracnosis (Coffee berry disease, Roboflow) reutiliza las fotos de un conjunto colombiano de madurez de Zenodo, etiquetadas por un usuario anónimo como Colletotrichum kahawae, especie reportada solo en África; algunos frutos marcados como enfermos figuran como secos o sobremaduros. Un especialista debe revisar esas 559 imágenes antes del modelo final.'],
+  ['limitaciones', 'Pocos frutos enfermos', 'Solo 768 de las 3 840 imágenes tienen antracnosis y vienen de dos fuentes. Se compensa con pesos por clase y aumento de datos, pero el modelo puede no reconocer síntomas poco representados.'],
+  ['limitaciones', 'Datos de otras regiones', 'No hay fotos de frutos de Amazonas en el entrenamiento y en el Perú la antracnosis la causan otras especies de Colletotrichum. El desempeño real se medirá con al menos 100 fotos de la finca revisadas por un especialista.'],
+  ['limitaciones', 'El modelo se guía en parte por el fondo', 'Cada fuente tiene su propio fondo, cámara e iluminación, y casi todos los frutos enfermos vienen de fotos sobre fondo claro. En la versión v0, ningún fruto sano de ese tipo de foto sale como «sano» y los mapas Grad-CAM muestran atención en el fondo: el resultado es fiable en fotos del cafetal pero no en fotos sobre fondo claro. Se corregirá con más frutos sanos sobre fondo claro y revisando las etiquetas.'],
+  ['limitaciones', 'Sin severidad ni planta completa', 'El modelo clasifica un fruto por foto en sano o antracnosis. No estima la severidad ni analiza ramas completas: en las fotos de rama solo se usaron frutos de al menos 40 píxeles.'],
+  ['limitaciones', 'Modelo preliminar', 'La versión v0 se entrenó antes de la revisión experta de las etiquetas: sus métricas son orientativas, EfficientNet-B0 aún no alcanza el recall de 85 % en el conjunto de prueba (0,82) y el sistema no reemplaza el diagnóstico de un especialista ni de laboratorio.'],
+  ['limitaciones', 'Un solo equipo de cómputo', 'El entrenamiento se hace en la PC del equipo (GPU RTX 4060 de 8 GB): se usan lotes pequeños y no se hizo una búsqueda amplia de hiperparámetros.'],
+];
+
+// v4: Metodología del tercer avance antes de reunir y depurar los datos (Croppie y Coffee Fruit Maturity, WSL2).
+// Solo las secciones que cambiaron: se actualizan si nadie las editó desde el panel.
+const METHOD_ITEMS_V4 = [
+  ['flujo', 'Datos', 'Conjuntos públicos de imágenes: Coffee berry disease (646 fotos de frutos sanos y con antracnosis) como fuente principal, y Croppie y Coffee Fruit Maturity para sumar frutos sanos. Se recorta cada fruto, se unifican las etiquetas en sano y antracnosis, y se eliminan duplicados y fotos borrosas.'],
+  ['flujo', 'Preprocesamiento', 'Recorte, redimensionamiento a 224 × 224 píxeles y normalización. El aumento de datos (rotaciones, volteos, brillo y contraste) se aplica solo al entrenamiento.'],
+  ['flujo', 'Modelos', 'EfficientNet-B0 como modelo principal y MobileNetV2 como alternativa más ligera, ambos preentrenados y ajustados con transferencia de aprendizaje.'],
+  ['flujo', 'Entrenamiento', 'Transferencia de aprendizaje en dos fases con Adam, pesos por clase y parada temprana según el recall. Una neurona sigmoide entrega la probabilidad de antracnosis y dos umbrales la convierten en sano, revisar o antracnosis.'],
+  ['flujo', 'Evaluación', 'Matriz de confusión, recall, precisión y F1, porcentaje de casos «revisar» y mapas Grad-CAM en el conjunto de prueba, y una prueba local con al menos 100 fotos de frutos tomadas en la finca.'],
   ['tecnologias', 'Python', 'Entrenamiento e inferencia del modelo.'],
   ['tecnologias', 'TensorFlow · Keras', 'Construcción y entrenamiento de la CNN.'],
   ['tecnologias', 'WSL2 · CUDA', 'Entrenamiento con la GPU RTX 4060 de la PC del equipo.'],
@@ -180,9 +226,6 @@ export const METHOD_ITEMS = [
   ['tecnologias', 'nginx', 'Sirve la interfaz y reenvía /api a la API.'],
   ['tecnologias', 'Cloudflare Tunnel', 'URL pública HTTPS sin abrir puertos.'],
   ['tecnologias', 'Git · GitHub', 'Control de versiones del código y de los scripts de la base de datos.'],
-  // Alcance (un punto por línea)
-  ['alcance', 'Incluye', 'Clasificación de frutos individuales en sano o antracnosis, con el estado «revisar» para los casos dudosos\nEntrenamiento y comparación de EfficientNet-B0 y MobileNetV2 con transferencia de aprendizaje\nMódulo web de diagnóstico, validación experta y tablero de incidencia para productor, propietario, especialista y administrador\nPrueba local con fotos de la finca y prueba de usabilidad (SUS), de octubre a diciembre de 2026'],
-  ['alcance', 'No incluye', 'Análisis de hojas, ramas o plantas completas\nEstimación de la severidad (infección incipiente o avanzada)\nSensores de temperatura y humedad (trabajo futuro)\nReemplazo del diagnóstico de laboratorio\nServicios de nube pagados: el sistema se ejecuta en la PC del equipo'],
 ];
 
 // v3: versión anterior de las secciones que cambiaron con la entrega final del tercer avance
@@ -404,6 +447,7 @@ Los registros de campo son el punto de partida, no el diagnóstico final. Si la 
 export const LEGACY_METHOD_VERSIONS = [
   LEGACY_METHOD_ITEMS,
   METHOD_ITEMS_V3,
+  METHOD_ITEMS_V4,
   METHOD_ITEMS_V3.map((i) =>
     i[0] === 'flujo' && i[1] === 'Modelos' ? [i[0], i[1], 'EfficientNet-B0 como modelo principal, MobileNetV2 como alternativa ligera y una CNN sencilla entrenada desde cero como línea base.'] : i,
   ),

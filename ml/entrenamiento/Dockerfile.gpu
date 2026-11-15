@@ -1,0 +1,14 @@
+# Imagen para entrenar con GPU NVIDIA (Docker Desktop + WSL2, o Linux con nvidia-container-toolkit).
+# La imagen oficial tensorflow:2.18.0-gpu no trae cuDNN 9, que TensorFlow necesita para usar la GPU.
+#
+#   docker build -t antracnosis-entrenamiento -f ml/entrenamiento/Dockerfile.gpu ml/entrenamiento
+#   docker run --rm --gpus all -v "<datos>:/datos:ro" -v "${PWD}\ml\modelos:/salida" antracnosis-entrenamiento \
+#       python entrenar.py --datos /datos --modelo efficientnet_b0 --salida /salida --version v0
+FROM tensorflow/tensorflow:2.18.0-gpu
+
+RUN pip install --no-cache-dir nvidia-cudnn-cu12==9.3.0.75 pillow==11.1.0
+ENV LD_LIBRARY_PATH=/usr/local/lib/python3.11/dist-packages/nvidia/cudnn/lib:/usr/local/nvidia/lib:/usr/local/nvidia/lib64 \
+    TF_CPP_MIN_LOG_LEVEL=2 PYTHONDONTWRITEBYTECODE=1 TF_FORCE_GPU_ALLOW_GROWTH=true
+
+WORKDIR /ent
+COPY *.py ./

@@ -27,6 +27,8 @@ const SECTIONS = {
   flujo: { label: 'Arquitectura', page: 'Metodología', singular: 'paso', titleLabel: 'Paso', bodyLabel: 'Descripción' },
   metricas: { label: 'Métricas', page: 'Metodología', singular: 'métrica', titleLabel: 'Métrica', bodyLabel: 'Qué mide' },
   tecnologias: { label: 'Tecnologías', page: 'Metodología', singular: 'tecnología', titleLabel: 'Herramienta', bodyLabel: 'Uso' },
+  estado: { label: 'Estado actual', page: 'Metodología', singular: 'paso', titleLabel: 'Paso', bodyLabel: 'Qué se hizo o qué falta' },
+  limitaciones: { label: 'Limitaciones', page: 'Metodología', singular: 'limitación', titleLabel: 'Limitación', bodyLabel: 'Descripción y cómo se mitiga' },
   alcance: {
     label: 'Alcance',
     page: 'Metodología',

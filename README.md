@@ -325,6 +325,7 @@ El servicio `ml` expone `GET /health` y `POST /predict` **solo en la red interna
 | 15/11/2026 | Definición de EfficientNet-B0 y MobileNetV2, script de entrenamiento (división 70/15/15 por grupo, dos fases, umbrales con validación) y exportación de las redes sin entrenar para probar el sistema |
 | 15/11/2026 | Preparación de datos con `ml/entrenamiento/preparar_datos.py`: recorte de un fruto por imagen, etiquetas sano y antracnosis, limpieza de frutos pequeños, borrosos y duplicados, balance de clases y división 70/15/15 por grupo |
 | 15/11/2026 | Evaluación de los modelos con `ml/entrenamiento/evaluar.py` (AUC, pérdida, recall, precisión, F1 y brecha entre entrenamiento y prueba) y línea base de las dos redes sin entrenar |
+| 15/11/2026 | Versión preliminar v0 de EfficientNet-B0 y MobileNetV2 entrenada con la GPU (AUC 0,96 en prueba); Metodología con las secciones «Qué estamos haciendo ahora» y «Limitaciones» |
 
 ---
 

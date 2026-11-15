@@ -269,6 +269,9 @@ def main():
     h2 = modelo.fit(ds_train, validation_data=ds_val, epochs=args.epocas_fase2,
                     class_weight=pesos_clase, callbacks=[parada()])
 
+    # Se guarda ya entrenado, antes de evaluar: si la evaluación falla no se pierde el entrenamiento.
+    modelo.save(args.salida / f"{args.modelo}.keras")
+
     # Umbrales con validación; la evaluación final, una sola vez, con prueba.
     y_val, p_val = predecir(modelo, ds_val)
     inferior, superior = elegir_umbrales(y_val, p_val)
@@ -300,7 +303,6 @@ def main():
         "curvas": curvas,
     }
 
-    modelo.save(args.salida / f"{args.modelo}.keras")
     cfg = config_servicio(args.modelo, args.version, inferior, superior)
     (args.salida / f"{args.modelo}.json").write_text(json.dumps(cfg, indent=2, ensure_ascii=False), encoding="utf-8")
     (args.salida / f"{args.modelo}_metricas.json").write_text(

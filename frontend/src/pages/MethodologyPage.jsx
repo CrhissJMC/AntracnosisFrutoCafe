@@ -4,7 +4,7 @@ import { MainLayout } from '../components/templates';
 import { useSite } from '../context/SiteContext.jsx';
 import { HEALTH_COLORS } from '../lib/traceability.js';
 
-/** Metodología: problema → clases → arquitectura → evaluación → tecnologías → alcance. */
+/** Metodología: problema → clases → arquitectura → evaluación → tecnologías → alcance → estado actual → limitaciones. */
 export function MethodologyPage() {
   const { settings: s, section } = useSite();
   return (
@@ -35,6 +35,14 @@ export function MethodologyPage() {
       <CardGridSection title="Tecnologías y herramientas" id="tecnologias" items={section('tecnologias')} marker="number" min={200} />
 
       <ListColumnsSection title="Alcance del proyecto" id="alcance" items={section('alcance')} min={320} />
+
+      {section('estado').length > 0 && (
+        <StepsSection title="Qué estamos haciendo ahora" tone="alt" id="estado" items={section('estado')} />
+      )}
+
+      {section('limitaciones').length > 0 && (
+        <CardGridSection title="Limitaciones" id="limitaciones" items={section('limitaciones')} marker="number" min={280} />
+      )}
 
       <CallToAction
         id="repositorio"

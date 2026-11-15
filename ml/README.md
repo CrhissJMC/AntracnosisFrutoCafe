@@ -105,6 +105,14 @@ python entrenar.py --datos /ruta/a/fruto --modelo efficientnet_b0 --version v1
 python entrenar.py --datos /ruta/a/fruto --modelo mobilenet_v2 --version v1
 ```
 
+Con la GPU desde Docker Desktop (así se entrenó la v0 con la RTX 4060). `Dockerfile.gpu` agrega cuDNN 9, que falta en la imagen oficial de TensorFlow:
+```powershell
+docker build -t antracnosis-entrenamiento -f ml/entrenamiento/Dockerfile.gpu ml/entrenamiento
+docker run --rm --gpus all -v "${PWD}\ml\entrenamiento:/ent:ro" -v "C:\ruta\fruto:/datos:ro" -v "${PWD}\ml\modelos:/salida" -w /ent antracnosis-entrenamiento python entrenar.py --datos /datos --modelo mobilenet_v2 --salida /salida --version v0
+```
+Con EfficientNet-B0, la predicción en la GPU puede fallar con `CUDNN_STATUS_EXECUTION_FAILED` después de entrenar. El modelo ya queda guardado;
+se eligen los umbrales y se evalúa en la CPU con `evaluar.py --elegir-umbrales <versión>` (ver «Evaluar»).
+
 Sin GPU se puede usar la imagen del servicio (en CPU, más lento):
 ```powershell
 docker run --rm -u root -v "${PWD}\ml\entrenamiento:/ent:ro" -v "C:\ruta\datos:/datos:ro" -v "${PWD}\ml\modelos:/salida" -w /ent antracnosis-ml python entrenar.py --datos /datos --modelo mobilenet_v2 --salida /salida
@@ -127,6 +135,9 @@ docker run --rm -u root -v "${PWD}\ml\entrenamiento:/ent:ro" -v "${PWD}\ml\model
    o de recall indica sobreajuste. `entrenar.py` guarda además las curvas por época (`curvas` en `<modelo>_metricas.json`):
    si la pérdida de train sigue bajando mientras la de val sube, el modelo empezó a memorizar.
 
+3. **¿Aprendió el síntoma o la fuente?** `evaluar.py` desglosa el resultado por fuente. Si los sanos de un tipo de foto
+   salen casi todos como antracnosis, el modelo se guía por el fondo o la cámara. Confirmar con los mapas Grad-CAM.
+
 El recall solo no basta: una red que dice «antracnosis» casi siempre tiene recall alto y precisión igual a la proporción de enfermos (~19 %).
 
 Línea base medida el 15/11/2026 con el conjunto de `preparar_datos.py` (redes sin entrenar, umbrales 0,35 / 0,65):
@@ -137,6 +148,16 @@ Línea base medida el 15/11/2026 con el conjunto de `preparar_datos.py` (redes s
 | EfficientNet-B0 | test | 0,232 | 0,019 | 0,037 | 0,025 | 89,3 |
 | MobileNetV2 | val | 0,451 | 0,917 | 0,188 | 0,312 | 7,2 |
 | MobileNetV2 | test | 0,414 | 0,869 | 0,179 | 0,298 | 8,8 |
+
+Versión preliminar **v0** (15/11/2026, entrenada con la GPU antes de la revisión experta de las etiquetas):
+
+| Modelo | Conjunto | AUC | Recall | Precisión | F1 | % revisar | Umbrales |
+|---|---|---|---|---|---|---|---|
+| EfficientNet-B0 | test | 0,960 | 0,822 | 0,733 | 0,775 | 22,0 | 0,04 / 0,80 |
+| MobileNetV2 | test | 0,960 | 0,888 | 0,679 | 0,769 | 19,0 | 0,07 / 0,74 |
+
+Aprendieron (AUC 0,96 frente a 0,23 / 0,41) y no memorizaron (brecha de AUC ≤ 0,03), pero el desglose por fuente y Grad-CAM
+muestran que se guían en parte por el fondo: ningún fruto sano fotografiado sobre fondo claro sale como «sano».
 
 ### Probar el sistema sin entrenar
 ```powershell

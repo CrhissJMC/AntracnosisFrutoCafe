@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS content_items (
   id         SERIAL PRIMARY KEY,
   section    VARCHAR(30)  NOT NULL
              CHECK (section IN ('sintomas', 'ciclo', 'manejo', 'mision', 'equipo', 'universidad',
-                         'problema', 'clases', 'flujo', 'metricas', 'tecnologias', 'alcance')),
+                         'problema', 'clases', 'flujo', 'metricas', 'tecnologias', 'alcance', 'estado', 'limitaciones')),
   title      VARCHAR(200) NOT NULL CHECK (length(trim(title)) > 0),
   body       TEXT         NOT NULL DEFAULT '',
   position   INTEGER      NOT NULL DEFAULT 0,
@@ -71,7 +71,7 @@ ALTER TABLE content_items DROP CONSTRAINT IF EXISTS content_items_section_check;
 DELETE FROM content_items WHERE section = 'servicios';
 ALTER TABLE content_items ADD CONSTRAINT content_items_section_check
   CHECK (section IN ('sintomas', 'ciclo', 'manejo', 'mision', 'equipo', 'universidad',
-                         'problema', 'clases', 'flujo', 'metricas', 'tecnologias', 'alcance'));
+                         'problema', 'clases', 'flujo', 'metricas', 'tecnologias', 'alcance', 'estado', 'limitaciones'));
 CREATE INDEX IF NOT EXISTS content_items_section_idx ON content_items (section, position, id);
 
 -- Textos generales del sitio (hero, contacto, pie de página…) -------------

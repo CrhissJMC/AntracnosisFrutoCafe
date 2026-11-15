@@ -64,7 +64,7 @@ export const commentSchema = z
 
 export const SECTIONS = [
   'sintomas', 'ciclo', 'manejo', 'mision', 'equipo', 'universidad',
-  'problema', 'clases', 'flujo', 'metricas', 'tecnologias', 'alcance',
+  'problema', 'clases', 'flujo', 'metricas', 'tecnologias', 'alcance', 'estado', 'limitaciones',
 ];
 
 export const contentItemSchema = z

@@ -133,9 +133,12 @@ def _gradcam(model, x, class_index, layer_name):
             layer = model.get_layer(layer_name)
         else:
             layer = next(l for l in reversed(model.layers) if len(getattr(l, "output", np.zeros(0)).shape) == 4)
-        grad_model = tf.keras.Model(model.inputs, [layer.output, model.output])
+        # model.outputs[0]: según la versión de Keras con que se guardó, model.output puede ser una lista.
+        grad_model = tf.keras.Model(model.inputs, [layer.output, model.outputs[0]])
         with tf.GradientTape() as tape:
             conv_out, preds = grad_model(x)
+            if isinstance(preds, (list, tuple)):
+                preds = preds[0]
             score = preds[:, class_index]
         grads = tape.gradient(score, conv_out)
         weights = tf.reduce_mean(grads, axis=(0, 1, 2))
