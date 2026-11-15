@@ -151,11 +151,18 @@ async function seed(client) {
     }
     log('seed_requirements', { count: REQUIREMENTS.length });
   }
-  // Descripciones de requisitos anteriores (tres clases, perfiles antiguos): igual que los objetivos.
-  for (const [code, , description] of REQUIREMENTS) {
-    const previous = LEGACY_DEFAULTS.requirementDescriptions[code];
-    if (!previous) continue;
-    await client.query('UPDATE requirements SET description = $3, updated_at = now() WHERE code = $1 AND description = $2', [code, previous, description]);
+  // Títulos y descripciones de requisitos anteriores (tres clases, perfiles antiguos, parcelas):
+  // se actualizan solo si nadie los editó. Cada valor puede ser un texto o una lista de textos anteriores.
+  const asList = (v) => (Array.isArray(v) ? v : v ? [v] : []);
+  for (const [code, title, description] of REQUIREMENTS) {
+    const previous = asList(LEGACY_DEFAULTS.requirementDescriptions[code]);
+    if (previous.length) {
+      await client.query('UPDATE requirements SET description = $3, updated_at = now() WHERE code = $1 AND description = ANY($2::text[])', [code, previous, description]);
+    }
+    const previousTitles = asList(LEGACY_DEFAULTS.requirementTitles?.[code]);
+    if (previousTitles.length) {
+      await client.query('UPDATE requirements SET title = $3, updated_at = now() WHERE code = $1 AND title = ANY($2::text[])', [code, previousTitles, title]);
+    }
   }
 
   // Trazabilidad versionada (src/db/trazabilidad.json, generada con export-traceability.js):
@@ -218,7 +225,7 @@ async function seed(client) {
   }
 }
 
-// Módulo de diagnóstico: versiones de los modelos incluidas en el repositorio y parcelas de ejemplo.
+// Módulo de diagnóstico: versiones de los modelos incluidas en el repositorio.
 async function seedModule(client) {
   for (const v of MODEL_VERSIONS) {
     const { rowCount } = await client.query(
@@ -231,11 +238,6 @@ async function seedModule(client) {
     );
     if (rowCount) log('seed_model_version', { modelo: v.modelo, version: v.version });
   }
-
-  // La parcela es opcional: ya no se crean parcelas de ejemplo, y se quitan las que se crearon antes
-  // (sus capturas, si las hay, quedan «sin parcela»).
-  const { rowCount: removed } = await client.query('DELETE FROM parcelas WHERE es_ejemplo');
-  if (removed) log('remove_example_plots', { count: removed });
 }
 
 export async function migrate() {

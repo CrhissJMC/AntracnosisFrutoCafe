@@ -98,11 +98,16 @@ export const LEGACY_DEFAULTS = {
     RF03: 'Clasificar el fruto como sano, con infección incipiente o con infección avanzada (EfficientNet-B0 o MobileNetV2).',
     RF04: 'Mostrar la categoría, el nivel de confianza, el semáforo y la recomendación asociada.',
     RF06: 'Permitir que el agrónomo confirme o corrija un diagnóstico y lo comente.',
-    RF08: 'Mostrar indicadores de incidencia por parcela, zona y periodo.',
-    RF10: 'Asignar perfiles del módulo (productor, técnico, agrónomo, gerencia) y registrar parcelas.',
+    RF05: 'Guardar la foto con su diagnóstico, fecha, hora, coordenadas, parcela y versión del modelo.',
+    RF08: ['Mostrar indicadores de incidencia por parcela, zona y periodo.', 'Mostrar indicadores de incidencia por parcela y periodo.'],
+    RF10: ['Asignar perfiles del módulo (productor, técnico, agrónomo, gerencia) y registrar parcelas.', 'Asignar perfiles del módulo (productor, propietario o especialista) y registrar las parcelas.'],
     RNF01: 'Recall de al menos 85 % en la clase de infección incipiente, medido en el conjunto de prueba.',
     RNF03: 'El sistema se ejecuta en contenedores Docker en la PC del equipo, sin servicios de nube pagados.',
     RNF05: 'Resultado con semáforo: verde (sano), amarillo (incipiente) y rojo (avanzado).',
+  },
+  // Títulos anteriores de requisitos (código → texto o lista)
+  requirementTitles: {
+    RF10: 'Gestión de usuarios y parcelas',
   },
 };
 
@@ -169,10 +174,17 @@ const ESTADO_ITEMS_V3 = [
   ESTADO_VALIDACION,
 ];
 
-// Versión vigente (15/11/2026): la parcela es opcional.
-const ESTADO_ITEMS = [
+// v4 (15/11/2026): la parcela era opcional.
+const ESTADO_ITEMS_V4 = [
   ...ESTADO_ITEMS_V1.slice(0, 4),
   ['estado', 'Módulos de gestión del conocimiento', 'En curso. Hecho: base de datos del módulo y registro de capturas (cada análisis guarda la foto, la fecha, el resultado y la versión del modelo, y opcionalmente la parcela y la ubicación). Pendiente: historial, validación experta y tablero de incidencia. Solo los especialistas y el administrador podrán validar; cada validación queda registrada con quién la hizo y con qué perfil, sin borrar las anteriores (la base de datos ya lo exige).'],
+  ESTADO_VALIDACION,
+];
+
+// Versión vigente (15/11/2026): sin parcelas.
+const ESTADO_ITEMS = [
+  ...ESTADO_ITEMS_V1.slice(0, 4),
+  ['estado', 'Módulos de gestión del conocimiento', 'En curso. Hecho: base de datos del módulo y registro de capturas (cada análisis guarda la foto, la fecha, el autor, el resultado y la versión del modelo, y la ubicación solo si se autoriza). Pendiente: historial, validación experta y tablero de incidencia. Solo los especialistas y el administrador podrán validar; cada validación queda registrada con quién la hizo y con qué perfil, sin borrar las anteriores (la base de datos ya lo exige).'],
   ESTADO_VALIDACION,
 ];
 
@@ -473,6 +485,7 @@ export const LEGACY_METHOD_VERSIONS = [
   ESTADO_ITEMS_V1,
   ESTADO_ITEMS_V2,
   ESTADO_ITEMS_V3,
+  ESTADO_ITEMS_V4,
   METHOD_ITEMS_V3.map((i) =>
     i[0] === 'flujo' && i[1] === 'Modelos' ? [i[0], i[1], 'EfficientNet-B0 como modelo principal, MobileNetV2 como alternativa ligera y una CNN sencilla entrenada desde cero como línea base.'] : i,
   ),
@@ -486,12 +499,12 @@ export const REQUIREMENTS = [
   ['RF02', 'Preprocesamiento', 'Recortar, redimensionar a 224 × 224 píxeles y normalizar el color y el contraste de la imagen.', 2, 'Servicio del modelo', 'CP02', 'Alta', 'disenado'],
   ['RF03', 'Clasificación con CNN', 'Clasificar el fruto como sano o con antracnosis (EfficientNet-B0 o MobileNetV2) y marcar como «revisar» los casos de baja confianza.', 2, 'Servicio del modelo', 'CP03', 'Alta', 'disenado'],
   ['RF04', 'Diagnóstico visual inmediato', 'Mostrar el resultado, la probabilidad, el semáforo y la ficha de manejo asociada.', 4, 'Nuevo diagnóstico', 'CP04', 'Alta', 'disenado'],
-  ['RF05', 'Registro de capturas', 'Guardar la foto con su diagnóstico, fecha, hora, coordenadas, parcela y versión del modelo.', 4, 'Nuevo diagnóstico · Historial', 'CP05', 'Alta', 'disenado'],
+  ['RF05', 'Registro de capturas', 'Guardar la foto con su diagnóstico, fecha, hora, autor, ubicación (si se autoriza) y versión del modelo.', 4, 'Nuevo diagnóstico · Historial', 'CP05', 'Alta', 'disenado'],
   ['RF06', 'Validación experta', 'Permitir que el especialista confirme o corrija un diagnóstico y lo comente.', 4, 'Validación', 'CP06', 'Alta', 'disenado'],
   ['RF07', 'Base de conocimiento', 'Publicar en el blog fichas de manejo vinculadas a cada categoría, y consultarlas y comentarlas.', 4, 'Blog', 'CP07', 'Media', 'disenado'],
-  ['RF08', 'Tablero de incidencia', 'Mostrar indicadores de incidencia por parcela y periodo.', 4, 'Tablero', 'CP08', 'Media', 'disenado'],
+  ['RF08', 'Tablero de incidencia', 'Mostrar indicadores de incidencia por periodo.', 4, 'Tablero', 'CP08', 'Media', 'disenado'],
   ['RF09', 'Reentrenamiento y versionado', 'Reentrenar el modelo con imágenes validadas y registrar sus métricas por versión.', 2, 'Panel · Modelo de diagnóstico', 'CP09', 'Media', 'disenado'],
-  ['RF10', 'Gestión de usuarios y parcelas', 'Asignar perfiles del módulo (productor, propietario o especialista) y registrar las parcelas.', 4, 'Panel · Usuarios', 'CP10', 'Alta', 'disenado'],
+  ['RF10', 'Gestión de usuarios y perfiles', 'Asignar perfiles del módulo (productor, propietario o especialista) a los usuarios.', 4, 'Panel · Usuarios', 'CP10', 'Alta', 'disenado'],
   ['RNF01', 'Sensibilidad del modelo', 'Recall de al menos 85 % en la clase antracnosis, medido en el conjunto de prueba.', 3, 'Modelo', 'Evaluación en el conjunto de prueba', null, 'pendiente'],
   ['RNF02', 'Tiempo de respuesta', 'El diagnóstico tarda como máximo 3 segundos desde el envío de la foto.', 4, 'Servicio del modelo', 'Prueba de rendimiento (30 imágenes)', null, 'pendiente'],
   ['RNF03', 'Ejecución local', 'El sistema se ejecuta en contenedores Docker y el modelo se entrena con la GPU de la PC del equipo, sin servicios de nube pagados.', 4, 'Infraestructura', 'Despliegue con Docker Compose', null, 'implementado'],

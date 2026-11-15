@@ -11,6 +11,8 @@
 --     además un disparador de la base de datos.
 --   - Hay una versión activa por arquitectura (EfficientNet-B0 y MobileNetV2), porque
 --     el sitio permite elegir el modelo o comparar ambos.
+--   - No se registran parcelas: la captura guarda la foto, la fecha, el autor y, si se
+--     autoriza, la ubicación; el tablero muestra la incidencia por periodo.
 -- =============================================================================
 
 -- Perfil del módulo (lo asigna solo el administrador) -----------------------
@@ -22,20 +24,6 @@ ALTER TABLE articles ADD COLUMN IF NOT EXISTS clase_relacionada VARCHAR(12)
   CHECK (clase_relacionada IN ('sano', 'revisar', 'antracnosis'));
 CREATE INDEX IF NOT EXISTS articles_clase_idx ON articles (clase_relacionada)
   WHERE clase_relacionada IS NOT NULL;
-
--- Parcelas de la finca -------------------------------------------------------
-CREATE TABLE IF NOT EXISTS parcelas (
-  id             SERIAL PRIMARY KEY,
-  propietario_id INTEGER      NOT NULL REFERENCES users(id),
-  nombre         VARCHAR(80)  NOT NULL CHECK (length(trim(nombre)) > 0),
-  sector         VARCHAR(80),
-  variedad       VARCHAR(60),
-  altitud_msnm   INTEGER      CHECK (altitud_msnm BETWEEN 0 AND 4000),
-  es_ejemplo     BOOLEAN      NOT NULL DEFAULT FALSE,   -- parcelas ficticias de una versión anterior (se borran al migrar)
-  created_at     TIMESTAMPTZ  NOT NULL DEFAULT now(),
-  UNIQUE (propietario_id, nombre)
-);
-CREATE INDEX IF NOT EXISTS parcelas_propietario_idx ON parcelas (propietario_id);
 
 -- Versiones del modelo (RF09, RNF08) -----------------------------------------
 --   p < umbral_inferior -> 'sano'; p >= umbral_superior -> 'antracnosis'; entre ambos -> 'revisar'
@@ -64,7 +52,6 @@ CREATE UNIQUE INDEX IF NOT EXISTS modelo_versiones_activo_uq ON modelo_versiones
 -- Capturas y diagnósticos (RF05) ---------------------------------------------
 CREATE TABLE IF NOT EXISTS capturas (
   id         SERIAL PRIMARY KEY,
-  parcela_id INTEGER      REFERENCES parcelas(id) ON DELETE SET NULL,  -- opcional
   autor_id   INTEGER      REFERENCES users(id) ON DELETE SET NULL,
   imagen     VARCHAR(255) NOT NULL UNIQUE,                  -- nombre del archivo en el volumen de capturas
   latitud    NUMERIC(9,6) CHECK (latitud BETWEEN -90 AND 90),
@@ -72,12 +59,13 @@ CREATE TABLE IF NOT EXISTS capturas (
   tomada_en  TIMESTAMPTZ  NOT NULL DEFAULT now(),
   CHECK ((latitud IS NULL) = (longitud IS NULL))
 );
--- Bases creadas cuando la parcela era obligatoria
-ALTER TABLE capturas ALTER COLUMN parcela_id DROP NOT NULL;
-ALTER TABLE capturas DROP CONSTRAINT IF EXISTS capturas_parcela_id_fkey;
-ALTER TABLE capturas ADD CONSTRAINT capturas_parcela_id_fkey FOREIGN KEY (parcela_id) REFERENCES parcelas(id) ON DELETE SET NULL;
-CREATE INDEX IF NOT EXISTS capturas_parcela_idx ON capturas (parcela_id, tomada_en DESC);
-CREATE INDEX IF NOT EXISTS capturas_autor_idx   ON capturas (autor_id);
+CREATE INDEX IF NOT EXISTS capturas_tomada_idx ON capturas (tomada_en DESC);
+CREATE INDEX IF NOT EXISTS capturas_autor_idx  ON capturas (autor_id);
+
+-- Bases creadas cuando había parcelas: se quitan (primero las vistas que las usan).
+DROP VIEW IF EXISTS v_dataset_reentrenamiento, v_incidencia_mensual, v_diagnostico_final, v_validacion_vigente CASCADE;
+ALTER TABLE capturas DROP COLUMN IF EXISTS parcela_id;
+DROP TABLE IF EXISTS parcelas;
 
 CREATE TABLE IF NOT EXISTS diagnosticos (
   id               SERIAL PRIMARY KEY,
@@ -141,8 +129,7 @@ DROP TRIGGER IF EXISTS validaciones_sin_cambios ON validaciones;
 CREATE TRIGGER validaciones_sin_cambios BEFORE UPDATE ON validaciones
   FOR EACH ROW EXECUTE FUNCTION validaciones_sin_cambios();
 
--- Vistas (se recrean en cada arranque) ----------------------------------------
-DROP VIEW IF EXISTS v_dataset_reentrenamiento, v_incidencia_mensual, v_diagnostico_final, v_validacion_vigente CASCADE;
+-- Vistas (se recrean en cada arranque; ya se quitaron arriba) -----------------
 
 -- Validación vigente de cada captura: la más reciente.
 CREATE VIEW v_validacion_vigente AS
@@ -156,7 +143,7 @@ ORDER BY captura_id, created_at DESC, id DESC;
 -- Si se compararon ambos modelos, se toma el primer diagnóstico registrado.
 CREATE VIEW v_diagnostico_final AS
 SELECT DISTINCT ON (c.id)
-       c.id AS captura_id, c.parcela_id, c.autor_id, c.tomada_en,
+       c.id AS captura_id, c.autor_id, c.tomada_en,
        d.id AS diagnostico_id, d.modelo_id, d.prob_antracnosis, d.resultado,
        v.clase_confirmada, v.perfil_validador, v.validador_nombre, v.validada_en,
        COALESCE(v.clase_confirmada, d.resultado) AS clase_final,
@@ -166,17 +153,16 @@ JOIN diagnosticos d ON d.captura_id = c.id
 LEFT JOIN v_validacion_vigente v ON v.captura_id = c.id
 ORDER BY c.id, d.id;
 
--- Tablero de incidencia por parcela y mes (RF08)
+-- Tablero de incidencia por mes (RF08)
 CREATE VIEW v_incidencia_mensual AS
-SELECT f.parcela_id, COALESCE(p.nombre, 'Sin parcela') AS parcela,
-       date_trunc('month', f.tomada_en)::date AS mes,
+SELECT date_trunc('month', f.tomada_en)::date AS mes,
        COUNT(*) AS total_capturas,
        COUNT(*) FILTER (WHERE f.clase_final = 'antracnosis') AS antracnosis,
        COUNT(*) FILTER (WHERE f.clase_final = 'revisar')     AS por_revisar,
+       COUNT(*) FILTER (WHERE f.validado)                    AS validadas,
        ROUND(100.0 * COUNT(*) FILTER (WHERE f.clase_final = 'antracnosis') / COUNT(*), 1) AS incidencia_pct
 FROM v_diagnostico_final f
-LEFT JOIN parcelas p ON p.id = f.parcela_id
-GROUP BY f.parcela_id, p.nombre, date_trunc('month', f.tomada_en);
+GROUP BY date_trunc('month', f.tomada_en);
 
 -- Imágenes validadas para reentrenar (RF09): solo sano y antracnosis.
 CREATE VIEW v_dataset_reentrenamiento AS

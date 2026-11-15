@@ -4,7 +4,7 @@ import path from 'node:path';
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import { z } from 'zod';
-import { query, withTransaction } from '../db/pool.js';
+import { withTransaction } from '../db/pool.js';
 import { asyncHandler, HttpError } from '../lib/http.js';
 import { requireAuth } from '../middleware/auth.js';
 
@@ -41,10 +41,6 @@ const analyzeSchema = z
   .object({
     image: imageDataUrl,
     model: z.enum([...MODEL_IDS, 'ambos'], { message: 'Elige un modelo' }),
-    // Parcela opcional
-    parcela_id: z
-      .preprocess((v) => (v === '' || v === undefined ? null : v), z.coerce.number().int().positive('Parcela no válida').nullable())
-      .default(null),
     // Ubicación: solo si el usuario la autoriza en el navegador; ambas o ninguna.
     latitud: coord(-90, 90).default(null),
     longitud: coord(-180, 180).default(null),
@@ -99,18 +95,6 @@ router.get(
   }),
 );
 
-// GET /api/diagnostico/parcelas — usuarios con sesión: parcelas para registrar la captura (opcional)
-router.get(
-  '/parcelas',
-  requireAuth,
-  asyncHandler(async (req, res) => {
-    const { rows } = await query(
-      'SELECT id, nombre, sector, variedad, altitud_msnm FROM parcelas ORDER BY nombre',
-    );
-    res.json({ parcelas: rows });
-  }),
-);
-
 // POST /api/diagnostico/analizar — usuarios con sesión: analiza la foto y registra la captura (RF05)
 router.post(
   '/analizar',
@@ -119,12 +103,6 @@ router.post(
   asyncHandler(async (req, res) => {
     const data = analyzeSchema.parse(req.body);
     const models = data.model === 'ambos' ? MODEL_IDS : [data.model];
-    let parcela = null;
-    if (data.parcela_id !== null) {
-      const { rows: plots } = await query('SELECT id, nombre FROM parcelas WHERE id = $1', [data.parcela_id]);
-      if (!plots[0]) throw new HttpError(400, 'La parcela elegida no existe');
-      parcela = plots[0].nombre;
-    }
 
     const result = await callMl(
       '/predict',
@@ -148,9 +126,9 @@ router.post(
     try {
       captura = await withTransaction(async (client) => {
         const { rows } = await client.query(
-          `INSERT INTO capturas (parcela_id, autor_id, imagen, latitud, longitud)
-           VALUES ($1, $2, $3, $4, $5) RETURNING id, tomada_en`,
-          [data.parcela_id, req.user.id, image.name, data.latitud, data.longitud],
+          `INSERT INTO capturas (autor_id, imagen, latitud, longitud)
+           VALUES ($1, $2, $3, $4) RETURNING id, tomada_en`,
+          [req.user.id, image.name, data.latitud, data.longitud],
         );
         for (const r of results.filter((x) => x.available)) {
           await client.query(
@@ -172,7 +150,6 @@ router.post(
       captura: {
         id: captura.id,
         tomada_en: captura.tomada_en,
-        parcela, // null si no se eligió
         ubicacion: data.latitud !== null,
       },
     });
