@@ -36,6 +36,10 @@ services:
       TRUST_PROXY_HOPS: ${TRUST_PROXY_HOPS:-1}
       # Servicio de los modelos (solo si se levanta con el perfil ml)
       ML_SERVICE_URL: http://ml:8000
+      # Fotos de las capturas del módulo de diagnóstico
+      CAPTURAS_DIR: /data/capturas
+    volumes:
+      - capturas-data:/data/capturas
     depends_on:
       db:
         condition: service_healthy
@@ -73,3 +77,4 @@ services:
 
 volumes:
   db-data:
+  capturas-data:

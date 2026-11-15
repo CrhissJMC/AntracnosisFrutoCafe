@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Button, Icon, Text } from '../components/atoms';
+import { Button, Checkbox, Icon, Select, Text } from '../components/atoms';
 import { Alert, Callout } from '../components/molecules';
 import { DiagnosisPanel, ImageCapture, ModelPicker, PageHero } from '../components/organisms';
 import { DiagnosisLayout } from '../components/templates';
@@ -12,19 +12,48 @@ import './DiagnosisPage.css';
 
 const DEFAULT_MODEL = 'efficientnet_b0';
 
-/** Nuevo diagnóstico: foto del fruto → modelo → resultado con semáforo y descripción. */
+/** Pide la ubicación al navegador (solo si el usuario la activa). */
+function getLocation() {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) return reject(new Error('Este navegador no permite obtener la ubicación.'));
+    navigator.geolocation.getCurrentPosition(
+      (pos) => resolve({ latitud: +pos.coords.latitude.toFixed(6), longitud: +pos.coords.longitude.toFixed(6) }),
+      () => reject(new Error('No se pudo obtener la ubicación: revisa el permiso del navegador.')),
+      { enableHighAccuracy: true, timeout: 10000 },
+    );
+  });
+}
+
+/** Nuevo diagnóstico: parcela → foto del fruto → modelo → resultado con semáforo; la captura queda registrada. */
 export function DiagnosisPage() {
   const { user } = useAuth();
   const { section } = useSite();
   const models = useAsync(() => api.get('/diagnostico/modelos'), []);
+  const plots = useAsync(() => (user ? api.get('/diagnostico/parcelas') : Promise.resolve(null)), [user?.id]);
   const descriptions = useMemo(() => classDescriptions(section('clases')), [section]);
 
   const [photo, setPhoto] = useState(null);
   const [model, setModel] = useState(DEFAULT_MODEL);
+  const [plot, setPlot] = useState('');
+  const [useLocation, setUseLocation] = useState(false);
+  const [location, setLocation] = useState({ status: 'off', coords: null, message: '' });
   const [status, setStatus] = useState('idle');
   const [response, setResponse] = useState(null);
   const [error, setError] = useState(null);
   const [formError, setFormError] = useState('');
+
+  const toggleLocation = async (checked) => {
+    setUseLocation(checked);
+    if (!checked) return setLocation({ status: 'off', coords: null, message: '' });
+    setLocation({ status: 'loading', coords: null, message: 'Obteniendo la ubicación…' });
+    try {
+      const coords = await getLocation();
+      setLocation({ status: 'ok', coords, message: `Ubicación lista (${coords.latitud}, ${coords.longitud}).` });
+    } catch (err) {
+      setUseLocation(false);
+      setLocation({ status: 'error', coords: null, message: err.message });
+    }
+  };
 
   const changePhoto = (value) => {
     setPhoto(value);
@@ -34,11 +63,14 @@ export function DiagnosisPage() {
   };
 
   const analyze = async () => {
+    if (!plot) return setFormError('Elige la parcela donde se tomó la foto.');
     if (!photo) return setFormError('Primero toma o sube una foto del fruto.');
+    if (location.status === 'loading') return setFormError('Espera a que se obtenga la ubicación.');
     setFormError('');
     setStatus('loading');
     try {
-      setResponse(await api.post('/diagnostico/analizar', { image: photo, model }));
+      const coords = useLocation && location.coords ? location.coords : {};
+      setResponse(await api.post('/diagnostico/analizar', { image: photo, model, parcela_id: Number(plot), ...coords }));
       setStatus('done');
     } catch (err) {
       setError({ message: err.message, unavailable: err.status === 503 });
@@ -48,6 +80,8 @@ export function DiagnosisPage() {
 
   const list = models.data?.models ?? [];
   const anyReady = list.some((m) => m.available);
+  const plotList = plots.data?.parcelas ?? [];
+  const n = user ? 1 : 0; // con sesión, el primer paso es la parcela
 
   return (
     <DiagnosisLayout
@@ -60,16 +94,44 @@ export function DiagnosisPage() {
       }
       form={
         <div className="dx-form">
+          {user && (
+            <div className="dx-form__step">
+              <label className="dx-form__title" htmlFor="dx-parcela">
+                <span>1</span> Parcela
+              </label>
+              <Select id="dx-parcela" value={plot} onChange={(e) => setPlot(e.target.value)} disabled={status === 'loading'}>
+                <option value="">{plots.loading ? 'Cargando parcelas…' : 'Elige la parcela'}</option>
+                {plotList.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.nombre}
+                    {p.sector ? ` · ${p.sector}` : ''}
+                  </option>
+                ))}
+              </Select>
+              <Checkbox
+                label="Guardar la ubicación de la foto"
+                checked={useLocation}
+                onChange={(e) => toggleLocation(e.target.checked)}
+                disabled={status === 'loading'}
+              />
+              {location.message && (
+                <Text size="sm" className={location.status === 'error' ? 'dx-form__error' : 'dx-form__privacy'}>
+                  {location.message}
+                </Text>
+              )}
+            </div>
+          )}
+
           <div className="dx-form__step">
             <p className="dx-form__title">
-              <span>1</span> Fotografía del fruto
+              <span>{n + 1}</span> Fotografía del fruto
             </p>
             <ImageCapture value={photo} onChange={changePhoto} disabled={status === 'loading'} />
           </div>
 
           <div className="dx-form__step">
             <p className="dx-form__title">
-              <span>2</span> Modelo
+              <span>{n + 2}</span> Modelo
             </p>
             {list.length > 0 && <ModelPicker models={list} value={model} onChange={setModel} legend="Elige con qué modelo se analizará" />}
             {models.data && !anyReady && (
@@ -88,7 +150,8 @@ export function DiagnosisPage() {
                 <Icon name="scan" size={18} /> Analizar fruto
               </Button>
               <Text size="sm" className="dx-form__privacy">
-                La foto se reduce y se le quitan los metadatos (incluida la ubicación GPS) antes de enviarla.
+                La foto se reduce y se le quitan los metadatos (incluida la ubicación GPS) antes de enviarla. Se guarda con la
+                parcela, la fecha y el resultado; la ubicación, solo si la activas.
               </Text>
             </div>
           ) : (
@@ -106,7 +169,17 @@ export function DiagnosisPage() {
           )}
         </div>
       }
-      result={<DiagnosisPanel status={status} error={error} response={response} photo={photo} descriptions={descriptions} />}
+      result={
+        <div className="dx-result">
+          {status === 'done' && response?.captura && (
+            <Alert tone="success">
+              Captura N.º {response.captura.id} guardada en {response.captura.parcela}
+              {response.captura.ubicacion ? ', con su ubicación.' : '.'}
+            </Alert>
+          )}
+          <DiagnosisPanel status={status} error={error} response={response} photo={photo} descriptions={descriptions} />
+        </div>
+      }
     />
   );
 }

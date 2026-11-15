@@ -146,12 +146,27 @@ export const CONTENT_ITEMS = [
 // Se carga por sección: solo las secciones que aún no tienen bloques.
 // Metodología · «Qué estamos haciendo ahora» (15/11/2026). Al cambiar, mover esta versión a una
 // lista anterior en LEGACY_METHOD_VERSIONS para que la página se actualice si nadie la editó.
-const ESTADO_ITEMS = [
+const ESTADO_ITEMS_V1 = [
   ['estado', 'Datos reunidos y depurados', 'Hecho. 3 840 imágenes de un fruto cada una (768 con antracnosis y 3 072 sanas) de tres conjuntos públicos, divididas en 70 % entrenamiento, 15 % validación y 15 % prueba sin repartir una misma foto entre conjuntos.'],
   ['estado', 'Modelos preliminares (v0) entrenados', 'Hecho. EfficientNet-B0 y MobileNetV2 se entrenaron con la GPU de la PC del equipo y ya se usan en la página Diagnóstico. En el conjunto de prueba ambos alcanzan una AUC de 0,96 (sin entrenar: 0,23 y 0,41), con recall de 0,82 y 0,89 y precisión de 0,73 y 0,68 en la clase antracnosis; la diferencia con el entrenamiento es pequeña, así que no memorizaron las fotos.'],
   ['estado', 'Revisión de lo que aprendió el modelo', 'En curso. Ambos reconocen bien los frutos fotografiados en el cafetal, pero casi ningún fruto sano fotografiado sobre fondo claro sale como «sano», y los mapas Grad-CAM muestran que a veces se fijan en el fondo. Por eso la v0 es solo preliminar.'],
   ['estado', 'Revisión de etiquetas con un especialista', 'Pendiente. Confirmar o corregir las 559 imágenes de antracnosis de la fuente principal y sumar frutos sanos sobre fondo claro antes de entrenar la versión v1.'],
   ['estado', 'Módulos y validación en campo', 'Pendiente. Registro de capturas, historial, validación experta y tablero de incidencia; prueba con al menos 100 fotos de la finca, casos de prueba y encuesta de usabilidad (SUS).'],
+];
+
+// v2 (15/11/2026): se detalló la validación experta y se mencionó la alternativa a la prueba en la finca.
+const ESTADO_VALIDACION = ['estado', 'Validación del sistema', 'Pendiente. El plan es probar el sistema con al menos 100 fotos de la finca, los casos de prueba y una encuesta de usabilidad (SUS). Como alternativa, si no es posible: validar el modelo solo con el conjunto de prueba y hacer una prueba de usabilidad corta con compañeros del curso, que también sirve para la SUS.'];
+const ESTADO_ITEMS_V2 = [
+  ...ESTADO_ITEMS_V1.slice(0, 4),
+  ['estado', 'Módulos de gestión del conocimiento', 'Pendiente. Registro de capturas, historial, tablero de incidencia y validación experta. Solo los usuarios con perfil de especialista podrán validar un diagnóstico; el administrador también podrá corregirlo, y cada validación quedará registrada con quién la hizo y con qué perfil, sin borrar las anteriores.'],
+  ESTADO_VALIDACION,
+];
+
+// Versión vigente (15/11/2026): registro de capturas implementado.
+const ESTADO_ITEMS = [
+  ...ESTADO_ITEMS_V1.slice(0, 4),
+  ['estado', 'Módulos de gestión del conocimiento', 'En curso. Hecho: base de datos del módulo y registro de capturas (cada análisis guarda la foto, la parcela, la fecha, la ubicación si se autoriza, el resultado y la versión del modelo). Pendiente: historial, validación experta y tablero de incidencia. Solo los especialistas y el administrador podrán validar; cada validación queda registrada con quién la hizo y con qué perfil, sin borrar las anteriores (la base de datos ya lo exige).'],
+  ESTADO_VALIDACION,
 ];
 
 export const METHOD_ITEMS = [
@@ -448,6 +463,8 @@ export const LEGACY_METHOD_VERSIONS = [
   LEGACY_METHOD_ITEMS,
   METHOD_ITEMS_V3,
   METHOD_ITEMS_V4,
+  ESTADO_ITEMS_V1,
+  ESTADO_ITEMS_V2,
   METHOD_ITEMS_V3.map((i) =>
     i[0] === 'flujo' && i[1] === 'Modelos' ? [i[0], i[1], 'EfficientNet-B0 como modelo principal, MobileNetV2 como alternativa ligera y una CNN sencilla entrenada desde cero como línea base.'] : i,
   ),
@@ -476,4 +493,30 @@ export const REQUIREMENTS = [
   ['RNF07', 'Mantenibilidad', 'Código modular, documentado y versionado en GitHub.', 4, 'Repositorio', 'Revisión del repositorio', null, 'implementado'],
   ['RNF08', 'Trazabilidad del diagnóstico', 'Cada diagnóstico registra la versión del modelo que lo generó.', 4, 'Base de datos', 'CP05', null, 'disenado'],
   ['RNF09', 'Diseño adaptable', 'Las pantallas se usan sin desplazamiento horizontal de 360 a 1440 px y conservan el estilo del sitio.', 4, 'Sitio', 'Prueba en 360, 768 y 1280 px', null, 'implementado'],
+];
+
+// Módulo de diagnóstico ------------------------------------------------------
+// Versiones de los modelos que trae el repositorio (ml/modelos/). Métricas del conjunto de prueba
+// (datos/evaluaciones/*_v0-preliminar.json). Al entrenar una nueva versión, agregarla aquí.
+export const MODEL_VERSIONS = [
+  {
+    modelo: 'efficientnet_b0', version: 'v0-preliminar', archivo: 'ml/modelos/efficientnet_b0.keras',
+    umbral_inferior: 0.04, umbral_superior: 0.8, auc: 0.96, recall: 0.8224, precision: 0.7333, f1: 0.7753,
+    num_imagenes: 2703, entrenado_en: '2026-11-15T14:54:00-05:00',
+    notas: 'Versión preliminar, entrenada antes de la revisión experta de las etiquetas. Se guía en parte por el fondo de la foto.',
+  },
+  {
+    modelo: 'mobilenet_v2', version: 'v0-preliminar', archivo: 'ml/modelos/mobilenet_v2.keras',
+    umbral_inferior: 0.07, umbral_superior: 0.74, auc: 0.9602, recall: 0.8879, precision: 0.6786, f1: 0.7692,
+    num_imagenes: 2703, entrenado_en: '2026-11-15T14:48:00-05:00',
+    notas: 'Versión preliminar, entrenada antes de la revisión experta de las etiquetas. Se guía en parte por el fondo de la foto.',
+  },
+];
+
+// Parcelas ficticias para demostrar el registro, el historial y el tablero (sin datos de ninguna finca real).
+// [nombre, sector, variedad, altitud en m s. n. m.]
+export const EXAMPLE_PLOTS = [
+  ['Parcela A (ejemplo)', 'Sector alto', 'Catimor', 1750],
+  ['Parcela B (ejemplo)', 'Sector medio', 'Typica', 1600],
+  ['Parcela C (ejemplo)', 'Sector bajo', 'Catimor', 1450],
 ];

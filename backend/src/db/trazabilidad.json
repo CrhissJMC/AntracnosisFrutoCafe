@@ -1,5 +1,5 @@
 {
-  "exported_at": "2026-11-15T20:05:00.007Z",
+  "exported_at": "2026-11-15T20:54:58.305Z",
   "objectives": [
     {
       "code": 1,
@@ -15,7 +15,7 @@
     },
     {
       "code": 4,
-      "progress": 40
+      "progress": 50
     },
     {
       "code": 5,
@@ -41,7 +41,7 @@
     },
     {
       "code": "RF05",
-      "status": "disenado"
+      "status": "implementado"
     },
     {
       "code": "RF06",
@@ -93,7 +93,7 @@
     },
     {
       "code": "RNF08",
-      "status": "disenado"
+      "status": "implementado"
     },
     {
       "code": "RNF09",
@@ -289,6 +289,51 @@
       "seci_phase": "externalizacion",
       "author_name": "Administrador",
       "created_at": "2026-11-15T19:58:09.923Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "Decisión del equipo sobre la validación experta: solo los usuarios con perfil de especialista pueden validar un diagnóstico; el administrador también puede corregirlo. Cada validación se conserva con quién la hizo y con qué perfil (especialista o administrador), sin borrar las anteriores.",
+      "seci_phase": "socializacion",
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T20:18:29.500Z"
+    },
+    {
+      "objective_code": 5,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "Alternativa en evaluación a la prueba en la finca y la encuesta SUS: validar el modelo solo con el conjunto de prueba y hacer una prueba de usabilidad corta con compañeros del curso, que también sirve para la SUS. Por ahora el plan del informe se mantiene.",
+      "seci_phase": "socializacion",
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T20:18:29.508Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": 40,
+      "new_progress": 50,
+      "note": "Fases 0 y 1 del módulo. Base de datos (02_modulo_diagnostico.sql): parcelas, versiones del modelo, capturas, diagnósticos y validaciones, con sus vistas. Nuevo diagnóstico registra cada análisis: foto, parcela, fecha, ubicación si se autoriza, resultado y versión del modelo. Las validaciones son un historial que solo pueden escribir especialistas y administradores; la base de datos lo exige y se probó con 7 casos. Falta: historial, validación, tablero y perfiles en el panel.",
+      "seci_phase": "combinacion",
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T20:54:57.726Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RF05 · Registro de capturas: Diseñado → Implementado. Cada análisis guarda la foto, la parcela, la fecha, la ubicación (si se autoriza), el resultado de cada modelo y su versión. Falta la pantalla Historial.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T20:54:57.739Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RNF08 · Trazabilidad del diagnóstico: Diseñado → Implementado. Cada diagnóstico queda ligado a la versión del modelo que lo generó (tabla modelo_versiones).",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T20:54:57.749Z"
     }
   ]
 }

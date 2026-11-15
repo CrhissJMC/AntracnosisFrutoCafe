@@ -14,6 +14,8 @@ import {
   LEGACY_METHOD_VERSIONS,
   REMOVED_SETTINGS,
   REQUIREMENTS,
+  MODEL_VERSIONS,
+  EXAMPLE_PLOTS,
 } from './seed-data.js';
 
 const log = (msg, extra = {}) => console.log(JSON.stringify({ level: 'info', msg, ...extra }));
@@ -217,14 +219,45 @@ async function seed(client) {
   }
 }
 
+// Módulo de diagnóstico: versiones de los modelos incluidas en el repositorio y parcelas de ejemplo.
+async function seedModule(client) {
+  for (const v of MODEL_VERSIONS) {
+    const { rowCount } = await client.query(
+      `INSERT INTO modelo_versiones (modelo, version, archivo, umbral_inferior, umbral_superior, auc, recall_antracnosis,
+                                     precision_antracnosis, f1_antracnosis, num_imagenes, entrenado_en, notas, activo)
+       VALUES ($1::varchar, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12,
+               NOT EXISTS (SELECT 1 FROM modelo_versiones WHERE modelo = $1::varchar AND activo))
+       ON CONFLICT (modelo, version) DO NOTHING`,
+      [v.modelo, v.version, v.archivo, v.umbral_inferior, v.umbral_superior, v.auc, v.recall, v.precision, v.f1, v.num_imagenes, v.entrenado_en, v.notas],
+    );
+    if (rowCount) log('seed_model_version', { modelo: v.modelo, version: v.version });
+  }
+
+  if (await isEmpty(client, 'parcelas')) {
+    const { rows } = await client.query("SELECT id FROM users WHERE role = 'admin' ORDER BY id LIMIT 1");
+    if (rows[0]) {
+      for (const [nombre, sector, variedad, altitud] of EXAMPLE_PLOTS) {
+        await client.query(
+          'INSERT INTO parcelas (propietario_id, nombre, sector, variedad, altitud_msnm, es_ejemplo) VALUES ($1, $2, $3, $4, $5, TRUE)',
+          [rows[0].id, nombre, sector, variedad, altitud],
+        );
+      }
+      log('seed_example_plots', { count: EXAMPLE_PLOTS.length });
+    }
+  }
+}
+
 export async function migrate() {
   await waitForDatabase();
   const schema = await readFile(new URL('./schema.sql', import.meta.url), 'utf8');
+  const moduleSchema = await readFile(new URL('./02_modulo_diagnostico.sql', import.meta.url), 'utf8');
   await withTransaction(async (client) => {
     // Evita que dos instancias de la API migren a la vez.
     await client.query('SELECT pg_advisory_xact_lock(724001)');
     await client.query(schema);
+    await client.query(moduleSchema);
     await seed(client);
+    await seedModule(client);
   });
   log('migrations_done');
 }

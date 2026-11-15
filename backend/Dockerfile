@@ -10,6 +10,9 @@ RUN npm install --omit=dev --no-audit --no-fund && npm cache clean --force
 
 COPY src ./src
 
+# Carpeta de las fotos de las capturas (volumen); debe ser del usuario node
+RUN mkdir -p /data/capturas && chown node:node /data/capturas
+
 # No ejecutar como root
 USER node
 

@@ -73,7 +73,7 @@ El avance de cada objetivo se actualiza desde el panel y cada cambio queda en la
 | Informe | Implementación en el repositorio | Estado |
 |---|---|---|
 | 1.3 Propuesta · captura y diagnóstico automático | Página `/diagnostico` + servicio `ml/` | ✅ Implementado (falta el modelo entrenado) |
-| 1.3 Propuesta · memoria institucional (registro de capturas) | Tablas `capturas`, `diagnosticos` | ⏳ Pendiente |
+| 1.3 Propuesta · memoria institucional (registro de capturas) | Tablas `capturas` y `diagnosticos`; cada análisis queda registrado | ✅ Implementado |
 | 1.3 Propuesta · red de conocimiento | Blog con comentarios; validación experta | 🟡 Blog listo, validación pendiente |
 | 1.3 Propuesta · tablero de incidencia | Pestaña Tablero | ⏳ Pendiente |
 | 2.2.1 Modelo SECI | Bitácora de Trazabilidad: cada registro lleva su fase SECI | ✅ Implementado |
@@ -84,7 +84,7 @@ El avance de cada objetivo se actualiza desde el panel y cada cambio queda en la
 | 3.5 IA y deep learning (FastAPI + TensorFlow) | Servicio `ml/` (perfil `ml` de Docker) | ✅ |
 | 4.1.3 y 4.1.4 Requerimientos (RF01–RF10, RNF01–RNF09) | Matriz de trazabilidad de requisitos (sección 5) | ✅ |
 | 4.2.1 Arquitectura lógica en capas | `web` → `api` → `ml` y `db` (sección 6) | ✅ |
-| 4.2.3 Modelo de datos (Anexo 5) | Tablas del sitio, de trazabilidad y de requisitos; las del módulo, pendientes (sección 7) | 🟡 Parcial |
+| 4.2.3 Modelo de datos (Anexo 5) | Tablas del sitio, de trazabilidad, de requisitos y del módulo de diagnóstico (sección 7) | ✅ |
 | 4.3.4 Pantalla «Nuevo diagnóstico» (Figura 6) | `/diagnostico` | ✅ |
 | 4.3.4 Historial, Validación, Tablero y Modelo (Figuras 7–10) | — | ⏳ Pendiente |
 | 4.3.6 Estructura del repositorio (Tabla 16) | `ml/`, `ml/modelos/` fuera de Git, servicio `ml` en `docker-compose.yml` | ✅ · entrenamiento en `ml/entrenamiento/` |
@@ -96,7 +96,7 @@ El avance de cada objetivo se actualiza desde el panel y cada cambio queda en la
 |---|---|---|
 | Tres modelos: EfficientNet-B0, MobileNetV2 y una CNN desde cero (línea base) | Solo EfficientNet-B0 y MobileNetV2 | Se descartó la CNN desde cero por alcance |
 | Redes, asociaciones de base y parcelas de una organización | Parcela y zona, sin datos de ninguna organización | El sitio no usa datos de terceros |
-| `POST /api/diagnosticos` (Tabla 17) | `POST /api/diagnostico/analizar` | El registro de capturas aún no existe; la ruta actual solo analiza |
+| `POST /api/diagnosticos` (Tabla 17) | `POST /api/diagnostico/analizar` | La misma ruta analiza y registra la captura con sus diagnósticos |
 | Pantallas en `frontend/src/pages/diagnostico/` | `frontend/src/pages/DiagnosisPage.jsx` | Por ahora es una sola pantalla |
 
 > **Al actualizar el informe**, revisar también: la sección 4.3.2 y la Tabla 22 mencionan la CNN desde cero.
@@ -223,8 +223,24 @@ Al arrancar, la API crea o actualiza las tablas (`backend/src/db/schema.sql`) y 
 
 Las reglas críticas se aseguran en la propia base de datos: valores permitidos, rangos de 0 a 100, claves foráneas y que cada registro de la bitácora sea un cambio o una nota con texto.
 
-### Tablas del módulo (pendientes, Anexo 5 del informe)
-`capturas`, `diagnosticos` y `validaciones`, con las vistas `v_diagnostico_final`, `v_incidencia_mensual` y `v_dataset_reentrenamiento`, más `modelo_versiones` y `parcelas`. Permitirán guardar cada foto con su diagnóstico (RF05), la validación del experto (RF06), el tablero (RF08) y el reentrenamiento (RF09).
+### Tablas del módulo de diagnóstico (`backend/src/db/02_modulo_diagnostico.sql`)
+Se ejecuta después de `schema.sql` en cada arranque, sin duplicar nada (informe, Anexo 4).
+
+| Tabla / vista | Qué guarda |
+|---|---|
+| `users.perfil` | Perfil del módulo: `productor`, `propietario` o `especialista` (lo asigna el administrador) |
+| `parcelas` | Parcelas del propietario; `es_ejemplo` marca las tres parcelas ficticias de demostración |
+| `modelo_versiones` | Cada versión de cada modelo con umbrales y métricas; una activa por arquitectura (RF09) |
+| `capturas` | Foto (archivo en el volumen `capturas-data`), parcela, autor, fecha y ubicación si se autoriza (RF05) |
+| `diagnosticos` | Resultado de cada modelo para la captura, con la versión que lo generó (RNF08) |
+| `validaciones` | Historial de validaciones de la captura: clase confirmada, comentario, quién y con qué perfil (RF06) |
+| `v_validacion_vigente`, `v_diagnostico_final` | La validación más reciente prevalece sobre el resultado del modelo |
+| `v_incidencia_mensual` | Incidencia por parcela y mes, para el tablero (RF08) |
+| `v_dataset_reentrenamiento` | Imágenes validadas como sano o antracnosis, para reentrenar (RF09) |
+
+**Validación experta** (decisión del equipo): solo validan los usuarios con perfil `especialista` y el administrador. Las validaciones no se editan ni se borran; una corrección es una validación nueva y vale la más reciente. Un disparador de la base de datos rechaza a cualquier otro usuario, impide editar una validación y toma el nombre del validador de su cuenta, así no se puede falsificar.
+
+**Diferencias con el Anexo 4:** la validación es de la captura (no de cada diagnóstico, porque con «comparar ambos» una foto tiene dos), se guarda un historial en vez de una sola validación, y hay una versión activa por arquitectura.
 
 ---
 
@@ -309,7 +325,7 @@ El servicio `ml` expone `GET /health` y `POST /predict` **solo en la red interna
 |---|---|
 | Sitio con blog, panel y contenido editable | Revisión de las etiquetas de antracnosis con un especialista |
 | Trazabilidad con SECI y matriz de requisitos | Entrenar EfficientNet-B0 y MobileNetV2 con la GPU de la PC en WSL2 con `ml/entrenamiento/entrenar.py` |
-| Pantalla «Nuevo diagnóstico» con selector y comparación de modelos | Tablas del módulo: registro de capturas, validación, versiones del modelo |
+| Pantalla «Nuevo diagnóstico» con selector y comparación de modelos | Versión v1 de los modelos tras la revisión experta de las etiquetas |
 | Servicio `ml/` con Grad-CAM y dos umbrales (sano, revisar, antracnosis) | Pantallas Historial, Validación, Tablero y Modelo |
 | Publicación con Docker y túnel de Cloudflare | Perfiles del módulo (productor, propietario, especialista) |
 | | Pruebas: casos CP01–CP10, rendimiento, usabilidad (SUS) y fotos de campo |
@@ -327,6 +343,7 @@ El servicio `ml` expone `GET /health` y `POST /predict` **solo en la red interna
 | 15/11/2026 | Evaluación de los modelos con `ml/entrenamiento/evaluar.py` (AUC, pérdida, recall, precisión, F1 y brecha entre entrenamiento y prueba) y línea base de las dos redes sin entrenar |
 | 15/11/2026 | Versión preliminar v0 de EfficientNet-B0 y MobileNetV2 entrenada con la GPU (AUC 0,96 en prueba); Metodología con las secciones «Qué estamos haciendo ahora» y «Limitaciones» |
 | 15/11/2026 | Los modelos v0, el conjunto de datos preparado (`datos/`) y el avance de Trazabilidad se versionan: quien clona el repositorio tiene el mismo sistema |
+| 15/11/2026 | Base de datos del módulo de diagnóstico y registro de capturas: cada análisis guarda la foto, la parcela, la fecha, la ubicación (si se autoriza), el resultado y la versión del modelo; validaciones con historial y control de perfiles en la base de datos |
 
 ---
 
