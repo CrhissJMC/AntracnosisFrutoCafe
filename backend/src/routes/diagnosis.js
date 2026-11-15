@@ -1,11 +1,12 @@
 import { randomUUID } from 'node:crypto';
-import { mkdir, unlink, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, unlink, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import { z } from 'zod';
-import { withTransaction } from '../db/pool.js';
-import { asyncHandler, HttpError } from '../lib/http.js';
+import { query, withTransaction } from '../db/pool.js';
+import { asyncHandler, HttpError, notFound, parseId } from '../lib/http.js';
+import { canSeeCapture } from '../lib/modulo.js';
 import { requireAuth } from '../middleware/auth.js';
 
 const router = Router();
@@ -153,6 +154,58 @@ router.post(
         ubicacion: data.latitud !== null,
       },
     });
+  }),
+);
+
+/** Captura con permiso de lectura: quien la tomó, un especialista o el administrador. */
+async function readableCapture(req) {
+  const id = parseId(req.params.id, 'Captura');
+  const { rows } = await query('SELECT id, autor_id, imagen FROM capturas WHERE id = $1', [id]);
+  if (!rows[0] || !canSeeCapture(req.user, rows[0])) throw notFound('Captura');
+  return rows[0];
+}
+
+// GET /api/diagnostico/capturas/:id/imagen — la foto guardada
+router.get(
+  '/capturas/:id/imagen',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const capture = await readableCapture(req);
+    res.set('Cache-Control', 'private, max-age=86400');
+    res.sendFile(capture.imagen, { root: CAPTURES_DIR, dotfiles: 'deny' }, (err) => {
+      if (err && !res.headersSent) res.status(404).json({ error: 'La foto ya no está disponible' });
+    });
+  }),
+);
+
+// POST /api/diagnostico/capturas/:id/gradcam — vuelve a calcular el mapa Grad-CAM de un modelo
+// (no se guarda: se genera al pedirlo, con la versión que esté cargada en el servicio).
+router.post(
+  '/capturas/:id/gradcam',
+  requireAuth,
+  analyzeLimiter,
+  asyncHandler(async (req, res) => {
+    const capture = await readableCapture(req);
+    const { model } = z.object({ model: z.enum(MODEL_IDS) }).strict().parse(req.body);
+    let bytes;
+    try {
+      bytes = await readFile(path.join(CAPTURES_DIR, capture.imagen));
+    } catch {
+      throw new HttpError(404, 'La foto ya no está disponible');
+    }
+    const mime = capture.imagen.endsWith('.png') ? 'image/png' : 'image/jpeg';
+    const result = await callMl(
+      '/predict',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: `data:${mime};base64,${bytes.toString('base64')}`, models: [model] }),
+      },
+      30000,
+    );
+    const r = result?.ok ? result.body.results?.[0] : null;
+    if (!r?.available) throw new HttpError(503, 'El servicio de los modelos no está activo.', { code: 'model_unavailable' });
+    res.json({ model, version: r.version, gradcam: r.gradcam, probability: r.probability, class: r.class });
   }),
 );
 

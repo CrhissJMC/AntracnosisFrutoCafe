@@ -14,6 +14,7 @@ import messageRoutes from './routes/messages.js';
 import adminRoutes from './routes/admin.js';
 import traceabilityRoutes from './routes/traceability.js';
 import diagnosisRoutes from './routes/diagnosis.js';
+import validationRoutes from './routes/validation.js';
 
 export function createApp() {
   const app = express();
@@ -77,6 +78,7 @@ export function createApp() {
   app.use('/api/admin', adminRoutes);
   app.use('/api/traceability', traceabilityRoutes);
   app.use('/api/diagnostico', diagnosisRoutes);
+  app.use('/api/validacion', validationRoutes);
 
   app.use('/api', (req, res, next) => next(new HttpError(404, 'Ruta no encontrada')));
   app.use(errorHandler);

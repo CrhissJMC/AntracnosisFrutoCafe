@@ -42,7 +42,7 @@ export async function loadUser(req, res, next) {
   }
 
   try {
-    const { rows } = await query('SELECT id, name, email, role FROM users WHERE id = $1', [Number(payload.sub)]);
+    const { rows } = await query('SELECT id, name, email, role, perfil FROM users WHERE id = $1', [Number(payload.sub)]);
     req.user = rows[0] ?? null;
     if (!req.user) clearSessionCookie(res);
     next();

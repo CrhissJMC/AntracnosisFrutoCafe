@@ -20,7 +20,7 @@ const authLimiter = rateLimit({
 // Hash ficticio para que el login tarde lo mismo exista o no el correo.
 const DUMMY_HASH = bcrypt.hashSync('dummy-password-for-timing', 10);
 
-const publicUser = ({ id, name, email, role }) => ({ id, name, email, role });
+const publicUser = ({ id, name, email, role, perfil = null }) => ({ id, name, email, role, perfil });
 
 router.post(
   '/register',
@@ -54,7 +54,7 @@ router.post(
   asyncHandler(async (req, res) => {
     const data = loginSchema.parse(req.body);
     const { rows } = await query(
-      'SELECT id, name, email, role, password_hash FROM users WHERE lower(email) = $1',
+      'SELECT id, name, email, role, perfil, password_hash FROM users WHERE lower(email) = $1',
       [data.email],
     );
     const user = rows[0];

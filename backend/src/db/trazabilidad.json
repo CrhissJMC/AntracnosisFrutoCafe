@@ -1,5 +1,5 @@
 {
-  "exported_at": "2026-11-15T21:11:58.365Z",
+  "exported_at": "2026-11-15T21:20:53.657Z",
   "objectives": [
     {
       "code": 1,
@@ -15,7 +15,7 @@
     },
     {
       "code": 4,
-      "progress": 50
+      "progress": 65
     },
     {
       "code": 5,
@@ -45,7 +45,7 @@
     },
     {
       "code": "RF06",
-      "status": "disenado"
+      "status": "implementado"
     },
     {
       "code": "RF07",
@@ -61,7 +61,7 @@
     },
     {
       "code": "RF10",
-      "status": "disenado"
+      "status": "implementado"
     },
     {
       "code": "RNF01",
@@ -343,6 +343,33 @@
       "seci_phase": "socializacion",
       "author_name": "Administrador",
       "created_at": "2026-11-15T21:11:57.823Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": 50,
+      "new_progress": 65,
+      "note": "Fase 2: pantalla Validación (/validacion). El especialista (perfil asignado por el administrador en el panel de usuarios) y el administrador revisan la cola de casos —primero los «revisar»—, ven la foto, el resultado de cada modelo y su Grad-CAM, y confirman o corrigen la clase (sano, antracnosis u otro daño) con un comentario. Cada validación queda en un historial con quién la hizo y con qué perfil; vale la más reciente. Se probaron 17 casos de permisos y del flujo completo. Falta: historial de capturas y tablero.",
+      "seci_phase": "socializacion",
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T21:20:53.129Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RF06 · Validación experta: Diseñado → Implementado. Pantalla Validación: confirmar o corregir la clase con comentario; historial con validador y perfil; solo especialistas y administrador (API y base de datos).",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T21:20:53.139Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RF10 · Gestión de usuarios y perfiles: Diseñado → Implementado. El administrador asigna el perfil del módulo (productor, propietario o especialista) en el panel de usuarios; nadie puede asignárselo a sí mismo.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T21:20:53.146Z"
     }
   ]
 }

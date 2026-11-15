@@ -46,7 +46,8 @@ El repositorio contiene el sitio del proyecto (React + Node.js + PostgreSQL), el
 ### Roles
 
 - **Administrador:** gestiona artículos, comentarios, contenido de las páginas, textos del sitio, mensajes, usuarios y la **trazabilidad** (avance de objetivos, notas de bitácora y estado de cada requisito).
-- **Usuario registrado:** comenta en el blog, borra sus propios comentarios y **usa el diagnóstico**.
+- **Usuario registrado:** comenta en el blog, borra sus propios comentarios y **usa el diagnóstico** (cada análisis queda registrado).
+- **Especialista** (perfil del módulo, lo asigna el administrador en `/admin/usuarios`): **valida los diagnósticos** en `/validacion`. El administrador también puede validar; cada validación guarda quién la hizo y con qué perfil.
 
 Todo el contenido vive en la base de datos y se edita desde el panel (`/admin`), sin tocar el código.
 
@@ -72,9 +73,9 @@ El avance de cada objetivo se actualiza desde el panel y cada cambio queda en la
 
 | Informe | Implementación en el repositorio | Estado |
 |---|---|---|
-| 1.3 Propuesta · captura y diagnóstico automático | Página `/diagnostico` + servicio `ml/` | ✅ Implementado (falta el modelo entrenado) |
+| 1.3 Propuesta · captura y diagnóstico automático | Página `/diagnostico` + servicio `ml/` | ✅ Implementado (modelos v0 preliminares) |
 | 1.3 Propuesta · memoria institucional (registro de capturas) | Tablas `capturas` y `diagnosticos`; cada análisis queda registrado | ✅ Implementado |
-| 1.3 Propuesta · red de conocimiento | Blog con comentarios; validación experta | 🟡 Blog listo, validación pendiente |
+| 1.3 Propuesta · red de conocimiento | Blog con comentarios; validación experta en `/validacion` | ✅ Implementado |
 | 1.3 Propuesta · tablero de incidencia | Pestaña Tablero | ⏳ Pendiente |
 | 2.2.1 Modelo SECI | Bitácora de Trazabilidad: cada registro lleva su fase SECI | ✅ Implementado |
 | 2.7.2 Transferencia de aprendizaje (EfficientNet-B0, MobileNetV2) | `ml/entrenamiento/modelos.py` define ambas redes; `ml/app.py` las carga; selector en `/diagnostico` | ✅ Implementado (sin entrenar) |
@@ -86,7 +87,8 @@ El avance de cada objetivo se actualiza desde el panel y cada cambio queda en la
 | 4.2.1 Arquitectura lógica en capas | `web` → `api` → `ml` y `db` (sección 6) | ✅ |
 | 4.2.3 Modelo de datos (Anexo 5) | Tablas del sitio, de trazabilidad, de requisitos y del módulo de diagnóstico (sección 7) | ✅ |
 | 4.3.4 Pantalla «Nuevo diagnóstico» (Figura 6) | `/diagnostico` | ✅ |
-| 4.3.4 Historial, Validación, Tablero y Modelo (Figuras 7–10) | — | ⏳ Pendiente |
+| 4.3.4 Validación (Figura 8) | `/validacion` | ✅ |
+| 4.3.4 Historial, Tablero y Modelo (Figuras 7, 9 y 10) | — | ⏳ Pendiente |
 | 4.3.6 Estructura del repositorio (Tabla 16) | `ml/`, `ml/modelos/` fuera de Git, servicio `ml` en `docker-compose.yml` | ✅ · entrenamiento en `ml/entrenamiento/` |
 | 4.4 Publicación con túnel de Cloudflare | `docker compose --profile tunnel up -d` | ✅ |
 
@@ -281,7 +283,7 @@ Cada nivel solo usa los niveles inferiores (átomos → moléculas → organismo
 
 ## 9. Rutas y API
 
-**Sitio público:** `/`, `/nosotros`, `/metodologia`, `/blog`, `/blog/:slug`, `/diagnostico`, `/trazabilidad`, `/contacto`, `/login`, `/registro` (`/servicios` redirige a Metodología).
+**Sitio público:** `/`, `/nosotros`, `/metodologia`, `/blog`, `/blog/:slug`, `/diagnostico`, `/validacion` (especialista o admin), `/trazabilidad`, `/contacto`, `/login`, `/registro` (`/servicios` redirige a Metodología).
 
 **Panel (solo admin):** `/admin`, `/admin/articulos`, `/admin/articulos/nuevo`, `/admin/articulos/:id`, `/admin/comentarios`, `/admin/trazabilidad`, `/admin/contenido`, `/admin/textos`, `/admin/mensajes`, `/admin/usuarios`
 
@@ -298,7 +300,9 @@ Cada nivel solo usa los niveles inferiores (átomos → moléculas → organismo
 | `GET /traceability` (objetivos, avance total, bitácora y matriz de requisitos) | público |
 | `PATCH /traceability/objectives/:id`, `PATCH /traceability/requirements/:id`, `POST /traceability/log`, `DELETE /traceability/log/:id` | admin |
 | `GET /diagnostico/modelos` (modelos y disponibilidad) | público |
-| `POST /diagnostico/analizar` (`{ image, model }`, con `model` = `efficientnet_b0`, `mobilenet_v2` o `ambos`) | usuario registrado |
+| `POST /diagnostico/analizar` (`{ image, model, latitud?, longitud? }`, con `model` = `efficientnet_b0`, `mobilenet_v2` o `ambos`): analiza y registra la captura | usuario registrado |
+| `GET /diagnostico/capturas/:id/imagen`, `POST /diagnostico/capturas/:id/gradcam` | autor de la captura, especialista o admin |
+| `GET /validacion/casos` (`estado` = `pendientes`, `validados` o `todos`), `GET /validacion/casos/:id`, `POST /validacion/casos/:id` (`{ clase_confirmada, comentario }`) | especialista o admin |
 | `GET /health` | público (estado de la API y la base de datos) |
 
 El servicio `ml` expone `GET /health` y `POST /predict` **solo en la red interna** (ver [ml/README.md](ml/README.md)).
@@ -312,9 +316,10 @@ El servicio `ml` expone `GET /health` y `POST /predict` **solo en la red interna
 - Todas las entradas se validan en el servidor y se rechazan los campos desconocidos.
 - Límites de intentos en login y registro, comentarios, contacto y análisis de imágenes. El formulario de contacto tiene además un campo trampa contra bots.
 - El contenido se dibuja sin `innerHTML`, y los enlaces y las imágenes de los textos del sitio solo aceptan `http(s)`, lo que evita XSS.
-- Las fotos del diagnóstico solo se aceptan como JPG o PNG de hasta 8 MB, se procesan en el servicio interno y no se guardan todavía.
+- Las fotos del diagnóstico solo se aceptan como JPG o PNG de hasta 8 MB, sin metadatos. Se guardan en el volumen `capturas-data` (no en Git) y solo las ven quien tomó la foto, los especialistas y el administrador.
 - Un administrador no puede quitarse su propio rol ni borrar su propia cuenta.
-- `.env` (credenciales) y `ml/modelos/` (modelos) están excluidos de Git.
+- `.env` (credenciales) y las fotos de las capturas están excluidos de Git.
+- Solo los especialistas y el administrador validan, y solo el administrador asigna perfiles. La base de datos lo vuelve a comprobar con un disparador y no permite editar una validación.
 
 ---
 
@@ -325,8 +330,8 @@ El servicio `ml` expone `GET /health` y `POST /predict` **solo en la red interna
 | Sitio con blog, panel y contenido editable | Revisión de las etiquetas de antracnosis con un especialista |
 | Trazabilidad con SECI y matriz de requisitos | Entrenar EfficientNet-B0 y MobileNetV2 con la GPU de la PC en WSL2 con `ml/entrenamiento/entrenar.py` |
 | Pantalla «Nuevo diagnóstico» con selector y comparación de modelos | Versión v1 de los modelos tras la revisión experta de las etiquetas |
-| Servicio `ml/` con Grad-CAM y dos umbrales (sano, revisar, antracnosis) | Pantallas Historial, Validación, Tablero y Modelo |
-| Publicación con Docker y túnel de Cloudflare | Perfiles del módulo (productor, propietario, especialista) |
+| Servicio `ml/` con Grad-CAM y dos umbrales (sano, revisar, antracnosis) | Pantallas Historial, Tablero y Modelo |
+| Publicación con Docker y túnel de Cloudflare | Permisos por perfil para productor y propietario |
 | | Pruebas: casos CP01–CP10, rendimiento, usabilidad (SUS) y fotos de campo |
 
 ### Historial de cambios
@@ -343,6 +348,7 @@ El servicio `ml` expone `GET /health` y `POST /predict` **solo en la red interna
 | 15/11/2026 | Versión preliminar v0 de EfficientNet-B0 y MobileNetV2 entrenada con la GPU (AUC 0,96 en prueba); Metodología con las secciones «Qué estamos haciendo ahora» y «Limitaciones» |
 | 15/11/2026 | Los modelos v0, el conjunto de datos preparado (`datos/`) y el avance de Trazabilidad se versionan: quien clona el repositorio tiene el mismo sistema |
 | 15/11/2026 | Base de datos del módulo de diagnóstico y registro de capturas: cada análisis guarda la foto, la fecha, el autor, el resultado, la versión del modelo y, si se autoriza, la ubicación; validaciones con historial y control de perfiles en la base de datos |
+| 15/11/2026 | Pantalla Validación (`/validacion`) para especialistas y administrador, con historial de validaciones y Grad-CAM de la captura; perfil del módulo asignable desde el panel de usuarios |
 
 ---
 

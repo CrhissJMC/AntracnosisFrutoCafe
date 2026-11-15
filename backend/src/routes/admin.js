@@ -30,7 +30,7 @@ router.get(
   asyncHandler(async (req, res) => {
     const { limit, offset } = paginationSchema.parse(req.query);
     const { rows } = await query(
-      `SELECT u.id, u.name, u.email, u.role, u.created_at,
+      `SELECT u.id, u.name, u.email, u.role, u.perfil, u.created_at,
               (SELECT count(*)::int FROM comments c WHERE c.user_id = u.id) AS comment_count
          FROM users u
         ORDER BY u.created_at DESC, u.id DESC
@@ -41,16 +41,25 @@ router.get(
   }),
 );
 
-// PATCH /api/admin/users/:id — cambiar rol
+// PATCH /api/admin/users/:id — cambiar rol y/o perfil del módulo (solo el administrador asigna perfiles)
 router.patch(
   '/users/:id',
   asyncHandler(async (req, res) => {
     const id = parseId(req.params.id, 'Usuario');
-    const { role } = z.object({ role: z.enum(['admin', 'user']) }).strict().parse(req.body);
-    if (id === req.user.id) throw new HttpError(400, 'No puedes cambiar tu propio rol');
+    const data = z
+      .object({
+        role: z.enum(['admin', 'user']).optional(),
+        perfil: z.preprocess((v) => (v === '' ? null : v), z.enum(['productor', 'propietario', 'especialista']).nullable()).optional(),
+      })
+      .strict()
+      .refine((d) => d.role !== undefined || d.perfil !== undefined, { message: 'Nada que cambiar' })
+      .parse(req.body);
+    if (data.role !== undefined && id === req.user.id) throw new HttpError(400, 'No puedes cambiar tu propio rol');
     const { rows } = await query(
-      'UPDATE users SET role = $1 WHERE id = $2 RETURNING id, name, email, role, created_at',
-      [role, id],
+      `UPDATE users SET role = COALESCE($1::varchar, role),
+                        perfil = CASE WHEN $3::boolean THEN $2::varchar ELSE perfil END
+        WHERE id = $4 RETURNING id, name, email, role, perfil, created_at`,
+      [data.role ?? null, data.perfil ?? null, data.perfil !== undefined, id],
     );
     if (!rows[0]) throw notFound('Usuario');
     res.json({ user: rows[0] });

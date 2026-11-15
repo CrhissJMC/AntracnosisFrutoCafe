@@ -181,10 +181,17 @@ const ESTADO_ITEMS_V4 = [
   ESTADO_VALIDACION,
 ];
 
-// Versión vigente (15/11/2026): sin parcelas.
-const ESTADO_ITEMS = [
+// v5 (15/11/2026): sin parcelas.
+const ESTADO_ITEMS_V5 = [
   ...ESTADO_ITEMS_V1.slice(0, 4),
   ['estado', 'Módulos de gestión del conocimiento', 'En curso. Hecho: base de datos del módulo y registro de capturas (cada análisis guarda la foto, la fecha, el autor, el resultado y la versión del modelo, y la ubicación solo si se autoriza). Pendiente: historial, validación experta y tablero de incidencia. Solo los especialistas y el administrador podrán validar; cada validación queda registrada con quién la hizo y con qué perfil, sin borrar las anteriores (la base de datos ya lo exige).'],
+  ESTADO_VALIDACION,
+];
+
+// Versión vigente (15/11/2026): validación experta implementada.
+const ESTADO_ITEMS = [
+  ...ESTADO_ITEMS_V1.slice(0, 4),
+  ['estado', 'Módulos de gestión del conocimiento', 'En curso. Hecho: registro de capturas (cada análisis guarda la foto, la fecha, el autor, el resultado y la versión del modelo, y la ubicación solo si se autoriza) y validación experta: los especialistas, a quienes el administrador asigna ese perfil, y el administrador confirman o corrigen la clase del fruto; cada validación queda en un historial con quién la hizo y con qué perfil, y vale la más reciente. Pendiente: historial de capturas y tablero de incidencia.'],
   ESTADO_VALIDACION,
 ];
 
@@ -486,6 +493,7 @@ export const LEGACY_METHOD_VERSIONS = [
   ESTADO_ITEMS_V2,
   ESTADO_ITEMS_V3,
   ESTADO_ITEMS_V4,
+  ESTADO_ITEMS_V5,
   METHOD_ITEMS_V3.map((i) =>
     i[0] === 'flujo' && i[1] === 'Modelos' ? [i[0], i[1], 'EfficientNet-B0 como modelo principal, MobileNetV2 como alternativa ligera y una CNN sencilla entrenada desde cero como línea base.'] : i,
   ),

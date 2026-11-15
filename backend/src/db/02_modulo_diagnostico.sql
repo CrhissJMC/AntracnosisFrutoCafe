@@ -119,8 +119,14 @@ CREATE TRIGGER validaciones_verificar_perfil BEFORE INSERT ON validaciones
   FOR EACH ROW EXECUTE FUNCTION validaciones_verificar_perfil();
 
 -- Las validaciones no se editan: una corrección es una validación nueva.
+-- Única excepción: al borrar la cuenta del validador, la base de datos deja validador_id en NULL
+-- (el nombre se conserva en validador_nombre).
 CREATE OR REPLACE FUNCTION validaciones_sin_cambios() RETURNS trigger AS $$
 BEGIN
+  IF NEW.validador_id IS NULL AND OLD.validador_id IS NOT NULL
+     AND (to_jsonb(NEW) - 'validador_id') = (to_jsonb(OLD) - 'validador_id') THEN
+    RETURN NEW;
+  END IF;
   RAISE EXCEPTION 'Las validaciones no se modifican: registra una nueva' USING ERRCODE = 'check_violation';
 END;
 $$ LANGUAGE plpgsql;

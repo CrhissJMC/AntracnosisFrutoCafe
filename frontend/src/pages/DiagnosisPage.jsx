@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Button, Checkbox, Icon, Text } from '../components/atoms';
 import { Alert, Callout } from '../components/molecules';
-import { DiagnosisPanel, ImageCapture, ModelPicker, PageHero } from '../components/organisms';
+import { DiagnosisPanel, ImageCapture, ModelPicker, ModuleTabs, PageHero } from '../components/organisms';
 import { DiagnosisLayout } from '../components/templates';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useSite } from '../context/SiteContext.jsx';
@@ -81,11 +81,14 @@ export function DiagnosisPage() {
   return (
     <DiagnosisLayout
       hero={
-        <PageHero
-          label="Módulo de diagnóstico"
-          title="Diagnóstico de antracnosis"
-          description="Fotografía un fruto de café, elige el modelo y obtén su estado sanitario con la recomendación de manejo."
-        />
+        <>
+          <PageHero
+            label="Módulo de diagnóstico"
+            title="Diagnóstico de antracnosis"
+            description="Fotografía un fruto de café, elige el modelo y obtén su estado sanitario con la recomendación de manejo."
+          />
+          <ModuleTabs />
+        </>
       }
       form={
         <div className="dx-form">
