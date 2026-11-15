@@ -66,11 +66,25 @@ Los umbrales se fijan con el conjunto de validación: el superior, para alcanzar
 |---|---|
 | `modelos.py` | Define las dos redes: base de ImageNet (EfficientNet-B0 o MobileNetV2) + `GlobalAveragePooling → Dropout(0.3) → Dense(1, sigmoide)`. El preprocesamiento va dentro del modelo (`"preprocess": "none"`) |
 | `exportar_sin_entrenar.py` | Guarda las dos redes **sin entrenar** en `ml/modelos/` (versión `sin-entrenar`) para probar el sistema de punta a punta. Sus predicciones no significan nada |
-| `entrenar.py` | División 70/15/15 por grupo, aumento de datos, entrenamiento en dos fases, pesos de clase, umbrales con validación, métricas con prueba |
+| `preparar_datos.py` | Limpieza de datos: recorta un fruto por imagen, unifica etiquetas en sano y antracnosis, descarta frutos pequeños, borrosos y duplicados, equilibra las clases y divide 70/15/15 por grupo en `train/val/test` |
+| `entrenar.py` | División 70/15/15 por grupo (o usa la de `preparar_datos.py`), aumento de datos, entrenamiento en dos fases, pesos de clase, umbrales con validación, métricas con prueba |
 | `requirements.txt` | Dependencias para entrenar con GPU (WSL2) |
 
+### Preparar los datos
+Con las tres fuentes descargadas en una carpeta `datasets/` (Coffee berry disease y coffee cherry 20251206 de Roboflow en COCO, y Cherry Coffe Bean de Zenodo):
+
+```powershell
+docker run --rm -u root -v "${PWD}\ml\entrenamiento:/ent:ro" -v "C:\ruta\datasets:/datasets:ro" -v "C:\ruta\datasets\fruto:/salida" antracnosis-ml python -I /ent/preparar_datos.py --datasets /datasets --salida /salida
+```
+
+Genera `fruto/{train,val,test}/{sano,antracnosis}/<fuente>/<grupo>__<n>.jpg` más `manifiesto.csv`, `descartes.csv` y `resumen.json`.
+Ningún grupo (foto original, video o recortes de una misma foto) queda en dos conjuntos.
+
+> «Coffee berry disease» reutiliza las fotos del dataset de maduración de Zenodo con etiquetas de lesión de un usuario anónimo de Roboflow:
+> sus imágenes de antracnosis deben revisarse con un especialista antes del entrenamiento final.
+
 ### Datos de entrada
-Una imagen por fruto, en dos carpetas (se admiten subcarpetas por fuente):
+`entrenar.py` acepta la carpeta de `preparar_datos.py` (ya dividida) o una imagen por fruto en dos carpetas (se admiten subcarpetas por fuente):
 
 ```
 datos/
@@ -86,8 +100,8 @@ los cuadros de un video (`IMG_0832.MOV_111.jpg`) y los recortes de una misma fot
 # con GPU, dentro de WSL2
 pip install -r ml/entrenamiento/requirements.txt
 cd ml/entrenamiento
-python entrenar.py --datos /ruta/a/datos --modelo efficientnet_b0 --version v1
-python entrenar.py --datos /ruta/a/datos --modelo mobilenet_v2 --version v1
+python entrenar.py --datos /ruta/a/fruto --modelo efficientnet_b0 --version v1
+python entrenar.py --datos /ruta/a/fruto --modelo mobilenet_v2 --version v1
 ```
 
 Sin GPU se puede usar la imagen del servicio (en CPU, más lento):

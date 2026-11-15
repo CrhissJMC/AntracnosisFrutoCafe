@@ -1,12 +1,12 @@
 """Entrena EfficientNet-B0 o MobileNetV2 para clasificar frutos de café: sano o antracnosis.
 
-Estructura esperada de los datos (una imagen = un fruto recortado; se admiten subcarpetas por fuente):
+Estructura de los datos (una imagen = un fruto recortado; se admiten subcarpetas por fuente).
+Lo normal es usar la carpeta que genera preparar_datos.py, ya dividida:
 
-    datos/
-      sano/          coffee_berry/xxx.jpg, zenodo/Maduros/yyy.jpg, ...
-      antracnosis/   coffee_berry/zzz.jpg, ...
+    fruto/{train,val,test}/{sano,antracnosis}/<fuente>/<grupo>__<n>.jpg
 
-División 70/15/15 por GRUPO, para no evaluar con imágenes casi iguales a las de entrenamiento:
+Si se pasa una carpeta sin dividir (datos/sano y datos/antracnosis), el script divide
+70/15/15 por GRUPO, para no evaluar con imágenes casi iguales a las de entrenamiento:
   - Cuadros de un mismo video («IMG_0832.MOV_111.jpg») forman un grupo.
   - Recortes de una misma foto deben llamarse «foto__1.jpg», «foto__2.jpg»: forman un grupo.
 Todo el grupo va al mismo conjunto. El conjunto de prueba solo se usa al final.
@@ -202,8 +202,13 @@ def main():
     args.salida.mkdir(parents=True, exist_ok=True)
     nombre = ARQUITECTURAS[args.modelo]["nombre"]
 
-    items = listar_imagenes(args.datos.resolve())
-    partes = dividir(items, args.semilla)
+    raiz = args.datos.resolve()
+    if all((raiz / s).is_dir() for s in ("train", "val", "test")):
+        # División ya hecha por preparar_datos.py: se respeta tal cual.
+        partes = {s: listar_imagenes(raiz / s) for s in ("train", "val", "test")}
+        print("Usando la división de", raiz)
+    else:
+        partes = dividir(listar_imagenes(raiz), args.semilla)
     for s, lista in partes.items():
         conteo = Counter(CLASES[e] for _, e, _ in lista)
         print(f"{s:5s}: {len(lista):5d} imágenes  {dict(conteo)}")
@@ -212,7 +217,7 @@ def main():
         w.writerow(["conjunto", "clase", "grupo", "ruta"])
         for s, lista in partes.items():
             for ruta, e, g in lista:
-                w.writerow([s, CLASES[e], g, ruta.relative_to(args.datos.resolve())])
+                w.writerow([s, CLASES[e], g, ruta.relative_to(raiz).as_posix()])
 
     # Pesos de clase: compensan que haya muchos más frutos sanos que con antracnosis.
     n_train = Counter(e for _, e, _ in partes["train"])
