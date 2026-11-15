@@ -12,6 +12,7 @@ export const ADMIN_LINKS = [
   { to: '/admin/textos', label: 'Textos del sitio', icon: 'settings' },
   { to: '/admin/mensajes', label: 'Mensajes', icon: 'inbox' },
   { to: '/admin/usuarios', label: 'Usuarios', icon: 'users' },
+  { to: '/admin/modelo', label: 'Modelo de diagnóstico', icon: 'scan' },
 ];
 
 export function AdminSidebar({ open, onNavigate, onLogout }) {

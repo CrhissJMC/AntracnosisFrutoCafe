@@ -1,0 +1,20 @@
+.mdl { display: flex; flex-direction: column; gap: var(--space-4); }
+.mdl-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
+.mdl-card__head { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+.mdl-card__title { font-family: var(--font-sans); font-size: 1rem; font-weight: 700; }
+.mdl-card code { font-size: 0.85em; background: var(--color-surface-tint); padding: 1px 4px; border-radius: var(--radius-sm); }
+.mdl-service { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+.mdl-service li { display: flex; flex-direction: column; gap: var(--space-1); font-size: var(--text-sm); }
+.mdl-table-wrap { overflow-x: auto; }
+.mdl-table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); font-variant-numeric: tabular-nums; }
+.mdl-table th, .mdl-table td { padding: var(--space-2) var(--space-3); text-align: right; white-space: nowrap; border-bottom: 1px solid var(--color-border); }
+.mdl-table th:first-child, .mdl-table td:first-child { text-align: left; }
+.mdl-table thead th { color: var(--color-text-muted); font-weight: 600; }
+.mdl-table tbody tr:not(.mdl-notes) th, .mdl-table tbody tr:not(.mdl-notes) td { border-bottom: none; }
+.mdl-notes td { text-align: left; white-space: normal; color: var(--color-text-muted); }
+.mdl-notes__edit { display: flex; gap: var(--space-2); align-items: flex-start; }
+.mdl-notes__edit textarea { flex: 1; }
+.mdl-actions { display: flex; gap: var(--space-2); justify-content: flex-end; }
+.mdl-low { color: var(--color-danger-text); font-weight: 600; }
+.mdl-counts { list-style: none; margin: 0; padding: 0; display: flex; gap: var(--space-5); flex-wrap: wrap; font-size: var(--text-sm); color: var(--color-text-muted); }
+.mdl-counts strong { font-size: 1.25rem; color: var(--color-text); margin-right: 4px; }

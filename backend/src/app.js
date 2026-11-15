@@ -17,6 +17,7 @@ import diagnosisRoutes from './routes/diagnosis.js';
 import validationRoutes from './routes/validation.js';
 import historyRoutes from './routes/history.js';
 import dashboardRoutes from './routes/dashboard.js';
+import modelRoutes from './routes/models.js';
 
 export function createApp() {
   const app = express();
@@ -77,6 +78,7 @@ export function createApp() {
   app.use('/api/content', contentRoutes);
   app.use('/api/settings', settingsRoutes);
   app.use('/api/messages', messageRoutes);
+  app.use('/api/admin/modelos', modelRoutes);
   app.use('/api/admin', adminRoutes);
   app.use('/api/traceability', traceabilityRoutes);
   app.use('/api/diagnostico', diagnosisRoutes);

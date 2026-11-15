@@ -18,6 +18,7 @@ import { ContentAdminPage } from './pages/admin/ContentAdminPage.jsx';
 import { SettingsAdminPage } from './pages/admin/SettingsAdminPage.jsx';
 import { MessagesAdminPage } from './pages/admin/MessagesAdminPage.jsx';
 import { UsersAdminPage } from './pages/admin/UsersAdminPage.jsx';
+import { ModelAdminPage } from './pages/admin/ModelAdminPage.jsx';
 import { TraceabilityPage } from './pages/TraceabilityPage.jsx';
 import { DiagnosisPage } from './pages/DiagnosisPage.jsx';
 import { ValidationPage } from './pages/ValidationPage.jsx';
@@ -50,6 +51,7 @@ const ROUTES = [
   ['/admin/textos', SettingsAdminPage],
   ['/admin/mensajes', MessagesAdminPage],
   ['/admin/usuarios', UsersAdminPage],
+  ['/admin/modelo', ModelAdminPage],
 ];
 
 function Routes() {

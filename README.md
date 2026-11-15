@@ -92,7 +92,7 @@ El avance de cada objetivo se actualiza desde el panel y cada cambio queda en la
 | 4.3.4 Validación (Figura 8) | `/validacion` | ✅ |
 | 4.3.4 Historial (Figura 7) | `/historial`: filtros por periodo, clase y validación; exportación en CSV | ✅ |
 | 4.3.4 Tablero (Figura 9) | `/tablero` | ✅ |
-| 4.3.4 Modelo de diagnóstico (Figura 10) | — | ⏳ Pendiente |
+| 4.3.4 Modelo de diagnóstico (Figura 10) | `/admin/modelo`: versiones, métricas, versión activa y ZIP de reentrenamiento | ✅ |
 | 4.3.6 Estructura del repositorio (Tabla 16) | `ml/`, `ml/modelos/` fuera de Git, servicio `ml` en `docker-compose.yml` | ✅ · entrenamiento en `ml/entrenamiento/` |
 | 4.4 Publicación con túnel de Cloudflare | `docker compose --profile tunnel up -d` | ✅ |
 
@@ -289,7 +289,7 @@ Cada nivel solo usa los niveles inferiores (átomos → moléculas → organismo
 
 **Sitio público:** `/`, `/nosotros`, `/metodologia`, `/blog`, `/blog/:slug`, `/diagnostico`, `/historial` (con sesión), `/validacion` (especialista o admin), `/tablero` (propietario, especialista o admin), `/trazabilidad`, `/contacto`, `/login`, `/registro` (`/servicios` redirige a Metodología).
 
-**Panel (solo admin):** `/admin`, `/admin/articulos`, `/admin/articulos/nuevo`, `/admin/articulos/:id`, `/admin/comentarios`, `/admin/trazabilidad`, `/admin/contenido`, `/admin/textos`, `/admin/mensajes`, `/admin/usuarios`
+**Panel (solo admin):** `/admin`, `/admin/articulos`, `/admin/articulos/nuevo`, `/admin/articulos/:id`, `/admin/comentarios`, `/admin/trazabilidad`, `/admin/contenido`, `/admin/textos`, `/admin/mensajes`, `/admin/usuarios`, `/admin/modelo`
 
 ### API REST (`/api`)
 | Método y ruta | Acceso |
@@ -309,6 +309,7 @@ Cada nivel solo usa los niveles inferiores (átomos → moléculas → organismo
 | `GET /validacion/casos` (`estado` = `pendientes`, `validados` o `todos`), `GET /validacion/casos/:id`, `POST /validacion/casos/:id` (`{ clase_confirmada, comentario }`) | especialista o admin |
 | `GET /historial` (`desde`, `hasta`, `clase`, `estado`, `limit`, `offset`), `GET /historial/:id`, `GET /historial/exportar` (CSV con los mismos filtros) | con sesión: cada usuario ve sus capturas; propietario, especialista y admin, todas |
 | `GET /tablero` (`desde`, `hasta`): resumen, incidencia por mes y distribución por clase | propietario, especialista o admin |
+| `GET /admin/modelos`, `PATCH /admin/modelos/:id` (`{ activo: true }` o `{ notas }`), `GET /admin/modelos/reentrenamiento` (ZIP con `sano/`, `antracnosis/` y `manifiesto.csv`) | admin |
 | `GET /health` | público (estado de la API y la base de datos) |
 
 El servicio `ml` expone `GET /health` y `POST /predict` **solo en la red interna** (ver [ml/README.md](ml/README.md)).
@@ -336,7 +337,7 @@ El servicio `ml` expone `GET /health` y `POST /predict` **solo en la red interna
 | Sitio con blog, panel y contenido editable | Revisión de las etiquetas de antracnosis con un especialista |
 | Trazabilidad con SECI y matriz de requisitos | Entrenar EfficientNet-B0 y MobileNetV2 con la GPU de la PC en WSL2 con `ml/entrenamiento/entrenar.py` |
 | Pantalla «Nuevo diagnóstico» con selector y comparación de modelos | Versión v1 de los modelos tras la revisión experta de las etiquetas |
-| Servicio `ml/` con Grad-CAM y dos umbrales (sano, revisar, antracnosis) | Pantalla Modelo de diagnóstico en el panel |
+| Servicio `ml/` con Grad-CAM y dos umbrales (sano, revisar, antracnosis) | Reflejar en el informe (4.3 y Anexo 4) los cambios del módulo |
 | Publicación con Docker y túnel de Cloudflare | Permisos por perfil para productor y propietario |
 | | Pruebas: casos CP01–CP10, rendimiento, usabilidad (SUS) y fotos de campo |
 
@@ -357,6 +358,7 @@ El servicio `ml` expone `GET /health` y `POST /predict` **solo en la red interna
 | 15/11/2026 | Pantalla Validación (`/validacion`) para especialistas y administrador, con historial de validaciones y Grad-CAM de la captura; perfil del módulo asignable desde el panel de usuarios |
 | 15/11/2026 | Pantalla Historial (`/historial`) con filtros por periodo, clase vigente y validación, detalle de cada captura y exportación en CSV; desde el historial se abre el caso en Validación |
 | 15/11/2026 | Tablero de incidencia (`/tablero`) con indicadores, frutos por mes y clase, incidencia mensual, distribución por clase y tabla de datos, filtrable por periodo |
+| 15/11/2026 | Pantalla Modelo de diagnóstico en el panel (`/admin/modelo`): versiones con umbrales y métricas, versión activa por modelo, aviso si el servicio tiene cargada otra versión y descarga en ZIP de las fotos validadas para reentrenar |
 
 ---
 

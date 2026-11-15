@@ -74,7 +74,7 @@ async function saveImage(dataUrl) {
   return { name, file };
 }
 
-async function callMl(path, init = {}, timeoutMs = 3000) {
+export async function callMl(path, init = {}, timeoutMs = 3000) {
   if (!ML_URL) return null;
   try {
     const res = await fetch(`${ML_URL}${path}`, { ...init, signal: AbortSignal.timeout(timeoutMs) });
