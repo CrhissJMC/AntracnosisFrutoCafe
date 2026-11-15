@@ -209,10 +209,17 @@ const ESTADO_ITEMS_V8 = [
   ESTADO_VALIDACION,
 ];
 
-// Versión vigente (15/11/2026): módulo de gestión del conocimiento completo.
-const ESTADO_ITEMS = [
+// v9 (15/11/2026): módulo de gestión del conocimiento completo.
+const ESTADO_ITEMS_V9 = [
   ...ESTADO_ITEMS_V1.slice(0, 4),
   ['estado', 'Módulos de gestión del conocimiento', 'Hecho. Registro de capturas; validación experta con historial de quién validó y con qué perfil; historial de capturas con exportación en CSV; tablero de incidencia por periodo; y, en el panel, el modelo de diagnóstico: versiones con sus métricas, versión activa y descarga de las fotos validadas para reentrenar. Pendiente: reflejar estos cambios en el informe.'],
+  ESTADO_VALIDACION,
+];
+
+// Versión vigente (15/11/2026): revisión general; las fichas del blog aún no se vinculan a cada resultado.
+const ESTADO_ITEMS = [
+  ...ESTADO_ITEMS_V1.slice(0, 4),
+  ['estado', 'Módulos de gestión del conocimiento', 'Casi listo. Hecho: registro de capturas; validación experta con historial de quién validó y con qué perfil; historial de capturas con exportación en CSV; tablero de incidencia por periodo; y, en el panel, el modelo de diagnóstico con sus versiones, la versión activa y la descarga de las fotos validadas para reentrenar. Probado: tiempo de respuesta (menos de 3 s en 60 análisis), permisos por perfil y diseño adaptable. Pendiente: vincular las fichas del blog a cada resultado del diagnóstico y reflejar los cambios en el informe.'],
   ESTADO_VALIDACION,
 ];
 
@@ -518,6 +525,7 @@ export const LEGACY_METHOD_VERSIONS = [
   ESTADO_ITEMS_V6,
   ESTADO_ITEMS_V7,
   ESTADO_ITEMS_V8,
+  ESTADO_ITEMS_V9,
   METHOD_ITEMS_V3.map((i) =>
     i[0] === 'flujo' && i[1] === 'Modelos' ? [i[0], i[1], 'EfficientNet-B0 como modelo principal, MobileNetV2 como alternativa ligera y una CNN sencilla entrenada desde cero como línea base.'] : i,
   ),

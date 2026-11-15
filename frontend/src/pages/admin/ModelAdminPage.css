@@ -5,7 +5,7 @@
 .mdl-card code { font-size: 0.85em; background: var(--color-surface-tint); padding: 1px 4px; border-radius: var(--radius-sm); }
 .mdl-service { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
 .mdl-service li { display: flex; flex-direction: column; gap: var(--space-1); font-size: var(--text-sm); }
-.mdl-table-wrap { overflow-x: auto; }
+.mdl-table-wrap { overflow-x: auto; position: relative; } /* contiene el texto oculto del encabezado */
 .mdl-table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); font-variant-numeric: tabular-nums; }
 .mdl-table th, .mdl-table td { padding: var(--space-2) var(--space-3); text-align: right; white-space: nowrap; border-bottom: 1px solid var(--color-border); }
 .mdl-table th:first-child, .mdl-table td:first-child { text-align: left; }

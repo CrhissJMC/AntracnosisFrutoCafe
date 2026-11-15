@@ -337,7 +337,7 @@ El servicio `ml` expone `GET /health` y `POST /predict` **solo en la red interna
 | Sitio con blog, panel y contenido editable | Revisión de las etiquetas de antracnosis con un especialista |
 | Trazabilidad con SECI y matriz de requisitos | Entrenar EfficientNet-B0 y MobileNetV2 con la GPU de la PC en WSL2 con `ml/entrenamiento/entrenar.py` |
 | Pantalla «Nuevo diagnóstico» con selector y comparación de modelos | Versión v1 de los modelos tras la revisión experta de las etiquetas |
-| Servicio `ml/` con Grad-CAM y dos umbrales (sano, revisar, antracnosis) | Reflejar en el informe (4.3 y Anexo 4) los cambios del módulo |
+| Servicio `ml/` con Grad-CAM y dos umbrales (sano, revisar, antracnosis) | Vincular las fichas del blog a cada resultado (RF07) y reflejar en el informe (4.3 y Anexo 4) los cambios del módulo |
 | Publicación con Docker y túnel de Cloudflare | Permisos por perfil para productor y propietario |
 | | Pruebas: casos CP01–CP10, rendimiento, usabilidad (SUS) y fotos de campo |
 

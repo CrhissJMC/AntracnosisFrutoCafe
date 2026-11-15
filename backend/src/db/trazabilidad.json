@@ -1,5 +1,5 @@
 {
-  "exported_at": "2026-11-15T22:52:34.859Z",
+  "exported_at": "2026-11-15T23:05:08.249Z",
   "objectives": [
     {
       "code": 1,
@@ -15,11 +15,11 @@
     },
     {
       "code": 4,
-      "progress": 95
+      "progress": 90
     },
     {
       "code": 5,
-      "progress": 15
+      "progress": 25
     }
   ],
   "requirements": [
@@ -49,7 +49,7 @@
     },
     {
       "code": "RF07",
-      "status": "implementado"
+      "status": "disenado"
     },
     {
       "code": "RF08",
@@ -69,11 +69,11 @@
     },
     {
       "code": "RNF02",
-      "status": "implementado"
+      "status": "probado"
     },
     {
       "code": "RNF03",
-      "status": "implementado"
+      "status": "probado"
     },
     {
       "code": "RNF04",
@@ -85,7 +85,7 @@
     },
     {
       "code": "RNF06",
-      "status": "implementado"
+      "status": "probado"
     },
     {
       "code": "RNF07",
@@ -93,11 +93,11 @@
     },
     {
       "code": "RNF08",
-      "status": "implementado"
+      "status": "probado"
     },
     {
       "code": "RNF09",
-      "status": "implementado"
+      "status": "probado"
     }
   ],
   "log": [
@@ -424,6 +424,78 @@
       "seci_phase": null,
       "author_name": "Administrador",
       "created_at": "2026-11-15T22:52:34.269Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RF07 · Base de conocimiento: Implementado → Diseñado. Revisión: el blog con comentarios funciona (consultar y comentar fichas), pero las fichas de manejo todavía no están vinculadas a cada resultado del diagnóstico; la columna clase_relacionada existe en la base de datos y falta usarla en el panel y en el resultado.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T23:05:07.679Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RNF02 · Tiempo de respuesta: Implementado → Probado. Prueba de rendimiento con 30 imágenes del conjunto de prueba por modelo, por la ruta completa del sitio (API, servicio y registro) con Grad-CAM, en CPU: EfficientNet-B0 mediana 0,61 s y máximo 1,57 s; MobileNetV2 mediana 0,34 s y máximo 0,39 s. Ninguna supera 3 s.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T23:05:07.692Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RNF03 · Ejecución local: Implementado → Probado. El sistema corre en contenedores Docker en la PC del equipo y la versión v0 se entrenó con su GPU RTX 4060 (Docker con TensorFlow y cuDNN), sin servicios de nube pagados.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T23:05:07.704Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RNF06 · Seguridad: Implementado → Probado. Pruebas automáticas de permisos por rol y perfil: validación (17 casos), historial (19), tablero (perfiles sin acceso reciben 403) y panel del modelo (403 para no administradores); la base de datos rechaza validaciones de perfiles no autorizados.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T23:05:07.713Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RNF08 · Trazabilidad del diagnóstico: Implementado → Probado. Comprobado en la base de datos: cada diagnóstico queda ligado a la versión del modelo que lo generó; una versión nueva se registra sola con su primer diagnóstico.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T23:05:07.723Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RNF09 · Diseño adaptable: Implementado → Probado. Prueba en 360, 768 y 1280 px de 15 páginas (sitio público, módulo y panel): ninguna con desplazamiento horizontal; se corrigió la tabla del panel del modelo, que desbordaba.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T23:05:07.732Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": 95,
+      "new_progress": 90,
+      "note": "Revisión general: los cinco módulos están implementados, pero RF07 queda incompleto (las fichas del blog no están vinculadas a cada resultado del diagnóstico). Falta también reflejar los cambios del módulo en el informe.",
+      "seci_phase": "externalizacion",
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T23:05:07.742Z"
+    },
+    {
+      "objective_code": 5,
+      "previous_progress": 15,
+      "new_progress": 25,
+      "note": "Pruebas no funcionales ejecutadas: rendimiento (60 análisis, todos por debajo de 3 s), diseño adaptable (15 páginas en 360, 768 y 1280 px), permisos por rol y perfil, y trazabilidad del diagnóstico. Falta: casos de prueba CP01–CP10, prueba con fotos de la finca (o la alternativa: conjunto de prueba y SUS con compañeros) y la evaluación de la versión v1.",
+      "seci_phase": "externalizacion",
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T23:05:07.750Z"
     }
   ]
 }
