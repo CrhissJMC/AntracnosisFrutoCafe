@@ -1,5 +1,5 @@
 {
-  "exported_at": "2026-11-15T21:20:53.657Z",
+  "exported_at": "2026-11-15T22:37:05.630Z",
   "objectives": [
     {
       "code": 1,
@@ -15,7 +15,7 @@
     },
     {
       "code": 4,
-      "progress": 65
+      "progress": 75
     },
     {
       "code": 5,
@@ -370,6 +370,24 @@
       "seci_phase": null,
       "author_name": "Administrador",
       "created_at": "2026-11-15T21:20:53.146Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": 65,
+      "new_progress": 75,
+      "note": "Fase 3: pantalla Historial (/historial). Lista de capturas con foto, fecha, autor, resultado del modelo y validación vigente; filtros por periodo, clase vigente y estado de validación; detalle con Grad-CAM e historial de validaciones; exportación en CSV para Excel. Cada usuario ve sus capturas; el propietario, el especialista y el administrador ven todas. Desde el historial se abre el caso en Validación. Se probaron 19 casos de permisos, filtros y CSV. Falta: tablero de incidencia.",
+      "seci_phase": "combinacion",
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T22:37:05.106Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RF05 · Registro de capturas: se completa con la pantalla Historial (filtros, detalle y exportación en CSV).",
+      "seci_phase": "combinacion",
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T22:37:05.126Z"
     }
   ]
 }

@@ -25,10 +25,16 @@ export const validationLabel = (id) => VALIDATION_CLASSES.find((c) => c.id === i
 export const validatorLabel = (perfil) => (perfil === 'admin' ? 'Administrador' : 'Especialista');
 
 export const MODEL_NAMES = { efficientnet_b0: 'EfficientNet-B0', mobilenet_v2: 'MobileNetV2' };
+export const classTone = (c) => (c === 'antracnosis' ? 'brand' : c === 'sano' ? 'success' : 'warning');
+export const captureImageUrl = (id) => `/api/diagnostico/capturas/${id}/imagen`;
+
+/** Historial: el propietario, el especialista y el administrador ven todas las capturas; el resto, las suyas. */
+export const seesAllCaptures = (user) => Boolean(user && (user.role === 'admin' || ['propietario', 'especialista'].includes(user.perfil)));
 
 /** Pestañas del módulo; cada usuario ve solo las de su perfil. */
 export function moduleTabs(user) {
   const tabs = [{ to: '/diagnostico', label: 'Nuevo diagnóstico', icon: 'scan' }];
+  if (user) tabs.push({ to: '/historial', label: 'Historial', icon: 'clock' });
   if (canValidate(user)) tabs.push({ to: '/validacion', label: 'Validación', icon: 'check' });
   return tabs;
 }

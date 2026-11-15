@@ -1,3 +1,4 @@
+import { seesAllCaptures } from './capturas.js';
 import { HttpError } from './http.js';
 
 /**
@@ -20,5 +21,5 @@ export function requireValidator(req, res, next) {
   next();
 }
 
-/** Puede ver la foto de una captura: quien la tomó o quien puede validarla. */
-export const canSeeCapture = (user, capture) => Boolean(user && (capture.autor_id === user.id || validatorProfile(user)));
+/** Puede ver una captura: quien la tomó, o el propietario, el especialista y el administrador. */
+export const canSeeCapture = (user, capture) => Boolean(user && (capture.autor_id === user.id || seesAllCaptures(user)));

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { query } from '../db/pool.js';
 import { asyncHandler, HttpError, notFound, parseId } from '../lib/http.js';
+import { captureDetail } from '../lib/capturas.js';
 import { requireValidator, validatorProfile } from '../lib/modulo.js';
 
 // Validación experta (RF06): solo especialistas y el administrador.
@@ -54,39 +55,11 @@ router.get(
   }),
 );
 
-async function caseDetail(id) {
-  const { rows } = await query(
-    `SELECT c.id, c.tomada_en, c.latitud, c.longitud, u.name AS autor,
-            f.resultado, f.clase_final, f.validado
-       FROM capturas c
-       JOIN v_diagnostico_final f ON f.captura_id = c.id
-       LEFT JOIN users u ON u.id = c.autor_id
-      WHERE c.id = $1`,
-    [id],
-  );
-  if (!rows[0]) throw notFound('Caso');
-  const [diagnoses, history] = await Promise.all([
-    query(
-      `SELECT d.id, m.modelo, m.version, d.prob_antracnosis, d.resultado, d.tiempo_ms,
-              m.umbral_inferior, m.umbral_superior
-         FROM diagnosticos d JOIN modelo_versiones m ON m.id = d.modelo_id
-        WHERE d.captura_id = $1 ORDER BY d.id`,
-      [id],
-    ),
-    query(
-      `SELECT id, clase_confirmada, comentario, perfil_validador, validador_nombre, created_at
-         FROM validaciones WHERE captura_id = $1 ORDER BY created_at DESC, id DESC`,
-      [id],
-    ),
-  ]);
-  return { ...rows[0], diagnosticos: diagnoses.rows, historial: history.rows };
-}
-
 // GET /api/validacion/casos/:id — detalle: diagnósticos de cada modelo e historial de validaciones
 router.get(
   '/casos/:id',
   asyncHandler(async (req, res) => {
-    res.json({ caso: await caseDetail(parseId(req.params.id, 'Caso')) });
+    res.json({ caso: await captureDetail(parseId(req.params.id, 'Caso')) });
   }),
 );
 
@@ -110,7 +83,7 @@ router.post(
       if (err.code === '23514') throw new HttpError(403, err.message);
       throw err;
     }
-    res.status(201).json({ caso: await caseDetail(id) });
+    res.status(201).json({ caso: await captureDetail(id) });
   }),
 );
 

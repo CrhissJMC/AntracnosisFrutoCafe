@@ -32,15 +32,8 @@
 .vx-item__meta { font-size: var(--text-xs); color: var(--color-text-muted); }
 .vx-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
 
-/* Detalle */
+/* Detalle (la foto, los modelos y el historial están en CaptureView.css) */
 .vx-case { display: flex; flex-direction: column; gap: var(--space-5); }
-.vx-case__head { display: flex; justify-content: space-between; gap: var(--space-3); align-items: flex-start; flex-wrap: wrap; }
-.vx-case__title { font-weight: 700; font-size: var(--text-lg); }
-.vx-case__images { display: grid; gap: var(--space-3); grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
-.vx-models { display: grid; gap: var(--space-3); grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
-.vx-model { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius); }
-.vx-model__head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-2); }
-.vx-error { color: var(--color-danger-text); }
 
 /* Formulario */
 .vx-form { display: flex; flex-direction: column; gap: var(--space-3); padding-top: var(--space-4); border-top: 1px solid var(--color-border); }
@@ -53,10 +46,3 @@
 .vx-choice.is-checked { border-color: var(--color-forest-700); background: var(--color-surface-tint); }
 .vx-choice input { accent-color: var(--color-forest-700); }
 
-/* Historial */
-.vx-history { display: flex; flex-direction: column; gap: var(--space-3); padding-top: var(--space-4); border-top: 1px solid var(--color-border); }
-.vx-history__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
-.vx-history__item { padding-left: var(--space-3); border-left: 3px solid var(--color-border); display: flex; flex-direction: column; gap: 2px; }
-.vx-history__item:first-child { border-left-color: var(--color-forest-700); }
-.vx-history__line { display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap; }
-.vx-history__comment { font-size: var(--text-sm); margin-top: var(--space-1); }

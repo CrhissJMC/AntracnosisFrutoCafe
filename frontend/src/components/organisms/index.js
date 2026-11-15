@@ -30,3 +30,4 @@ export { DiagnosisResult } from './DiagnosisResult.jsx';
 export { ImageCapture } from './ImageCapture.jsx';
 export { COMPARE, ModelPicker } from './ModelPicker.jsx';
 export { ModuleTabs } from './ModuleTabs.jsx';
+export { CaptureView, ValidationHistory } from './CaptureView.jsx';

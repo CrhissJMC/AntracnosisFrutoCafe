@@ -48,6 +48,7 @@ El repositorio contiene el sitio del proyecto (React + Node.js + PostgreSQL), el
 - **Administrador:** gestiona artículos, comentarios, contenido de las páginas, textos del sitio, mensajes, usuarios y la **trazabilidad** (avance de objetivos, notas de bitácora y estado de cada requisito).
 - **Usuario registrado:** comenta en el blog, borra sus propios comentarios y **usa el diagnóstico** (cada análisis queda registrado).
 - **Especialista** (perfil del módulo, lo asigna el administrador en `/admin/usuarios`): **valida los diagnósticos** en `/validacion`. El administrador también puede validar; cada validación guarda quién la hizo y con qué perfil.
+- **Historial** (`/historial`): cada usuario ve sus capturas; el propietario, el especialista y el administrador ven todas. Se filtra por periodo, clase vigente y validación, y se exporta en CSV (separado por «;» para Excel).
 
 Todo el contenido vive en la base de datos y se edita desde el panel (`/admin`), sin tocar el código.
 
@@ -88,7 +89,8 @@ El avance de cada objetivo se actualiza desde el panel y cada cambio queda en la
 | 4.2.3 Modelo de datos (Anexo 5) | Tablas del sitio, de trazabilidad, de requisitos y del módulo de diagnóstico (sección 7) | ✅ |
 | 4.3.4 Pantalla «Nuevo diagnóstico» (Figura 6) | `/diagnostico` | ✅ |
 | 4.3.4 Validación (Figura 8) | `/validacion` | ✅ |
-| 4.3.4 Historial, Tablero y Modelo (Figuras 7, 9 y 10) | — | ⏳ Pendiente |
+| 4.3.4 Historial (Figura 7) | `/historial`: filtros por periodo, clase y validación; exportación en CSV | ✅ |
+| 4.3.4 Tablero y Modelo (Figuras 9 y 10) | — | ⏳ Pendiente |
 | 4.3.6 Estructura del repositorio (Tabla 16) | `ml/`, `ml/modelos/` fuera de Git, servicio `ml` en `docker-compose.yml` | ✅ · entrenamiento en `ml/entrenamiento/` |
 | 4.4 Publicación con túnel de Cloudflare | `docker compose --profile tunnel up -d` | ✅ |
 
@@ -283,7 +285,7 @@ Cada nivel solo usa los niveles inferiores (átomos → moléculas → organismo
 
 ## 9. Rutas y API
 
-**Sitio público:** `/`, `/nosotros`, `/metodologia`, `/blog`, `/blog/:slug`, `/diagnostico`, `/validacion` (especialista o admin), `/trazabilidad`, `/contacto`, `/login`, `/registro` (`/servicios` redirige a Metodología).
+**Sitio público:** `/`, `/nosotros`, `/metodologia`, `/blog`, `/blog/:slug`, `/diagnostico`, `/historial` (con sesión), `/validacion` (especialista o admin), `/trazabilidad`, `/contacto`, `/login`, `/registro` (`/servicios` redirige a Metodología).
 
 **Panel (solo admin):** `/admin`, `/admin/articulos`, `/admin/articulos/nuevo`, `/admin/articulos/:id`, `/admin/comentarios`, `/admin/trazabilidad`, `/admin/contenido`, `/admin/textos`, `/admin/mensajes`, `/admin/usuarios`
 
@@ -303,6 +305,7 @@ Cada nivel solo usa los niveles inferiores (átomos → moléculas → organismo
 | `POST /diagnostico/analizar` (`{ image, model, latitud?, longitud? }`, con `model` = `efficientnet_b0`, `mobilenet_v2` o `ambos`): analiza y registra la captura | usuario registrado |
 | `GET /diagnostico/capturas/:id/imagen`, `POST /diagnostico/capturas/:id/gradcam` | autor de la captura, especialista o admin |
 | `GET /validacion/casos` (`estado` = `pendientes`, `validados` o `todos`), `GET /validacion/casos/:id`, `POST /validacion/casos/:id` (`{ clase_confirmada, comentario }`) | especialista o admin |
+| `GET /historial` (`desde`, `hasta`, `clase`, `estado`, `limit`, `offset`), `GET /historial/:id`, `GET /historial/exportar` (CSV con los mismos filtros) | con sesión: cada usuario ve sus capturas; propietario, especialista y admin, todas |
 | `GET /health` | público (estado de la API y la base de datos) |
 
 El servicio `ml` expone `GET /health` y `POST /predict` **solo en la red interna** (ver [ml/README.md](ml/README.md)).
@@ -316,7 +319,7 @@ El servicio `ml` expone `GET /health` y `POST /predict` **solo en la red interna
 - Todas las entradas se validan en el servidor y se rechazan los campos desconocidos.
 - Límites de intentos en login y registro, comentarios, contacto y análisis de imágenes. El formulario de contacto tiene además un campo trampa contra bots.
 - El contenido se dibuja sin `innerHTML`, y los enlaces y las imágenes de los textos del sitio solo aceptan `http(s)`, lo que evita XSS.
-- Las fotos del diagnóstico solo se aceptan como JPG o PNG de hasta 8 MB, sin metadatos. Se guardan en el volumen `capturas-data` (no en Git) y solo las ven quien tomó la foto, los especialistas y el administrador.
+- Las fotos del diagnóstico solo se aceptan como JPG o PNG de hasta 8 MB, sin metadatos. Se guardan en el volumen `capturas-data` (no en Git) y solo las ven quien tomó la foto, el propietario, los especialistas y el administrador.
 - Un administrador no puede quitarse su propio rol ni borrar su propia cuenta.
 - `.env` (credenciales) y las fotos de las capturas están excluidos de Git.
 - Solo los especialistas y el administrador validan, y solo el administrador asigna perfiles. La base de datos lo vuelve a comprobar con un disparador y no permite editar una validación.
@@ -330,7 +333,7 @@ El servicio `ml` expone `GET /health` y `POST /predict` **solo en la red interna
 | Sitio con blog, panel y contenido editable | Revisión de las etiquetas de antracnosis con un especialista |
 | Trazabilidad con SECI y matriz de requisitos | Entrenar EfficientNet-B0 y MobileNetV2 con la GPU de la PC en WSL2 con `ml/entrenamiento/entrenar.py` |
 | Pantalla «Nuevo diagnóstico» con selector y comparación de modelos | Versión v1 de los modelos tras la revisión experta de las etiquetas |
-| Servicio `ml/` con Grad-CAM y dos umbrales (sano, revisar, antracnosis) | Pantallas Historial, Tablero y Modelo |
+| Servicio `ml/` con Grad-CAM y dos umbrales (sano, revisar, antracnosis) | Pantallas Tablero y Modelo |
 | Publicación con Docker y túnel de Cloudflare | Permisos por perfil para productor y propietario |
 | | Pruebas: casos CP01–CP10, rendimiento, usabilidad (SUS) y fotos de campo |
 
@@ -349,6 +352,7 @@ El servicio `ml` expone `GET /health` y `POST /predict` **solo en la red interna
 | 15/11/2026 | Los modelos v0, el conjunto de datos preparado (`datos/`) y el avance de Trazabilidad se versionan: quien clona el repositorio tiene el mismo sistema |
 | 15/11/2026 | Base de datos del módulo de diagnóstico y registro de capturas: cada análisis guarda la foto, la fecha, el autor, el resultado, la versión del modelo y, si se autoriza, la ubicación; validaciones con historial y control de perfiles en la base de datos |
 | 15/11/2026 | Pantalla Validación (`/validacion`) para especialistas y administrador, con historial de validaciones y Grad-CAM de la captura; perfil del módulo asignable desde el panel de usuarios |
+| 15/11/2026 | Pantalla Historial (`/historial`) con filtros por periodo, clase vigente y validación, detalle de cada captura y exportación en CSV; desde el historial se abre el caso en Validación |
 
 ---
 

@@ -1,0 +1,6 @@
+.hx { display: flex; flex-direction: column; gap: var(--space-4); }
+.hx-filters { display: grid; gap: var(--space-3); grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); align-items: end; }
+.hx-field { display: flex; flex-direction: column; gap: var(--space-1); font-size: var(--text-sm); font-weight: 600; }
+.hx-filters__actions { display: flex; gap: var(--space-2); flex-wrap: wrap; grid-column: 1 / -1; }
+.hx-error { color: var(--color-danger-text); grid-column: 1 / -1; }
+.hx-summary { color: var(--color-text-muted); }
