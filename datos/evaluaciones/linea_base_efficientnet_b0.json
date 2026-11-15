@@ -1,0 +1,82 @@
+{
+  "modelo": "efficientnet_b0",
+  "version": "sin-entrenar",
+  "fecha": "2026-11-15T19:11:28",
+  "umbrales": {
+    "inferior": 0.35,
+    "superior": 0.65
+  },
+  "conjuntos": {
+    "train": {
+      "n": 2703,
+      "auc": 0.3122,
+      "perdida_logaritmica": 0.7951,
+      "matriz_confusion": {
+        "VP": 22,
+        "FP": 221,
+        "FN": 531,
+        "VN": 1929
+      },
+      "recall_antracnosis": 0.0398,
+      "precision_antracnosis": 0.0905,
+      "f1_antracnosis": 0.0553,
+      "exactitud": 0.7218,
+      "porcentaje_revisar": 89.27,
+      "antracnosis_dadas_por_sanas": 17,
+      "cumple_RNF01": false,
+      "probabilidad_media": {
+        "sano": 0.5454,
+        "antracnosis": 0.4837
+      }
+    },
+    "val": {
+      "n": 569,
+      "auc": 0.2484,
+      "perdida_logaritmica": 0.8145,
+      "matriz_confusion": {
+        "VP": 1,
+        "FP": 57,
+        "FN": 107,
+        "VN": 404
+      },
+      "recall_antracnosis": 0.0093,
+      "precision_antracnosis": 0.0172,
+      "f1_antracnosis": 0.012,
+      "exactitud": 0.7118,
+      "porcentaje_revisar": 88.4,
+      "antracnosis_dadas_por_sanas": 5,
+      "cumple_RNF01": false,
+      "probabilidad_media": {
+        "sano": 0.5533,
+        "antracnosis": 0.4723
+      }
+    },
+    "test": {
+      "n": 568,
+      "auc": 0.2316,
+      "perdida_logaritmica": 0.8081,
+      "matriz_confusion": {
+        "VP": 2,
+        "FP": 52,
+        "FN": 105,
+        "VN": 409
+      },
+      "recall_antracnosis": 0.0187,
+      "precision_antracnosis": 0.037,
+      "f1_antracnosis": 0.0248,
+      "exactitud": 0.7236,
+      "porcentaje_revisar": 89.26,
+      "antracnosis_dadas_por_sanas": 4,
+      "cumple_RNF01": false,
+      "probabilidad_media": {
+        "sano": 0.5483,
+        "antracnosis": 0.4629
+      }
+    }
+  },
+  "brecha_train_test": {
+    "auc": 0.0806,
+    "recall_antracnosis": 0.0211,
+    "f1_antracnosis": 0.0305
+  }
+}

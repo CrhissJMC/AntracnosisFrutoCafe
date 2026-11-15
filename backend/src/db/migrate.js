@@ -157,6 +157,34 @@ async function seed(client) {
     await client.query('UPDATE requirements SET description = $3, updated_at = now() WHERE code = $1 AND description = $2', [code, previous, description]);
   }
 
+  // Trazabilidad versionada (src/db/trazabilidad.json, generada con export-traceability.js):
+  // solo en una base nueva, con la bitácora vacía, para que quien clona vea el mismo avance.
+  const { rows: anyLog } = await client.query('SELECT 1 FROM progress_log LIMIT 1');
+  if (anyLog.length === 0) {
+    let snapshot = null;
+    try {
+      snapshot = JSON.parse(await readFile(new URL('./trazabilidad.json', import.meta.url), 'utf8'));
+    } catch {
+      // sin archivo: se queda con los valores iniciales
+    }
+    if (snapshot) {
+      for (const o of snapshot.objectives) {
+        await client.query('UPDATE objectives SET progress = $2, updated_at = now() WHERE code = $1', [o.code, o.progress]);
+      }
+      for (const r of snapshot.requirements) {
+        await client.query('UPDATE requirements SET status = $2, updated_at = now() WHERE code = $1', [r.code, r.status]);
+      }
+      for (const l of snapshot.log) {
+        await client.query(
+          `INSERT INTO progress_log (objective_id, previous_progress, new_progress, note, seci_phase, author_name, created_at)
+           VALUES ((SELECT id FROM objectives WHERE code = $1), $2, $3, $4, $5, $6, $7)`,
+          [l.objective_code, l.previous_progress, l.new_progress, l.note, l.seci_phase, l.author_name, l.created_at],
+        );
+      }
+      log('seed_traceability', { objectives: snapshot.objectives.length, log: snapshot.log.length });
+    }
+  }
+
   // Sincroniza el tiempo de lectura con el contenido real de cada artículo.
   const { rows: articles } = await client.query('SELECT id, content, read_minutes FROM articles');
   let synced = 0;

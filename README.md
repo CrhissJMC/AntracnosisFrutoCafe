@@ -161,9 +161,9 @@ Analizar requiere iniciar sesión.
 ### El servicio de los modelos (`ml/`)
 - Python 3.11 + FastAPI + TensorFlow (CPU). Solo lo llama la API del sitio por la red interna de Docker; **no se expone a internet**.
 - Se enciende con `docker compose --profile ml up -d --build`. Sin él, la página avisa que el servicio no está activo.
-- **Agregar los modelos entrenados:** copiar `efficientnet_b0.keras` y `mobilenet_v2.keras` en `ml/modelos/`. Se cargan solos en el primer análisis, sin reiniciar nada. Mientras no existan, la página indica «Aún no entrenado».
+- **Modelos:** `ml/modelos/` ya trae EfficientNet-B0 y MobileNetV2 en su versión preliminar `v0-preliminar` (ver [ml/README.md](ml/README.md)). Al reemplazar un `.keras` por otro entrenado, se carga solo en el siguiente análisis, sin reiniciar nada.
 - Configuración opcional por modelo (`<modelo>.json`): versión, orden de clases, preprocesamiento, **umbrales inferior y superior** sobre la probabilidad de antracnosis (sano, revisar o antracnosis; RNF01 y RNF05) y capa de Grad-CAM. El modelo puede terminar en una neurona sigmoide o en una softmax con las clases sano y antracnosis.
-- Los archivos `.keras` **no se suben a Git**.
+- Los modelos y el conjunto de datos preparado (`datos/`) se versionan en Git para que quien clone tenga el mismo sistema.
 
 La guía completa, con un ejemplo de exportación del modelo, está en **[ml/README.md](ml/README.md)**.
 
@@ -326,6 +326,7 @@ El servicio `ml` expone `GET /health` y `POST /predict` **solo en la red interna
 | 15/11/2026 | Preparación de datos con `ml/entrenamiento/preparar_datos.py`: recorte de un fruto por imagen, etiquetas sano y antracnosis, limpieza de frutos pequeños, borrosos y duplicados, balance de clases y división 70/15/15 por grupo |
 | 15/11/2026 | Evaluación de los modelos con `ml/entrenamiento/evaluar.py` (AUC, pérdida, recall, precisión, F1 y brecha entre entrenamiento y prueba) y línea base de las dos redes sin entrenar |
 | 15/11/2026 | Versión preliminar v0 de EfficientNet-B0 y MobileNetV2 entrenada con la GPU (AUC 0,96 en prueba); Metodología con las secciones «Qué estamos haciendo ahora» y «Limitaciones» |
+| 15/11/2026 | Los modelos v0, el conjunto de datos preparado (`datos/`) y el avance de Trazabilidad se versionan: quien clona el repositorio tiene el mismo sistema |
 
 ---
 

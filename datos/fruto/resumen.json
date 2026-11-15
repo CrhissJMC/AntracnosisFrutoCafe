@@ -1,0 +1,84 @@
+{
+  "parametros": {
+    "datasets": "/datasets",
+    "salida": "/salida",
+    "min_lado": 40,
+    "min_nitidez": 15,
+    "dist_duplicado": 12,
+    "max_sano_por_antracnosis": 4,
+    "semilla": 42
+  },
+  "descartes": {
+    "fruto pequeño": 2750,
+    "borrosa": 718,
+    "duplicado": 13,
+    "duplicado de otro grupo": 531,
+    "balance de clases": 8382
+  },
+  "pasos": {
+    "1_anotados": {
+      "coffee_berry/sano": 82,
+      "coffee_berry/antracnosis": 559,
+      "coffee_cherry/sano": 14432,
+      "coffee_cherry/antracnosis": 218,
+      "zenodo/sano": 943
+    },
+    "2_tras_limpieza": {
+      "coffee_berry/antracnosis": 559,
+      "coffee_cherry/antracnosis": 209,
+      "coffee_berry/sano": 82,
+      "coffee_cherry/sano": 10958,
+      "zenodo/sano": 414
+    },
+    "3_tras_balance": {
+      "coffee_berry/antracnosis": 559,
+      "coffee_cherry/antracnosis": 209,
+      "coffee_berry/sano": 82,
+      "coffee_cherry/sano": 2576,
+      "zenodo/sano": 414
+    }
+  },
+  "por_conjunto_y_clase": {
+    "train": {
+      "sano": 2150,
+      "antracnosis": 553
+    },
+    "val": {
+      "antracnosis": 108,
+      "sano": 461
+    },
+    "test": {
+      "antracnosis": 107,
+      "sano": 461
+    }
+  },
+  "por_conjunto_y_fuente": {
+    "train": {
+      "coffee_berry/sano": 58,
+      "coffee_berry/antracnosis": 391,
+      "coffee_cherry/sano": 1802,
+      "coffee_cherry/antracnosis": 162,
+      "zenodo/sano": 290
+    },
+    "val": {
+      "coffee_berry/antracnosis": 84,
+      "coffee_berry/sano": 12,
+      "coffee_cherry/sano": 387,
+      "coffee_cherry/antracnosis": 24,
+      "zenodo/sano": 62
+    },
+    "test": {
+      "coffee_berry/antracnosis": 84,
+      "coffee_berry/sano": 12,
+      "coffee_cherry/sano": 387,
+      "coffee_cherry/antracnosis": 23,
+      "zenodo/sano": 62
+    }
+  },
+  "grupos_por_conjunto": {
+    "train": 1326,
+    "val": 287,
+    "test": 297
+  },
+  "total": 3840
+}

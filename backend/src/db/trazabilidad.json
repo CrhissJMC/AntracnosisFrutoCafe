@@ -1,0 +1,294 @@
+{
+  "exported_at": "2026-11-15T20:05:00.007Z",
+  "objectives": [
+    {
+      "code": 1,
+      "progress": 85
+    },
+    {
+      "code": 2,
+      "progress": 60
+    },
+    {
+      "code": 3,
+      "progress": 35
+    },
+    {
+      "code": 4,
+      "progress": 40
+    },
+    {
+      "code": 5,
+      "progress": 15
+    }
+  ],
+  "requirements": [
+    {
+      "code": "RF01",
+      "status": "implementado"
+    },
+    {
+      "code": "RF02",
+      "status": "implementado"
+    },
+    {
+      "code": "RF03",
+      "status": "probado"
+    },
+    {
+      "code": "RF04",
+      "status": "implementado"
+    },
+    {
+      "code": "RF05",
+      "status": "disenado"
+    },
+    {
+      "code": "RF06",
+      "status": "disenado"
+    },
+    {
+      "code": "RF07",
+      "status": "implementado"
+    },
+    {
+      "code": "RF08",
+      "status": "disenado"
+    },
+    {
+      "code": "RF09",
+      "status": "disenado"
+    },
+    {
+      "code": "RF10",
+      "status": "disenado"
+    },
+    {
+      "code": "RNF01",
+      "status": "implementado"
+    },
+    {
+      "code": "RNF02",
+      "status": "implementado"
+    },
+    {
+      "code": "RNF03",
+      "status": "implementado"
+    },
+    {
+      "code": "RNF04",
+      "status": "disenado"
+    },
+    {
+      "code": "RNF05",
+      "status": "implementado"
+    },
+    {
+      "code": "RNF06",
+      "status": "implementado"
+    },
+    {
+      "code": "RNF07",
+      "status": "implementado"
+    },
+    {
+      "code": "RNF08",
+      "status": "disenado"
+    },
+    {
+      "code": "RNF09",
+      "status": "implementado"
+    }
+  ],
+  "log": [
+    {
+      "objective_code": 1,
+      "previous_progress": 0,
+      "new_progress": 85,
+      "note": "Búsqueda de 37 conjuntos públicos (Excel de datasets). Descarga de Coffee berry disease y coffee cherry 20251206 (Roboflow) y Cherry Coffe Bean (Zenodo), todas CC BY 4.0. preparar_datos.py recorta un fruto por imagen, unifica etiquetas en sano y antracnosis, descarta pequeños, borrosos y duplicados, equilibra clases y divide 70/15/15 por grupo: 3 840 imágenes (768 antracnosis, 3 072 sano). Falta: revisión de las etiquetas de antracnosis con un especialista.",
+      "seci_phase": "combinacion",
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T19:07:00.049Z"
+    },
+    {
+      "objective_code": 2,
+      "previous_progress": 0,
+      "new_progress": 30,
+      "note": "EfficientNet-B0 y MobileNetV2 definidas con transferencia de aprendizaje (ml/entrenamiento/modelos.py) y entrenar.py listo (dos fases, pesos de clase, aumento de datos). Redes sin entrenar exportadas y probadas de punta a punta con el servicio ml (/predict y Grad-CAM). Prueba corta del entrenamiento en CPU. Falta: entrenar ambas redes con la GPU.",
+      "seci_phase": "externalizacion",
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T19:07:00.064Z"
+    },
+    {
+      "objective_code": 3,
+      "previous_progress": 0,
+      "new_progress": 20,
+      "note": "entrenar.py elige los umbrales con validación: el superior mantiene recall ≥ 85 % en antracnosis y el inferior deja como sano como máximo el 2 % de los enfermos; pesos de clase contra el desbalance. Falta: ajustar hiperparámetros y alcanzar la meta con los modelos entrenados.",
+      "seci_phase": "externalizacion",
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T19:07:00.073Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": 0,
+      "new_progress": 40,
+      "note": "Implementados: blog con comentarios (base de conocimiento), pantalla Nuevo diagnóstico con semáforo, Grad-CAM y recomendación, y Trazabilidad con bitácora SECI y matriz de requisitos. Falta: registro de capturas, historial, validación experta, tablero de incidencia y perfiles del módulo.",
+      "seci_phase": "combinacion",
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T19:07:00.080Z"
+    },
+    {
+      "objective_code": 5,
+      "previous_progress": 0,
+      "new_progress": 5,
+      "note": "entrenar.py calcula matriz de confusión, recall, precisión, F1 y porcentaje de casos revisar en el conjunto de prueba. Falta: evaluar los modelos entrenados, la prueba con fotos de la finca, los casos CP01–CP10 y la encuesta SUS.",
+      "seci_phase": "externalizacion",
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T19:07:00.087Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RF01 · Ingesta de imagen del fruto: Diseñado → Implementado. Pantalla /diagnostico: tomar o subir la foto (se reduce a 1024 px y se quitan los metadatos).",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T19:07:00.094Z"
+    },
+    {
+      "objective_code": 2,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RF02 · Preprocesamiento: Diseñado → Implementado. ml/app.py recorta al centro y redimensiona a 224 px; cada red trae su normalización dentro del modelo.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T19:07:00.103Z"
+    },
+    {
+      "objective_code": 2,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RF03 · Clasificación con CNN: Diseñado → Implementado. Las dos redes están definidas y responden en el servicio ml con los dos umbrales; aún sin entrenar.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T19:07:00.112Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RF04 · Diagnóstico visual inmediato: Diseñado → Implementado. Resultado con semáforo, probabilidad, umbrales, Grad-CAM y recomendación de manejo.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T19:07:00.119Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RF07 · Base de conocimiento: Diseñado → Implementado. Blog con artículos y comentarios de usuarios registrados.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T19:07:00.127Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RNF02 · Tiempo de respuesta: Pendiente → Implementado. Medido en el servicio ml (CPU): 0,3 s MobileNetV2 y 0,7 s EfficientNet-B0 por foto, con Grad-CAM. Falta medirlo desde la página.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T19:07:00.133Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RNF05 · Interfaz simplificada: Diseñado → Implementado. Semáforo verde, ámbar y rojo en la pantalla de diagnóstico.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T19:07:00.141Z"
+    },
+    {
+      "objective_code": 1,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "Hallazgo: Coffee berry disease (Roboflow) reutiliza las fotos del dataset de maduración de Zenodo (Colombia) con etiquetas de lesión de un usuario anónimo; la clase se llama C. kahawae, que solo existe en África, y marca frutos secos y sobremaduros. Sus 559 imágenes de antracnosis deben revisarse con un especialista antes del entrenamiento final.",
+      "seci_phase": "externalizacion",
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T19:07:00.148Z"
+    },
+    {
+      "objective_code": 3,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RNF01 · Sensibilidad del modelo: Pendiente → Diseñado. entrenar.py fija el umbral superior con validación para mantener recall ≥ 85 % y lo comprueba en el conjunto de prueba.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T19:07:37.259Z"
+    },
+    {
+      "objective_code": 5,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RNF04 · Tolerancia a la iluminación: Pendiente → Diseñado. Aumento de datos con cambios de brillo y contraste en el entrenamiento; falta la prueba con fotos de campo.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T19:07:37.268Z"
+    },
+    {
+      "objective_code": 2,
+      "previous_progress": 30,
+      "new_progress": 60,
+      "note": "Versión preliminar v0 entrenada con la GPU RTX 4060 (Docker con TensorFlow y cuDNN). Prueba: EfficientNet-B0 AUC 0,96, recall 0,82, precisión 0,73, F1 0,78; MobileNetV2 AUC 0,96, recall 0,89, precisión 0,68, F1 0,77. Línea base sin entrenar: AUC 0,23 y 0,41, así que aprendieron; brecha de AUC entre entrenamiento y prueba ≤ 0,03, no memorizaron. Falta la versión v1 tras la revisión de etiquetas, porque v0 no reconoce bien frutos sanos sobre fondo claro.",
+      "seci_phase": "externalizacion",
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T19:58:09.878Z"
+    },
+    {
+      "objective_code": 3,
+      "previous_progress": 20,
+      "new_progress": 35,
+      "note": "Umbrales elegidos con validación: EfficientNet-B0 0,04 / 0,80 y MobileNetV2 0,07 / 0,74. En prueba, MobileNetV2 cumple el recall ≥ 85 % (0,89) y EfficientNet-B0 queda en 0,82; casos revisar: 19 % y 22 %. Falta ajustar hiperparámetros y corregir el sesgo por el fondo de la foto.",
+      "seci_phase": "externalizacion",
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T19:58:09.890Z"
+    },
+    {
+      "objective_code": 5,
+      "previous_progress": 5,
+      "new_progress": 15,
+      "note": "Evaluación de la v0 en el conjunto de prueba con evaluar.py: matriz de confusión, AUC, recall, precisión, F1, desglose por fuente y Grad-CAM. El desglose y Grad-CAM muestran que los modelos se guían en parte por el fondo: ningún fruto sano sobre fondo claro sale como sano. Falta la prueba con fotos de la finca, CP01–CP10 y SUS.",
+      "seci_phase": "externalizacion",
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T19:58:09.900Z"
+    },
+    {
+      "objective_code": 2,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RF03 · Clasificación con CNN: Implementado → Probado. Modelos v0 entrenados y evaluados en el conjunto de prueba (AUC 0,96 ambos); se usan en la página Diagnóstico. Versión preliminar: falta la v1.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T19:58:09.908Z"
+    },
+    {
+      "objective_code": 3,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RNF01 · Sensibilidad del modelo: Diseñado → Implementado. Umbral por recall implementado y medido en prueba con la v0: MobileNetV2 0,89 (cumple) y EfficientNet-B0 0,82 (aún no cumple). Se marcará como probado cuando ambos cumplan con la v1.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T19:58:09.915Z"
+    },
+    {
+      "objective_code": null,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "Metodología actualizada: datos y tecnologías reales del proyecto, nueva sección «Qué estamos haciendo ahora» con el estado y los resultados de la v0, y nueva sección «Limitaciones» (etiquetas sin verificar, pocos frutos enfermos, datos de otras regiones, sesgo por el fondo, sin severidad, modelo preliminar y un solo equipo de cómputo).",
+      "seci_phase": "externalizacion",
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T19:58:09.923Z"
+    }
+  ]
+}

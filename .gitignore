@@ -3,6 +3,5 @@ dist/
 .env
 *.log
 
-# Modelos entrenados (pesados y dependen del dataset): no se suben a Git
-ml/modelos/*
-!ml/modelos/.gitkeep
+# Los modelos entrenados (ml/modelos/) y el dataset preparado (datos/) SÍ se versionan,
+# para que quien clone tenga el mismo sistema. Las fuentes originales (630 MB) no: ver datos/LEEME.md.

@@ -30,7 +30,7 @@ Sin este servicio, la página **Diagnóstico** sigue funcionando y avisa que el 
 3. No hace falta reiniciar nada: el servicio detecta los archivos y los carga en el primer análisis.
    Si reemplazas un archivo, se vuelve a cargar solo.
 
-Los archivos `.keras` **no se suben a Git** (pesan mucho y dependen de la autorización del dataset).
+Los modelos de la versión vigente (`v0-preliminar`) **están en el repositorio** (`ml/modelos/`), con sus umbrales, métricas y la división de datos usada: al clonar, el diagnóstico funciona sin entrenar.
 
 ## Archivo de configuración (`<modelo>.json`)
 
@@ -75,7 +75,7 @@ Los umbrales se fijan con el conjunto de validación: el superior, para alcanzar
 Con las tres fuentes descargadas en una carpeta `datasets/` (Coffee berry disease y coffee cherry 20251206 de Roboflow en COCO, y Cherry Coffe Bean de Zenodo):
 
 ```powershell
-docker run --rm -u root -v "${PWD}\ml\entrenamiento:/ent:ro" -v "C:\ruta\datasets:/datasets:ro" -v "C:\ruta\datasets\fruto:/salida" antracnosis-ml python -I /ent/preparar_datos.py --datasets /datasets --salida /salida
+docker run --rm -u root -v "${PWD}\ml\entrenamiento:/ent:ro" -v "C:\ruta\fuentes-descargadas:/datasets:ro" -v "${PWD}\datos\fruto:/salida" antracnosis-ml python -I /ent/preparar_datos.py --datasets /datasets --salida /salida
 ```
 
 Genera `fruto/{train,val,test}/{sano,antracnosis}/<fuente>/<grupo>__<n>.jpg` más `manifiesto.csv`, `descartes.csv` y `resumen.json`.
@@ -101,21 +101,21 @@ los cuadros de un video (`IMG_0832.MOV_111.jpg`) y los recortes de una misma fot
 # con GPU, dentro de WSL2
 pip install -r ml/entrenamiento/requirements.txt
 cd ml/entrenamiento
-python entrenar.py --datos /ruta/a/fruto --modelo efficientnet_b0 --version v1
-python entrenar.py --datos /ruta/a/fruto --modelo mobilenet_v2 --version v1
+python entrenar.py --datos ../../datos/fruto --modelo efficientnet_b0 --version v1
+python entrenar.py --datos ../../datos/fruto --modelo mobilenet_v2 --version v1
 ```
 
 Con la GPU desde Docker Desktop (así se entrenó la v0 con la RTX 4060). `Dockerfile.gpu` agrega cuDNN 9, que falta en la imagen oficial de TensorFlow:
 ```powershell
 docker build -t antracnosis-entrenamiento -f ml/entrenamiento/Dockerfile.gpu ml/entrenamiento
-docker run --rm --gpus all -v "${PWD}\ml\entrenamiento:/ent:ro" -v "C:\ruta\fruto:/datos:ro" -v "${PWD}\ml\modelos:/salida" -w /ent antracnosis-entrenamiento python entrenar.py --datos /datos --modelo mobilenet_v2 --salida /salida --version v0
+docker run --rm --gpus all -v "${PWD}\ml\entrenamiento:/ent:ro" -v "${PWD}\datos\fruto:/datos:ro" -v "${PWD}\ml\modelos:/salida" -w /ent antracnosis-entrenamiento python entrenar.py --datos /datos --modelo mobilenet_v2 --salida /salida --version v0
 ```
 Con EfficientNet-B0, la predicción en la GPU puede fallar con `CUDNN_STATUS_EXECUTION_FAILED` después de entrenar. El modelo ya queda guardado;
 se eligen los umbrales y se evalúa en la CPU con `evaluar.py --elegir-umbrales <versión>` (ver «Evaluar»).
 
 Sin GPU se puede usar la imagen del servicio (en CPU, más lento):
 ```powershell
-docker run --rm -u root -v "${PWD}\ml\entrenamiento:/ent:ro" -v "C:\ruta\datos:/datos:ro" -v "${PWD}\ml\modelos:/salida" -w /ent antracnosis-ml python entrenar.py --datos /datos --modelo mobilenet_v2 --salida /salida
+docker run --rm -u root -v "${PWD}\ml\entrenamiento:/ent:ro" -v "${PWD}\datos\fruto:/datos:ro" -v "${PWD}\ml\modelos:/salida" -w /ent antracnosis-ml python entrenar.py --datos /datos --modelo mobilenet_v2 --salida /salida
 ```
 
 Cada entrenamiento deja en `ml/modelos/`: `<modelo>.keras`, `<modelo>.json` (con los umbrales elegidos),
@@ -125,7 +125,7 @@ el superior es el mayor que mantiene recall ≥ 85 % (RNF01) y el inferior deja 
 
 ### Evaluar: ¿aprendió o memorizó?
 ```powershell
-docker run --rm -u root -v "${PWD}\ml\entrenamiento:/ent:ro" -v "${PWD}\ml\modelos:/modelos:ro" -v "C:\ruta\fruto:/datos:ro" -v "C:\ruta\evaluaciones:/out" -w /ent antracnosis-ml python evaluar.py --datos /datos --modelo /modelos/mobilenet_v2.keras --salida /out/mobilenet_v2_v1.json
+docker run --rm -u root -v "${PWD}\ml\entrenamiento:/ent:ro" -v "${PWD}\ml\modelos:/modelos:ro" -v "${PWD}\datos\fruto:/datos:ro" -v "${PWD}\datos\evaluaciones:/out" -w /ent antracnosis-ml python evaluar.py --datos /datos --modelo /modelos/mobilenet_v2.keras --salida /out/mobilenet_v2_v1.json
 ```
 
 1. **¿Aprendió?** Comparar con la línea base de las redes sin entrenar. La AUC no depende de los umbrales:
