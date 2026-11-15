@@ -195,10 +195,17 @@ const ESTADO_ITEMS_V6 = [
   ESTADO_VALIDACION,
 ];
 
-// Versión vigente (15/11/2026): historial de capturas implementado.
-const ESTADO_ITEMS = [
+// v7 (15/11/2026): historial de capturas implementado.
+const ESTADO_ITEMS_V7 = [
   ...ESTADO_ITEMS_V1.slice(0, 4),
   ['estado', 'Módulos de gestión del conocimiento', 'En curso. Hecho: registro de capturas (foto, fecha, autor, resultado, versión del modelo y, si se autoriza, ubicación), validación experta con historial de quién validó y con qué perfil, e historial de capturas con filtros por periodo, clase y validación y exportación en CSV. Cada usuario ve sus capturas; el propietario, el especialista y el administrador ven todas. Pendiente: tablero de incidencia.'],
+  ESTADO_VALIDACION,
+];
+
+// Versión vigente (15/11/2026): tablero de incidencia implementado.
+const ESTADO_ITEMS = [
+  ...ESTADO_ITEMS_V1.slice(0, 4),
+  ['estado', 'Módulos de gestión del conocimiento', 'Casi listo. Hecho: registro de capturas, validación experta con historial de quién validó y con qué perfil, historial de capturas con exportación en CSV y tablero de incidencia (frutos analizados, incidencia de antracnosis, pendientes de validar y coincidencia del modelo con el especialista, por periodo). Pendiente: la pantalla del modelo de diagnóstico en el panel (versiones, métricas y umbrales).'],
   ESTADO_VALIDACION,
 ];
 
@@ -502,6 +509,7 @@ export const LEGACY_METHOD_VERSIONS = [
   ESTADO_ITEMS_V4,
   ESTADO_ITEMS_V5,
   ESTADO_ITEMS_V6,
+  ESTADO_ITEMS_V7,
   METHOD_ITEMS_V3.map((i) =>
     i[0] === 'flujo' && i[1] === 'Modelos' ? [i[0], i[1], 'EfficientNet-B0 como modelo principal, MobileNetV2 como alternativa ligera y una CNN sencilla entrenada desde cero como línea base.'] : i,
   ),

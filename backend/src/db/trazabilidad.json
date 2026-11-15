@@ -1,5 +1,5 @@
 {
-  "exported_at": "2026-11-15T22:37:05.630Z",
+  "exported_at": "2026-11-15T22:47:16.694Z",
   "objectives": [
     {
       "code": 1,
@@ -15,7 +15,7 @@
     },
     {
       "code": 4,
-      "progress": 75
+      "progress": 90
     },
     {
       "code": 5,
@@ -53,7 +53,7 @@
     },
     {
       "code": "RF08",
-      "status": "disenado"
+      "status": "implementado"
     },
     {
       "code": "RF09",
@@ -388,6 +388,24 @@
       "seci_phase": "combinacion",
       "author_name": "Administrador",
       "created_at": "2026-11-15T22:37:05.126Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": 75,
+      "new_progress": 90,
+      "note": "Fase 4: Tablero de incidencia (/tablero) para el propietario, el especialista y el administrador. Indicadores (frutos analizados, incidencia de antracnosis, pendientes de validar y coincidencia del modelo con el especialista), frutos por mes y clase, incidencia mensual, distribución por clase y tabla de datos, filtrables por periodo. Cuenta la clase validada cuando existe. Gráficos SVG con tooltip y teclado; paleta validada para daltonismo. Se probaron permisos por perfil y que las cifras cuadren. Falta: pantalla del modelo en el panel.",
+      "seci_phase": "combinacion",
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T22:47:16.146Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RF08 · Tablero de incidencia: Diseñado → Implementado. Tablero con indicadores, incidencia mensual y distribución por clase, filtrable por periodo; solo propietario, especialista y administrador.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-15T22:47:16.157Z"
     }
   ]
 }

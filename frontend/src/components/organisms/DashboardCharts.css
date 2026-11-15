@@ -1,0 +1,30 @@
+.dash-chart { position: relative; width: 100%; min-width: 0; }
+.dash-chart svg { display: block; overflow: visible; }
+.dash-axis text { font-family: var(--font-sans); font-size: 11px; fill: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+.dash-grid { stroke: var(--color-surface-tint); stroke-width: 1; }
+.dash-baseline { stroke: var(--color-border); stroke-width: 1; }
+.dash-crosshair { stroke: var(--color-text-muted); stroke-width: 1; pointer-events: none; }
+.dash-hit { fill: transparent; cursor: default; outline: none; }
+.dash-hit:hover, .dash-hit:focus-visible { fill: rgba(0, 0, 0, 0.04); }
+.dash-hit:focus-visible { stroke: var(--color-forest-700); stroke-width: 2; }
+.dash-seg__text { font-family: var(--font-sans); font-size: 12px; font-weight: 600; pointer-events: none; }
+
+.dash-tip {
+  position: absolute; transform: translate(-50%, -100%); pointer-events: none; z-index: 2; min-width: 150px;
+  background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius); box-shadow: var(--shadow-md);
+  padding: var(--space-2) var(--space-3); font-size: var(--text-sm);
+}
+.dash-tip__title { font-weight: 600; margin-bottom: 2px; }
+.dash-tip__row { display: flex; align-items: center; gap: var(--space-2); white-space: nowrap; color: var(--color-text-muted); }
+.dash-tip__row strong { color: var(--color-text); font-variant-numeric: tabular-nums; }
+.dash-tip__key { width: 12px; height: 2px; border-radius: 1px; flex: none; }
+
+.dash-legend { list-style: none; margin: 0; padding: 0; display: flex; gap: var(--space-2) var(--space-4); flex-wrap: wrap; font-size: var(--text-sm); color: var(--color-text-muted); }
+.dash-legend li { display: inline-flex; align-items: center; gap: var(--space-2); }
+.dash-legend__key--rect { width: 12px; height: 12px; border-radius: 3px; }
+.dash-legend__key--line { width: 14px; height: 2px; border-radius: 1px; }
+
+.dash-tile { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-4) var(--space-5); display: flex; flex-direction: column; gap: 2px; }
+.dash-tile__label { font-size: var(--text-sm); color: var(--color-text-muted); }
+.dash-tile__value { font-family: var(--font-sans); font-size: 2rem; font-weight: 600; line-height: 1.15; color: var(--color-text); }
+.dash-tile__note { font-size: var(--text-xs); color: var(--color-text-muted); }

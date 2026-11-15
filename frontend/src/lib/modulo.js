@@ -36,5 +36,6 @@ export function moduleTabs(user) {
   const tabs = [{ to: '/diagnostico', label: 'Nuevo diagnóstico', icon: 'scan' }];
   if (user) tabs.push({ to: '/historial', label: 'Historial', icon: 'clock' });
   if (canValidate(user)) tabs.push({ to: '/validacion', label: 'Validación', icon: 'check' });
+  if (seesAllCaptures(user)) tabs.push({ to: '/tablero', label: 'Tablero', icon: 'chart' });
   return tabs;
 }
