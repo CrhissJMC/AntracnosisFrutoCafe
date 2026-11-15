@@ -63,14 +63,14 @@ export function DiagnosisPage() {
   };
 
   const analyze = async () => {
-    if (!plot) return setFormError('Elige la parcela donde se tomó la foto.');
     if (!photo) return setFormError('Primero toma o sube una foto del fruto.');
     if (location.status === 'loading') return setFormError('Espera a que se obtenga la ubicación.');
     setFormError('');
     setStatus('loading');
     try {
       const coords = useLocation && location.coords ? location.coords : {};
-      setResponse(await api.post('/diagnostico/analizar', { image: photo, model, parcela_id: Number(plot), ...coords }));
+      const parcela = plot ? { parcela_id: Number(plot) } : {};
+      setResponse(await api.post('/diagnostico/analizar', { image: photo, model, ...parcela, ...coords }));
       setStatus('done');
     } catch (err) {
       setError({ message: err.message, unavailable: err.status === 503 });
@@ -81,7 +81,7 @@ export function DiagnosisPage() {
   const list = models.data?.models ?? [];
   const anyReady = list.some((m) => m.available);
   const plotList = plots.data?.parcelas ?? [];
-  const n = user ? 1 : 0; // con sesión, el primer paso es la parcela
+  const n = user && plotList.length > 0 ? 1 : 0; // la parcela (opcional) solo aparece si hay parcelas registradas
 
   return (
     <DiagnosisLayout
@@ -94,13 +94,13 @@ export function DiagnosisPage() {
       }
       form={
         <div className="dx-form">
-          {user && (
+          {n === 1 && (
             <div className="dx-form__step">
               <label className="dx-form__title" htmlFor="dx-parcela">
-                <span>1</span> Parcela
+                <span>1</span> Parcela <small className="dx-form__optional">(opcional)</small>
               </label>
               <Select id="dx-parcela" value={plot} onChange={(e) => setPlot(e.target.value)} disabled={status === 'loading'}>
-                <option value="">{plots.loading ? 'Cargando parcelas…' : 'Elige la parcela'}</option>
+                <option value="">Sin parcela</option>
                 {plotList.map((p) => (
                   <option key={p.id} value={p.id}>
                     {p.nombre}
@@ -108,17 +108,6 @@ export function DiagnosisPage() {
                   </option>
                 ))}
               </Select>
-              <Checkbox
-                label="Guardar la ubicación de la foto"
-                checked={useLocation}
-                onChange={(e) => toggleLocation(e.target.checked)}
-                disabled={status === 'loading'}
-              />
-              {location.message && (
-                <Text size="sm" className={location.status === 'error' ? 'dx-form__error' : 'dx-form__privacy'}>
-                  {location.message}
-                </Text>
-              )}
             </div>
           )}
 
@@ -127,6 +116,21 @@ export function DiagnosisPage() {
               <span>{n + 1}</span> Fotografía del fruto
             </p>
             <ImageCapture value={photo} onChange={changePhoto} disabled={status === 'loading'} />
+            {user && (
+              <>
+                <Checkbox
+                  label="Guardar la ubicación de la foto (opcional)"
+                  checked={useLocation}
+                  onChange={(e) => toggleLocation(e.target.checked)}
+                  disabled={status === 'loading'}
+                />
+                {location.message && (
+                  <Text size="sm" className={location.status === 'error' ? 'dx-form__error' : 'dx-form__privacy'}>
+                    {location.message}
+                  </Text>
+                )}
+              </>
+            )}
           </div>
 
           <div className="dx-form__step">
@@ -151,7 +155,7 @@ export function DiagnosisPage() {
               </Button>
               <Text size="sm" className="dx-form__privacy">
                 La foto se reduce y se le quitan los metadatos (incluida la ubicación GPS) antes de enviarla. Se guarda con la
-                parcela, la fecha y el resultado; la ubicación, solo si la activas.
+                fecha y el resultado, y con la parcela y la ubicación solo si las eliges.
               </Text>
             </div>
           ) : (
@@ -173,7 +177,7 @@ export function DiagnosisPage() {
         <div className="dx-result">
           {status === 'done' && response?.captura && (
             <Alert tone="success">
-              Captura N.º {response.captura.id} guardada en {response.captura.parcela}
+              Captura N.º {response.captura.id} guardada{response.captura.parcela ? ` en ${response.captura.parcela}` : ''}
               {response.captura.ubicacion ? ', con su ubicación.' : '.'}
             </Alert>
           )}

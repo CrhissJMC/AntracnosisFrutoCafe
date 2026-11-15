@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS parcelas (
   sector         VARCHAR(80),
   variedad       VARCHAR(60),
   altitud_msnm   INTEGER      CHECK (altitud_msnm BETWEEN 0 AND 4000),
-  es_ejemplo     BOOLEAN      NOT NULL DEFAULT FALSE,   -- datos ficticios para demostrar el sistema
+  es_ejemplo     BOOLEAN      NOT NULL DEFAULT FALSE,   -- parcelas ficticias de una versión anterior (se borran al migrar)
   created_at     TIMESTAMPTZ  NOT NULL DEFAULT now(),
   UNIQUE (propietario_id, nombre)
 );
@@ -64,7 +64,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS modelo_versiones_activo_uq ON modelo_versiones
 -- Capturas y diagnósticos (RF05) ---------------------------------------------
 CREATE TABLE IF NOT EXISTS capturas (
   id         SERIAL PRIMARY KEY,
-  parcela_id INTEGER      NOT NULL REFERENCES parcelas(id),
+  parcela_id INTEGER      REFERENCES parcelas(id) ON DELETE SET NULL,  -- opcional
   autor_id   INTEGER      REFERENCES users(id) ON DELETE SET NULL,
   imagen     VARCHAR(255) NOT NULL UNIQUE,                  -- nombre del archivo en el volumen de capturas
   latitud    NUMERIC(9,6) CHECK (latitud BETWEEN -90 AND 90),
@@ -72,6 +72,10 @@ CREATE TABLE IF NOT EXISTS capturas (
   tomada_en  TIMESTAMPTZ  NOT NULL DEFAULT now(),
   CHECK ((latitud IS NULL) = (longitud IS NULL))
 );
+-- Bases creadas cuando la parcela era obligatoria
+ALTER TABLE capturas ALTER COLUMN parcela_id DROP NOT NULL;
+ALTER TABLE capturas DROP CONSTRAINT IF EXISTS capturas_parcela_id_fkey;
+ALTER TABLE capturas ADD CONSTRAINT capturas_parcela_id_fkey FOREIGN KEY (parcela_id) REFERENCES parcelas(id) ON DELETE SET NULL;
 CREATE INDEX IF NOT EXISTS capturas_parcela_idx ON capturas (parcela_id, tomada_en DESC);
 CREATE INDEX IF NOT EXISTS capturas_autor_idx   ON capturas (autor_id);
 
@@ -164,15 +168,15 @@ ORDER BY c.id, d.id;
 
 -- Tablero de incidencia por parcela y mes (RF08)
 CREATE VIEW v_incidencia_mensual AS
-SELECT p.id AS parcela_id, p.nombre AS parcela,
+SELECT f.parcela_id, COALESCE(p.nombre, 'Sin parcela') AS parcela,
        date_trunc('month', f.tomada_en)::date AS mes,
        COUNT(*) AS total_capturas,
        COUNT(*) FILTER (WHERE f.clase_final = 'antracnosis') AS antracnosis,
        COUNT(*) FILTER (WHERE f.clase_final = 'revisar')     AS por_revisar,
        ROUND(100.0 * COUNT(*) FILTER (WHERE f.clase_final = 'antracnosis') / COUNT(*), 1) AS incidencia_pct
 FROM v_diagnostico_final f
-JOIN parcelas p ON p.id = f.parcela_id
-GROUP BY p.id, p.nombre, date_trunc('month', f.tomada_en);
+LEFT JOIN parcelas p ON p.id = f.parcela_id
+GROUP BY f.parcela_id, p.nombre, date_trunc('month', f.tomada_en);
 
 -- Imágenes validadas para reentrenar (RF09): solo sano y antracnosis.
 CREATE VIEW v_dataset_reentrenamiento AS

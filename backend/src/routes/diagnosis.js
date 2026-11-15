@@ -41,7 +41,10 @@ const analyzeSchema = z
   .object({
     image: imageDataUrl,
     model: z.enum([...MODEL_IDS, 'ambos'], { message: 'Elige un modelo' }),
-    parcela_id: z.coerce.number({ message: 'Elige la parcela' }).int().positive('Elige la parcela'),
+    // Parcela opcional
+    parcela_id: z
+      .preprocess((v) => (v === '' || v === undefined ? null : v), z.coerce.number().int().positive('Parcela no válida').nullable())
+      .default(null),
     // Ubicación: solo si el usuario la autoriza en el navegador; ambas o ninguna.
     latitud: coord(-90, 90).default(null),
     longitud: coord(-180, 180).default(null),
@@ -96,13 +99,13 @@ router.get(
   }),
 );
 
-// GET /api/diagnostico/parcelas — usuarios con sesión: parcelas para registrar la captura
+// GET /api/diagnostico/parcelas — usuarios con sesión: parcelas para registrar la captura (opcional)
 router.get(
   '/parcelas',
   requireAuth,
   asyncHandler(async (req, res) => {
     const { rows } = await query(
-      'SELECT id, nombre, sector, variedad, altitud_msnm, es_ejemplo FROM parcelas ORDER BY es_ejemplo, nombre',
+      'SELECT id, nombre, sector, variedad, altitud_msnm FROM parcelas ORDER BY nombre',
     );
     res.json({ parcelas: rows });
   }),
@@ -116,8 +119,12 @@ router.post(
   asyncHandler(async (req, res) => {
     const data = analyzeSchema.parse(req.body);
     const models = data.model === 'ambos' ? MODEL_IDS : [data.model];
-    const { rows: plots } = await query('SELECT id, nombre FROM parcelas WHERE id = $1', [data.parcela_id]);
-    if (!plots[0]) throw new HttpError(400, 'La parcela elegida no existe');
+    let parcela = null;
+    if (data.parcela_id !== null) {
+      const { rows: plots } = await query('SELECT id, nombre FROM parcelas WHERE id = $1', [data.parcela_id]);
+      if (!plots[0]) throw new HttpError(400, 'La parcela elegida no existe');
+      parcela = plots[0].nombre;
+    }
 
     const result = await callMl(
       '/predict',
@@ -165,7 +172,7 @@ router.post(
       captura: {
         id: captura.id,
         tomada_en: captura.tomada_en,
-        parcela: plots[0].nombre,
+        parcela, // null si no se eligió
         ubicacion: data.latitud !== null,
       },
     });

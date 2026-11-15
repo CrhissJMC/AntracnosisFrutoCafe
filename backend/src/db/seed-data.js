@@ -162,10 +162,17 @@ const ESTADO_ITEMS_V2 = [
   ESTADO_VALIDACION,
 ];
 
-// Versión vigente (15/11/2026): registro de capturas implementado.
-const ESTADO_ITEMS = [
+// v3 (15/11/2026): registro de capturas con parcela obligatoria.
+const ESTADO_ITEMS_V3 = [
   ...ESTADO_ITEMS_V1.slice(0, 4),
   ['estado', 'Módulos de gestión del conocimiento', 'En curso. Hecho: base de datos del módulo y registro de capturas (cada análisis guarda la foto, la parcela, la fecha, la ubicación si se autoriza, el resultado y la versión del modelo). Pendiente: historial, validación experta y tablero de incidencia. Solo los especialistas y el administrador podrán validar; cada validación queda registrada con quién la hizo y con qué perfil, sin borrar las anteriores (la base de datos ya lo exige).'],
+  ESTADO_VALIDACION,
+];
+
+// Versión vigente (15/11/2026): la parcela es opcional.
+const ESTADO_ITEMS = [
+  ...ESTADO_ITEMS_V1.slice(0, 4),
+  ['estado', 'Módulos de gestión del conocimiento', 'En curso. Hecho: base de datos del módulo y registro de capturas (cada análisis guarda la foto, la fecha, el resultado y la versión del modelo, y opcionalmente la parcela y la ubicación). Pendiente: historial, validación experta y tablero de incidencia. Solo los especialistas y el administrador podrán validar; cada validación queda registrada con quién la hizo y con qué perfil, sin borrar las anteriores (la base de datos ya lo exige).'],
   ESTADO_VALIDACION,
 ];
 
@@ -465,6 +472,7 @@ export const LEGACY_METHOD_VERSIONS = [
   METHOD_ITEMS_V4,
   ESTADO_ITEMS_V1,
   ESTADO_ITEMS_V2,
+  ESTADO_ITEMS_V3,
   METHOD_ITEMS_V3.map((i) =>
     i[0] === 'flujo' && i[1] === 'Modelos' ? [i[0], i[1], 'EfficientNet-B0 como modelo principal, MobileNetV2 como alternativa ligera y una CNN sencilla entrenada desde cero como línea base.'] : i,
   ),
@@ -511,12 +519,4 @@ export const MODEL_VERSIONS = [
     num_imagenes: 2703, entrenado_en: '2026-11-15T14:48:00-05:00',
     notas: 'Versión preliminar, entrenada antes de la revisión experta de las etiquetas. Se guía en parte por el fondo de la foto.',
   },
-];
-
-// Parcelas ficticias para demostrar el registro, el historial y el tablero (sin datos de ninguna finca real).
-// [nombre, sector, variedad, altitud en m s. n. m.]
-export const EXAMPLE_PLOTS = [
-  ['Parcela A (ejemplo)', 'Sector alto', 'Catimor', 1750],
-  ['Parcela B (ejemplo)', 'Sector medio', 'Typica', 1600],
-  ['Parcela C (ejemplo)', 'Sector bajo', 'Catimor', 1450],
 ];

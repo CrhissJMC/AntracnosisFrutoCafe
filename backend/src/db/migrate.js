@@ -15,7 +15,6 @@ import {
   REMOVED_SETTINGS,
   REQUIREMENTS,
   MODEL_VERSIONS,
-  EXAMPLE_PLOTS,
 } from './seed-data.js';
 
 const log = (msg, extra = {}) => console.log(JSON.stringify({ level: 'info', msg, ...extra }));
@@ -233,18 +232,10 @@ async function seedModule(client) {
     if (rowCount) log('seed_model_version', { modelo: v.modelo, version: v.version });
   }
 
-  if (await isEmpty(client, 'parcelas')) {
-    const { rows } = await client.query("SELECT id FROM users WHERE role = 'admin' ORDER BY id LIMIT 1");
-    if (rows[0]) {
-      for (const [nombre, sector, variedad, altitud] of EXAMPLE_PLOTS) {
-        await client.query(
-          'INSERT INTO parcelas (propietario_id, nombre, sector, variedad, altitud_msnm, es_ejemplo) VALUES ($1, $2, $3, $4, $5, TRUE)',
-          [rows[0].id, nombre, sector, variedad, altitud],
-        );
-      }
-      log('seed_example_plots', { count: EXAMPLE_PLOTS.length });
-    }
-  }
+  // La parcela es opcional: ya no se crean parcelas de ejemplo, y se quitan las que se crearon antes
+  // (sus capturas, si las hay, quedan «sin parcela»).
+  const { rowCount: removed } = await client.query('DELETE FROM parcelas WHERE es_ejemplo');
+  if (removed) log('remove_example_plots', { count: removed });
 }
 
 export async function migrate() {

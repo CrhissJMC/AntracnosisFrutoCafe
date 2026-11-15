@@ -229,18 +229,18 @@ Se ejecuta después de `schema.sql` en cada arranque, sin duplicar nada (informe
 | Tabla / vista | Qué guarda |
 |---|---|
 | `users.perfil` | Perfil del módulo: `productor`, `propietario` o `especialista` (lo asigna el administrador) |
-| `parcelas` | Parcelas del propietario; `es_ejemplo` marca las tres parcelas ficticias de demostración |
+| `parcelas` | Parcelas del propietario (opcionales: una captura puede no tener parcela) |
 | `modelo_versiones` | Cada versión de cada modelo con umbrales y métricas; una activa por arquitectura (RF09) |
-| `capturas` | Foto (archivo en el volumen `capturas-data`), parcela, autor, fecha y ubicación si se autoriza (RF05) |
+| `capturas` | Foto (archivo en el volumen `capturas-data`), autor y fecha; parcela y ubicación opcionales (RF05) |
 | `diagnosticos` | Resultado de cada modelo para la captura, con la versión que lo generó (RNF08) |
 | `validaciones` | Historial de validaciones de la captura: clase confirmada, comentario, quién y con qué perfil (RF06) |
 | `v_validacion_vigente`, `v_diagnostico_final` | La validación más reciente prevalece sobre el resultado del modelo |
-| `v_incidencia_mensual` | Incidencia por parcela y mes, para el tablero (RF08) |
+| `v_incidencia_mensual` | Incidencia por parcela (o «Sin parcela») y mes, para el tablero (RF08) |
 | `v_dataset_reentrenamiento` | Imágenes validadas como sano o antracnosis, para reentrenar (RF09) |
 
 **Validación experta** (decisión del equipo): solo validan los usuarios con perfil `especialista` y el administrador. Las validaciones no se editan ni se borran; una corrección es una validación nueva y vale la más reciente. Un disparador de la base de datos rechaza a cualquier otro usuario, impide editar una validación y toma el nombre del validador de su cuenta, así no se puede falsificar.
 
-**Diferencias con el Anexo 4:** la validación es de la captura (no de cada diagnóstico, porque con «comparar ambos» una foto tiene dos), se guarda un historial en vez de una sola validación, y hay una versión activa por arquitectura.
+**Diferencias con el Anexo 4:** la validación es de la captura (no de cada diagnóstico, porque con «comparar ambos» una foto tiene dos), se guarda un historial en vez de una sola validación, hay una versión activa por arquitectura y la parcela es opcional.
 
 ---
 
@@ -343,7 +343,7 @@ El servicio `ml` expone `GET /health` y `POST /predict` **solo en la red interna
 | 15/11/2026 | Evaluación de los modelos con `ml/entrenamiento/evaluar.py` (AUC, pérdida, recall, precisión, F1 y brecha entre entrenamiento y prueba) y línea base de las dos redes sin entrenar |
 | 15/11/2026 | Versión preliminar v0 de EfficientNet-B0 y MobileNetV2 entrenada con la GPU (AUC 0,96 en prueba); Metodología con las secciones «Qué estamos haciendo ahora» y «Limitaciones» |
 | 15/11/2026 | Los modelos v0, el conjunto de datos preparado (`datos/`) y el avance de Trazabilidad se versionan: quien clona el repositorio tiene el mismo sistema |
-| 15/11/2026 | Base de datos del módulo de diagnóstico y registro de capturas: cada análisis guarda la foto, la parcela, la fecha, la ubicación (si se autoriza), el resultado y la versión del modelo; validaciones con historial y control de perfiles en la base de datos |
+| 15/11/2026 | Base de datos del módulo de diagnóstico y registro de capturas: cada análisis guarda la foto, la fecha, el resultado y la versión del modelo, y opcionalmente la parcela y la ubicación; validaciones con historial y control de perfiles en la base de datos |
 
 ---
 
