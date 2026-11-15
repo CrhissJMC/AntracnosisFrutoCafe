@@ -142,6 +142,21 @@ def elegir_umbrales(y, p):
     return float(inferior), float(superior)
 
 
+def auc(y, p):
+    """Área bajo la curva ROC (no depende de los umbrales): 0,5 = azar, 1 = separa perfecto."""
+    pos, neg = p[y == 1], p[y == 0]
+    if len(pos) == 0 or len(neg) == 0:
+        return float("nan")
+    rangos = np.argsort(np.argsort(np.concatenate([pos, neg]))) + 1
+    return float((rangos[: len(pos)].sum() - len(pos) * (len(pos) + 1) / 2) / (len(pos) * len(neg)))
+
+
+def perdida_log(y, p):
+    """Entropía cruzada binaria media: ~0,69 = azar con clases iguales; baja si el modelo acierta con seguridad."""
+    p = np.clip(p, 1e-7, 1 - 1e-7)
+    return float(-np.mean(y * np.log(p) + (1 - y) * np.log(1 - p)))
+
+
 def metricas(y, p, inferior, superior):
     pred = (p >= superior).astype(int)  # «antracnosis» solo desde el umbral superior
     vp = int(((pred == 1) & (y == 1)).sum())
@@ -154,6 +169,8 @@ def metricas(y, p, inferior, superior):
     revisar = (p >= inferior) & (p < superior)
     return {
         "n": int(len(y)),
+        "auc": round(auc(y, p), 4),
+        "perdida_logaritmica": round(perdida_log(y, p), 4),
         "matriz_confusion": {"VP": vp, "FP": fp, "FN": fn, "VN": vn},
         "recall_antracnosis": round(recall, 4),
         "precision_antracnosis": round(precision, 4),
@@ -256,6 +273,15 @@ def main():
     y_val, p_val = predecir(modelo, ds_val)
     inferior, superior = elegir_umbrales(y_val, p_val)
     y_test, p_test = predecir(modelo, ds_test)
+    # Entrenamiento sin aumento: si aquí es casi perfecto y en prueba cae mucho, el modelo memorizó.
+    y_tr, p_tr = predecir(modelo, dataset(partes["train"], args.lote))
+    m_tr = metricas(y_tr, p_tr, inferior, superior)
+    m_te = metricas(y_test, p_test, inferior, superior)
+    # Curvas de aprendizaje por época (fase 1 y luego fase 2): pérdida y AUC de train y val.
+    curvas = {
+        k: [round(float(v), 4) for v in h1.history.get(k, []) + h2.history.get(k, [])]
+        for k in ("loss", "val_loss", "auc", "val_auc", "recall", "val_recall")
+    }
     resultado = {
         "modelo": nombre,
         "version": args.version,
@@ -263,8 +289,15 @@ def main():
         "umbrales": {"inferior": inferior, "superior": superior},
         "imagenes": {s: dict(Counter(CLASES[e] for _, e, _ in l)) for s, l in partes.items()},
         "epocas": {"fase1": len(h1.history["loss"]), "fase2": len(h2.history["loss"])},
+        "entrenamiento": m_tr,
         "validacion": metricas(y_val, p_val, inferior, superior),
-        "prueba": metricas(y_test, p_test, inferior, superior),
+        "prueba": m_te,
+        "brecha_train_test": {
+            "auc": round(m_tr["auc"] - m_te["auc"], 4),
+            "recall_antracnosis": round(m_tr["recall_antracnosis"] - m_te["recall_antracnosis"], 4),
+            "f1_antracnosis": round(m_tr["f1_antracnosis"] - m_te["f1_antracnosis"], 4),
+        },
+        "curvas": curvas,
     }
 
     modelo.save(args.salida / f"{args.modelo}.keras")

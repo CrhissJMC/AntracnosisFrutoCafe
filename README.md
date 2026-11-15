@@ -324,6 +324,7 @@ El servicio `ml` expone `GET /health` y `POST /predict` **solo en la red interna
 | 27/10/2026 | Versión final del tercer avance: diagnóstico con sano, revisar y antracnosis; datasets públicos; objetivos, requisitos, tecnologías y alcance actualizados |
 | 15/11/2026 | Definición de EfficientNet-B0 y MobileNetV2, script de entrenamiento (división 70/15/15 por grupo, dos fases, umbrales con validación) y exportación de las redes sin entrenar para probar el sistema |
 | 15/11/2026 | Preparación de datos con `ml/entrenamiento/preparar_datos.py`: recorte de un fruto por imagen, etiquetas sano y antracnosis, limpieza de frutos pequeños, borrosos y duplicados, balance de clases y división 70/15/15 por grupo |
+| 15/11/2026 | Evaluación de los modelos con `ml/entrenamiento/evaluar.py` (AUC, pérdida, recall, precisión, F1 y brecha entre entrenamiento y prueba) y línea base de las dos redes sin entrenar |
 
 ---
 

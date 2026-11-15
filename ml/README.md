@@ -67,6 +67,7 @@ Los umbrales se fijan con el conjunto de validación: el superior, para alcanzar
 | `modelos.py` | Define las dos redes: base de ImageNet (EfficientNet-B0 o MobileNetV2) + `GlobalAveragePooling → Dropout(0.3) → Dense(1, sigmoide)`. El preprocesamiento va dentro del modelo (`"preprocess": "none"`) |
 | `exportar_sin_entrenar.py` | Guarda las dos redes **sin entrenar** en `ml/modelos/` (versión `sin-entrenar`) para probar el sistema de punta a punta. Sus predicciones no significan nada |
 | `preparar_datos.py` | Limpieza de datos: recorta un fruto por imagen, unifica etiquetas en sano y antracnosis, descarta frutos pequeños, borrosos y duplicados, equilibra las clases y divide 70/15/15 por grupo en `train/val/test` |
+| `evaluar.py` | Mide un `.keras` en train, val y test (AUC, pérdida, recall, precisión, F1, % revisar) y la brecha train − test |
 | `entrenar.py` | División 70/15/15 por grupo (o usa la de `preparar_datos.py`), aumento de datos, entrenamiento en dos fases, pesos de clase, umbrales con validación, métricas con prueba |
 | `requirements.txt` | Dependencias para entrenar con GPU (WSL2) |
 
@@ -113,6 +114,29 @@ Cada entrenamiento deja en `ml/modelos/`: `<modelo>.keras`, `<modelo>.json` (con
 `<modelo>_metricas.json` (matriz de confusión, recall, precisión, F1 y % «revisar» en validación y prueba) y
 `<modelo>_division.csv` (a qué conjunto fue cada imagen). Los umbrales se eligen con validación:
 el superior es el mayor que mantiene recall ≥ 85 % (RNF01) y el inferior deja como «sano» como máximo el 2 % de los frutos con antracnosis.
+
+### Evaluar: ¿aprendió o memorizó?
+```powershell
+docker run --rm -u root -v "${PWD}\ml\entrenamiento:/ent:ro" -v "${PWD}\ml\modelos:/modelos:ro" -v "C:\ruta\fruto:/datos:ro" -v "C:\ruta\evaluaciones:/out" -w /ent antracnosis-ml python evaluar.py --datos /datos --modelo /modelos/mobilenet_v2.keras --salida /out/mobilenet_v2_v1.json
+```
+
+1. **¿Aprendió?** Comparar con la línea base de las redes sin entrenar. La AUC no depende de los umbrales:
+   0,5 es azar y un valor lejos de 0,5 *en cualquier dirección* indica que los rasgos de ImageNet ya separan algo las clases.
+   El modelo entrenado debe superar con claridad `max(AUC, 1 − AUC)` de la línea base en val y test.
+2. **¿Memorizó?** Comparar train con val/test del mismo modelo (`brecha_train_test`). Una brecha de más de ~10 puntos de AUC
+   o de recall indica sobreajuste. `entrenar.py` guarda además las curvas por época (`curvas` en `<modelo>_metricas.json`):
+   si la pérdida de train sigue bajando mientras la de val sube, el modelo empezó a memorizar.
+
+El recall solo no basta: una red que dice «antracnosis» casi siempre tiene recall alto y precisión igual a la proporción de enfermos (~19 %).
+
+Línea base medida el 15/11/2026 con el conjunto de `preparar_datos.py` (redes sin entrenar, umbrales 0,35 / 0,65):
+
+| Modelo | Conjunto | AUC | Recall | Precisión | F1 | % revisar |
+|---|---|---|---|---|---|---|
+| EfficientNet-B0 | val | 0,248 | 0,009 | 0,017 | 0,012 | 88,4 |
+| EfficientNet-B0 | test | 0,232 | 0,019 | 0,037 | 0,025 | 89,3 |
+| MobileNetV2 | val | 0,451 | 0,917 | 0,188 | 0,312 | 7,2 |
+| MobileNetV2 | test | 0,414 | 0,869 | 0,179 | 0,298 | 8,8 |
 
 ### Probar el sistema sin entrenar
 ```powershell
