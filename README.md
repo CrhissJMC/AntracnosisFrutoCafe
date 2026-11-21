@@ -38,7 +38,7 @@ El repositorio contiene el sitio del proyecto (React + Node.js + PostgreSQL), el
 | Inicio | `/` | Qué es la antracnosis, síntomas en el fruto, ciclo de la enfermedad y manejo integrado |
 | Nosotros | `/nosotros` | El proyecto como trabajo del curso, la UNTRM (creación, licenciamiento, FISME, curso), equipo y docente |
 | Metodología | `/metodologia` | El problema, estado sanitario del fruto (semáforo), arquitectura experimental, evaluación, tecnologías, alcance y enlace a este repositorio |
-| Blog | `/blog` | Artículos sobre sanidad del café; los usuarios registrados comentan (base de conocimiento) |
+| Blog | `/blog` | Base de conocimiento: artículos sobre sanidad del café y **fichas de manejo** vinculadas a cada resultado del diagnóstico (sano, revisar, antracnosis); los usuarios registrados comentan |
 | **Diagnóstico** | `/diagnostico` | Tomar o subir la foto de un fruto, elegir el modelo y ver el resultado con semáforo (sano, revisar o antracnosis), probabilidad, Grad-CAM y recomendación |
 | **Trazabilidad** | `/trazabilidad` | Avance del proyecto: anillo del ciclo del café, objetivos, bitácora con fases SECI y matriz de requisitos |
 | Contacto | `/contacto` | Formulario de contacto |
@@ -77,7 +77,7 @@ El avance de cada objetivo se actualiza desde el panel y cada cambio queda en la
 |---|---|---|
 | 1.3 Propuesta · captura y diagnóstico automático | Página `/diagnostico` + servicio `ml/` | ✅ Implementado (modelos v0 preliminares) |
 | 1.3 Propuesta · memoria institucional (registro de capturas) | Tablas `capturas` y `diagnosticos`; cada análisis queda registrado | ✅ Implementado |
-| 1.3 Propuesta · red de conocimiento | Blog con comentarios; validación experta en `/validacion` | ✅ Implementado |
+| 1.3 Propuesta · red de conocimiento | Blog con comentarios y fichas de manejo vinculadas a cada resultado (RF07); validación experta en `/validacion` | ✅ Implementado |
 | 1.3 Propuesta · tablero de incidencia | `/tablero`: indicadores, incidencia mensual y distribución por clase | ✅ Implementado |
 | 2.2.1 Modelo SECI | Bitácora de Trazabilidad: cada registro lleva su fase SECI | ✅ Implementado |
 | 2.7.2 Transferencia de aprendizaje (EfficientNet-B0, MobileNetV2) | `ml/entrenamiento/modelos.py` define ambas redes; `ml/app.py` las carga; selector en `/diagnostico` | ✅ Implementado (sin entrenar) |
@@ -161,8 +161,21 @@ Para ver la base de datos con pgAdmin o DBeaver, conéctate a `localhost:5433` c
 1. **Fotografía del fruto:** guía de captura (un solo fruto, fondo uniforme, 10–20 cm, sin contraluz), arrastrar y soltar, **Tomar foto** (abre la cámara del teléfono) y **Subir foto**. Antes de enviarla, la foto se reduce a 1024 px y se le quitan los metadatos, incluida la ubicación GPS.
 2. **Modelo** (siempre visible): **EfficientNet-B0** por defecto, **MobileNetV2** (más rápido) o **Comparar ambos**.
 3. **Resultado:** semáforo verde (sano), ámbar (revisar) o rojo (antracnosis), probabilidad de antracnosis con los umbrales de la versión, foto junto al mapa **Grad-CAM** y la descripción «qué se observa / qué hacer», tomada de Metodología → Estado sanitario del fruto. «Revisar» no es una clase: aparece cuando la probabilidad queda entre los dos umbrales, y pide otra foto y la revisión de un especialista. Con «Comparar ambos» se muestran los dos resultados y si coinciden.
+4. **Fichas de manejo** (base de conocimiento, RF07): debajo del resultado aparecen la ficha de manejo de ese resultado y hasta dos lecturas relacionadas del blog, que se pueden abrir y comentar. Con «Comparar ambos» manda el resultado más grave, y si los modelos no coinciden, el de «revisar». El detalle de cada captura en Historial y Validación muestra las mismas fichas según la validación vigente o, si no la hay, según el modelo.
 
 Analizar requiere iniciar sesión.
+
+### Base de conocimiento (RF07)
+- Cada artículo del blog puede vincularse a un resultado (`sano`, `revisar` o `antracnosis`) desde el panel (**Vincular al resultado del diagnóstico**). Los de la categoría **FICHA DE MANEJO** aparecen primero.
+- Vienen tres fichas de manejo, una por resultado, y tres artículos nuevos («Recorridos de vigilancia», «Cómo tomar la foto del fruto» y «Manejo integrado de la antracnosis del fruto»). Además, seis artículos existentes quedan vinculados a un resultado.
+- Las fotos de los artículos nuevos están en `frontend/public/img/fichas/` y salen del conjunto coffee cherry 20251206 (Roboflow Universe, CC BY 4.0), citado en cada artículo.
+- **Productos y abonos de apoyo:** junto al resultado (y en el detalle de cada captura) aparece un bloque con los fungicidas, abonos, bioinsumos y precauciones de ese resultado.
+  - Para «antracnosis»: cobre como protectante, estrobilurinas o mezclas con triazol con asesoría, Trichoderma, potasio y calcio.
+  - Para «revisar»: confirmar antes de aplicar, y qué hacer si es broca o quemadura de sol.
+  - Para «sano»: abonamiento según análisis de suelo, encalado y prevención.
+
+  No incluye dosis a propósito: la dosis la fija la etiqueta del producto registrado ante SENASA y el plan, un ingeniero agrónomo. El texto se edita en el panel → Contenido → **Productos de apoyo** (una recomendación por línea, «Tipo: detalle»). El artículo «Fungicidas, abonos y bioinsumos frente a la antracnosis del café» lo explica con más detalle y referencias.
+- Se cargan una sola vez (tabla `migraciones_aplicadas`): lo que el administrador borre o edite después no vuelve a aparecer al reiniciar.
 
 ### El servicio de los modelos (`ml/`)
 - Python 3.11 + FastAPI + TensorFlow (CPU). Solo lo llama la API del sitio por la red interna de Docker; **no se expone a internet**.
@@ -218,9 +231,9 @@ Al arrancar, la API crea o actualiza las tablas (`backend/src/db/schema.sql`) y 
 | Tabla | Qué guarda |
 |---|---|
 | `users` | Cuentas, con rol `admin` o `user` (correo único sin distinguir mayúsculas) |
-| `articles` | Artículos del blog (Markdown sencillo, publicado o borrador, tiempo de lectura calculado) |
+| `articles` | Artículos del blog (Markdown sencillo, publicado o borrador, tiempo de lectura calculado) y el resultado del diagnóstico al que están vinculados (`clase_relacionada`) |
 | `comments` | Comentarios: artículo + usuario; se borran en cascada con el artículo o el usuario |
-| `content_items` | Bloques de las páginas: `sintomas`, `ciclo`, `manejo`, `mision`, `equipo`, `universidad`, `problema`, `clases`, `flujo`, `metricas`, `tecnologias`, `alcance` |
+| `content_items` | Bloques de las páginas: `sintomas`, `ciclo`, `manejo`, `mision`, `equipo`, `universidad`, `problema`, `clases`, `flujo`, `metricas`, `tecnologias`, `alcance`, `estado`, `limitaciones` y `productos` (productos de apoyo por resultado del diagnóstico) |
 | `settings` | Textos generales: portada, Nosotros, Metodología, Trazabilidad, contacto, pie de página |
 | `contact_messages` | Mensajes del formulario de contacto |
 | `objectives` | Objetivos específicos con su peso y avance (0–100 %) |
@@ -295,7 +308,7 @@ Cada nivel solo usa los niveles inferiores (átomos → moléculas → organismo
 | Método y ruta | Acceso |
 |---|---|
 | `POST /auth/register`, `POST /auth/login`, `POST /auth/logout`, `GET /auth/me` | público |
-| `GET /articles`, `GET /articles/:slug`, `GET /articles/:id/comments` | público |
+| `GET /articles` (`clase` = `sano`, `revisar` o `antracnosis`: artículos vinculados a ese resultado, con las fichas de manejo primero), `GET /articles/:slug`, `GET /articles/:id/comments` | público |
 | `POST /articles/:id/comments`, `DELETE /comments/:id` (propio) | usuario registrado |
 | `POST/PUT/DELETE /articles`, `GET /comments`, `DELETE /comments/:id` (cualquiera) | admin |
 | `GET /content`, `GET /settings`, `POST /messages` | público |
@@ -335,11 +348,11 @@ El servicio `ml` expone `GET /health` y `POST /predict` **solo en la red interna
 | Hecho | Pendiente |
 |---|---|
 | Sitio con blog, panel y contenido editable | Revisión de las etiquetas de antracnosis con un especialista |
-| Trazabilidad con SECI y matriz de requisitos | Entrenar EfficientNet-B0 y MobileNetV2 con la GPU de la PC en WSL2 con `ml/entrenamiento/entrenar.py` |
-| Pantalla «Nuevo diagnóstico» con selector y comparación de modelos | Versión v1 de los modelos tras la revisión experta de las etiquetas |
-| Servicio `ml/` con Grad-CAM y dos umbrales (sano, revisar, antracnosis) | Vincular las fichas del blog a cada resultado (RF07) y reflejar en el informe (4.3 y Anexo 4) los cambios del módulo |
-| Publicación con Docker y túnel de Cloudflare | Permisos por perfil para productor y propietario |
-| | Pruebas: casos CP01–CP10, rendimiento, usabilidad (SUS) y fotos de campo |
+| Trazabilidad con SECI y matriz de requisitos | Versión v1 de los modelos tras la revisión experta de las etiquetas |
+| Modelos v0 de EfficientNet-B0 y MobileNetV2 entrenados con la GPU de la PC | Reflejar en el informe (4.3 y Anexo 4) los cambios del módulo |
+| Módulos de diagnóstico, validación, historial, tablero y modelo de diagnóstico | Pruebas: casos CP01–CP10, usabilidad (SUS) y fotos de campo (RNF04) |
+| Base de conocimiento: fichas de manejo vinculadas a cada resultado (RF07) | |
+| Publicación con Docker y túnel de Cloudflare | |
 
 ### Historial de cambios
 | Fecha | Cambio |
@@ -359,6 +372,8 @@ El servicio `ml` expone `GET /health` y `POST /predict` **solo en la red interna
 | 15/11/2026 | Pantalla Historial (`/historial`) con filtros por periodo, clase vigente y validación, detalle de cada captura y exportación en CSV; desde el historial se abre el caso en Validación |
 | 15/11/2026 | Tablero de incidencia (`/tablero`) con indicadores, frutos por mes y clase, incidencia mensual, distribución por clase y tabla de datos, filtrable por periodo |
 | 15/11/2026 | Pantalla Modelo de diagnóstico en el panel (`/admin/modelo`): versiones con umbrales y métricas, versión activa por modelo, aviso si el servicio tiene cargada otra versión y descarga en ZIP de las fotos validadas para reentrenar |
+| 21/11/2026 | Base de conocimiento (RF07): artículos vinculados a cada resultado desde el panel; tres fichas de manejo y tres artículos nuevos; las fichas aparecen junto al resultado del diagnóstico y en el detalle de cada captura |
+| 21/11/2026 | Productos y abonos de apoyo por resultado (fungicidas, abonos, bioinsumos y precauciones, sin dosis), editables en el panel, y artículo sobre fungicidas, abonos y bioinsumos |
 
 ---
 

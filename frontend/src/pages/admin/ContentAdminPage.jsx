@@ -29,6 +29,15 @@ const SECTIONS = {
   tecnologias: { label: 'Tecnologías', page: 'Metodología', singular: 'tecnología', titleLabel: 'Herramienta', bodyLabel: 'Uso' },
   estado: { label: 'Estado actual', page: 'Metodología', singular: 'paso', titleLabel: 'Paso', bodyLabel: 'Qué se hizo o qué falta' },
   limitaciones: { label: 'Limitaciones', page: 'Metodología', singular: 'limitación', titleLabel: 'Limitación', bodyLabel: 'Descripción y cómo se mitiga' },
+  productos: {
+    label: 'Productos de apoyo',
+    page: 'Diagnóstico',
+    singular: 'resultado',
+    titleLabel: 'Resultado (Sano, Revisar o Antracnosis)',
+    bodyLabel: 'Recomendaciones',
+    bodyHint: 'Una recomendación por línea, con el formato «Tipo: detalle». Sin dosis: la fija la etiqueta registrada.',
+    multiline: true,
+  },
   alcance: {
     label: 'Alcance',
     page: 'Metodología',

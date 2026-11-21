@@ -25,3 +25,4 @@
   .blog-card:hover .blog-card__media img { transform: scale(1.03); }
   .blog-card:hover .blog-card__link { color: var(--color-brand); }
 }
+.blog-card__result { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--text-xs); font-weight: 600; color: var(--color-text-muted); }

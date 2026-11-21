@@ -15,3 +15,7 @@
 .article__sources { display: flex; flex-direction: column; gap: var(--space-2); }
 .article__sources a { display: inline-flex; align-items: center; gap: 4px; color: var(--color-brand); text-decoration: underline; text-underline-offset: 3px; font-size: var(--text-sm); }
 @media (hover: hover) { .article__back:hover { color: var(--color-brand); } }
+/* Base de conocimiento: a qué resultado del diagnóstico corresponde el artículo */
+.article__result { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; margin-top: var(--space-4); padding: var(--space-3) var(--space-4); border-left: 4px solid var(--article-result, var(--color-brand)); background: var(--color-surface-tint); border-radius: var(--radius); font-size: var(--text-sm); }
+.article__result-label { display: inline-flex; align-items: center; gap: var(--space-2); font-weight: 600; }
+.article__result a { font-weight: 600; color: var(--color-brand); text-decoration: underline; text-underline-offset: 3px; }

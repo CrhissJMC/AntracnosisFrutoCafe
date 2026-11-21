@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { Badge, Button, Icon, Text } from '../atoms';
 import { HealthLight, ImageFrame } from '../molecules';
 import { api } from '../../lib/api.js';
+import { knowledgeClass } from '../../lib/diagnosis.js';
+import { KnowledgeLinks } from './KnowledgeLinks.jsx';
+import { ProductAdvice } from './ProductAdvice.jsx';
 import { formatDateTime } from '../../lib/format.js';
 import { captureImageUrl, classTone, MODEL_NAMES, validationLabel, validatorLabel } from '../../lib/modulo.js';
 import './CaptureView.css';
@@ -12,6 +15,8 @@ const pct = (p) => `${Math.round(Number(p) * 100)} %`;
 export function CaptureView({ capture }) {
   const [gradcam, setGradcam] = useState({});
   const current = capture.historial[0];
+  // Fichas y productos: según la validación vigente; si no la hay, según el modelo.
+  const kbClass = knowledgeClass(current ? [current.clase_confirmada] : capture.diagnosticos.map((d) => d.resultado));
 
   const loadGradcam = async (model) => {
     setGradcam((g) => ({ ...g, [model]: { loading: true } }));
@@ -74,6 +79,9 @@ export function CaptureView({ capture }) {
           </div>
         ))}
       </div>
+
+      <ProductAdvice clase={kbClass} />
+      <KnowledgeLinks clase={kbClass} title={current ? 'Fichas de manejo según la validación' : 'Fichas de manejo según el modelo'} />
     </>
   );
 }

@@ -15,6 +15,9 @@ import {
   REMOVED_SETTINGS,
   REQUIREMENTS,
   MODEL_VERSIONS,
+  KNOWLEDGE_ARTICLES,
+  KNOWLEDGE_ARTICLES_V2,
+  ARTICLE_CLASS_LINKS,
 } from './seed-data.js';
 
 const log = (msg, extra = {}) => console.log(JSON.stringify({ level: 'info', msg, ...extra }));
@@ -240,6 +243,43 @@ async function seedModule(client) {
   }
 }
 
+// Base de conocimiento (RF07): fichas de manejo y artículos vinculados a cada resultado.
+// Se aplica una sola vez: lo que el administrador borre o cambie después no se restaura.
+async function insertKnowledgeArticles(client, articles) {
+  let added = 0;
+  for (const a of articles) {
+    const r = await client.query(
+      `INSERT INTO articles
+         (slug, category, title, subtitle, content, image_url, read_minutes, source_text, source_url, published_at, clase_relacionada)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+       ON CONFLICT (slug) DO NOTHING`,
+      [a.slug, a.category, a.title, a.subtitle, a.content, a.image_url, readingMinutes(a.content), a.source_text, a.source_url, a.published_at, a.clase_relacionada],
+    );
+    added += r.rowCount;
+  }
+  return added;
+}
+
+const applyOnce = async (client, name) =>
+  (await client.query('INSERT INTO migraciones_aplicadas (nombre) VALUES ($1) ON CONFLICT DO NOTHING', [name])).rowCount > 0;
+
+async function seedKnowledge(client) {
+  // v1: fichas de manejo y artículos existentes vinculados a cada resultado.
+  if (await applyOnce(client, 'base_conocimiento_v1')) {
+    const added = await insertKnowledgeArticles(client, KNOWLEDGE_ARTICLES);
+    let linked = 0;
+    for (const [slug, clase] of Object.entries(ARTICLE_CLASS_LINKS)) {
+      const r = await client.query('UPDATE articles SET clase_relacionada = $2 WHERE slug = $1 AND clase_relacionada IS NULL', [slug, clase]);
+      linked += r.rowCount;
+    }
+    log('seed_knowledge_base', { added, linked });
+  }
+  // v2: fungicidas, abonos y bioinsumos de apoyo.
+  if (await applyOnce(client, 'base_conocimiento_v2')) {
+    log('seed_knowledge_base_v2', { added: await insertKnowledgeArticles(client, KNOWLEDGE_ARTICLES_V2) });
+  }
+}
+
 export async function migrate() {
   await waitForDatabase();
   const schema = await readFile(new URL('./schema.sql', import.meta.url), 'utf8');
@@ -251,6 +291,7 @@ export async function migrate() {
     await client.query(moduleSchema);
     await seed(client);
     await seedModule(client);
+    await seedKnowledge(client);
   });
   log('migrations_done');
 }

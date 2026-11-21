@@ -12,6 +12,7 @@ const toForm = (a) => ({
   image_url: a.image_url ?? '',
   source_text: a.source_text ?? '',
   source_url: a.source_url ?? '',
+  clase_relacionada: a.clase_relacionada ?? '',
 });
 
 export function ArticleEditPage({ id }) {

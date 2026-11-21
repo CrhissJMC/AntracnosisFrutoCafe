@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { Button, Heading, Icon, Link, Spinner, Text } from '../components/atoms';
+import { Button, Dot, Heading, Icon, Link, Spinner, Text } from '../components/atoms';
+import { healthClass } from '../lib/diagnosis.js';
 import { Alert } from '../components/molecules';
 import { CommentSection } from '../components/organisms';
 import { MainLayout } from '../components/templates';
@@ -30,6 +31,8 @@ export function ArticlePage({ slug }) {
       requestAnimationFrame(() => document.querySelector(window.location.hash)?.scrollIntoView({ block: 'start' }));
     }
   }, [article]);
+
+  const cls = article?.clase_relacionada ? healthClass(article.clase_relacionada) : null;
 
   if (loading) {
     return (
@@ -75,6 +78,14 @@ export function ArticlePage({ slug }) {
                 <Icon name="clock" size={14} /> {article.read_minutes} min de lectura
               </span>
             </div>
+            {cls && (
+              <div className="article__result" style={{ '--article-result': cls.color }}>
+                <span className="article__result-label">
+                  <Dot color={cls.color} size={10} /> Para el resultado «{cls.short}» del diagnóstico
+                </span>
+                <Link to="/diagnostico">Analizar un fruto</Link>
+              </div>
+            )}
             {isAdmin && (
               <div className="article__admin">
                 {!article.published && <Alert tone="info">Borrador: solo los administradores pueden verlo.</Alert>}

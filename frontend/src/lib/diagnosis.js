@@ -12,6 +12,36 @@ export const HEALTH_CLASSES = [
 ];
 export const healthClass = (id) => HEALTH_CLASSES.find((c) => c.id === id);
 
+/**
+ * Resultado cuyas fichas de manejo se muestran (base de conocimiento, RF07). Con varios resultados
+ * (comparar modelos) manda el más grave; si no coinciden, «revisar». «Otro daño» validado → «revisar».
+ */
+export function knowledgeClass(classes) {
+  const list = classes.filter(Boolean).map((c) => (c === 'otro_dano' ? 'revisar' : c));
+  if (!list.length) return null;
+  if (list.includes('antracnosis')) return 'antracnosis';
+  if (list.includes('revisar') || new Set(list).size > 1) return 'revisar';
+  return list[0];
+}
+
+/**
+ * Recomendaciones de productos de un resultado (sección «productos» del contenido): el bloque cuyo título
+ * es el nombre corto del resultado (Sano, Revisar, Antracnosis); una recomendación por línea, «Tipo: detalle».
+ */
+export function productAdvice(items, clase) {
+  const short = healthClass(clase)?.short.toLowerCase();
+  const item = items.find((i) => i.title.trim().toLowerCase() === short);
+  if (!item) return [];
+  return item.body
+    .split('\n')
+    .map((l) => l.trim())
+    .filter(Boolean)
+    .map((l) => {
+      const m = l.match(/^([^:]{2,60}):\s*(.+)$/);
+      return m ? { label: m[1], text: m[2] } : { label: '', text: l };
+    });
+}
+
 export const CAPTURE_GUIDE = [
   { icon: 'target', label: 'Un solo fruto' },
   { icon: 'image', label: 'Fondo uniforme' },

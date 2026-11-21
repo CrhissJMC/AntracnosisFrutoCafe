@@ -25,6 +25,13 @@ ALTER TABLE articles ADD COLUMN IF NOT EXISTS clase_relacionada VARCHAR(12)
 CREATE INDEX IF NOT EXISTS articles_clase_idx ON articles (clase_relacionada)
   WHERE clase_relacionada IS NOT NULL;
 
+-- Cargas de contenido que se aplican una sola vez (p. ej. las fichas de manejo):
+-- si el administrador borra o edita lo cargado, no vuelve a aparecer al reiniciar.
+CREATE TABLE IF NOT EXISTS migraciones_aplicadas (
+  nombre      VARCHAR(80) PRIMARY KEY,
+  aplicada_en TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 -- Versiones del modelo (RF09, RNF08) -----------------------------------------
 --   p < umbral_inferior -> 'sano'; p >= umbral_superior -> 'antracnosis'; entre ambos -> 'revisar'
 CREATE TABLE IF NOT EXISTS modelo_versiones (

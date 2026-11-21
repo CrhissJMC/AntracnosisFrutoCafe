@@ -216,11 +216,53 @@ const ESTADO_ITEMS_V9 = [
   ESTADO_VALIDACION,
 ];
 
-// Versión vigente (15/11/2026): revisión general; las fichas del blog aún no se vinculan a cada resultado.
-const ESTADO_ITEMS = [
+// 15/11/2026: revisión general; las fichas del blog aún no se vinculaban a cada resultado.
+const ESTADO_ITEMS_V10 = [
   ...ESTADO_ITEMS_V1.slice(0, 4),
   ['estado', 'Módulos de gestión del conocimiento', 'Casi listo. Hecho: registro de capturas; validación experta con historial de quién validó y con qué perfil; historial de capturas con exportación en CSV; tablero de incidencia por periodo; y, en el panel, el modelo de diagnóstico con sus versiones, la versión activa y la descarga de las fotos validadas para reentrenar. Probado: tiempo de respuesta (menos de 3 s en 60 análisis), permisos por perfil y diseño adaptable. Pendiente: vincular las fichas del blog a cada resultado del diagnóstico y reflejar los cambios en el informe.'],
   ESTADO_VALIDACION,
+];
+
+// 21/11/2026: base de conocimiento con fichas de manejo vinculadas a cada resultado.
+const ESTADO_ITEMS_V11 = [
+  ...ESTADO_ITEMS_V1.slice(0, 4),
+  ['estado', 'Módulos de gestión del conocimiento', 'Hecho. Registro de capturas; validación experta con historial de quién validó y con qué perfil; historial de capturas con exportación en CSV; tablero de incidencia por periodo; base de conocimiento, con fichas de manejo y artículos del blog vinculados a cada resultado (sano, revisar y antracnosis) que se muestran junto al diagnóstico y en cada captura; y, en el panel, el modelo de diagnóstico con sus versiones, la versión activa y la descarga de las fotos validadas para reentrenar. Probado: tiempo de respuesta (menos de 3 s en 60 análisis), permisos por perfil y diseño adaptable. Pendiente: reflejar los cambios en el informe.'],
+  ESTADO_VALIDACION,
+];
+
+// Versión vigente (21/11/2026): base de conocimiento con fichas de manejo y productos de apoyo por resultado.
+const ESTADO_ITEMS = [
+  ...ESTADO_ITEMS_V1.slice(0, 4),
+  ['estado', 'Módulos de gestión del conocimiento', 'Hecho. Registro de capturas; validación experta con historial de quién validó y con qué perfil; historial de capturas con exportación en CSV; tablero de incidencia por periodo; base de conocimiento, con fichas de manejo, artículos del blog y productos de apoyo (fungicidas, abonos y bioinsumos, sin dosis) para cada resultado (sano, revisar y antracnosis), que se muestran junto al diagnóstico y en cada captura; y, en el panel, el modelo de diagnóstico con sus versiones, la versión activa y la descarga de las fotos validadas para reentrenar. Probado: tiempo de respuesta (menos de 3 s en 60 análisis), permisos por perfil y diseño adaptable. Pendiente: reflejar los cambios en el informe.'],
+  ESTADO_VALIDACION,
+];
+
+// Productos y abonos de apoyo según el resultado del diagnóstico (se muestran junto al resultado y
+// se editan en el panel → Contenido → Productos de apoyo). Título = resultado; una recomendación por línea,
+// con el formato «Tipo: detalle». Sin dosis: la dosis la fija la etiqueta registrada y el técnico.
+export const PRODUCT_ITEMS = [
+  ['productos', 'Sano', [
+    'Abonamiento: plan de nitrógeno, fósforo y potasio según el análisis de suelo, repartido en dos o tres aplicaciones al año.',
+    'Encalado: cal agrícola o dolomita si el suelo es ácido (pH menor que 5); también aporta calcio y magnesio.',
+    'Abono orgánico: compost o pulpa de café bien descompuesta, nunca preparada con frutos enfermos.',
+    'Bioinsumo preventivo (opcional): Trichoderma registrado como bioinsumo, aplicado al suelo o a la materia orgánica según su etiqueta.',
+    'Fungicida: no hace falta sin síntomas. En zonas con antecedentes de antracnosis, el técnico puede indicar un fungicida a base de cobre preventivo en la floración y el fruto pequeño, antes de las lluvias.',
+    'Insecticida: no previene la antracnosis; úsalo solo si se confirma otra plaga.',
+  ].join('\n')],
+  ['productos', 'Revisar', [
+    'Antes de aplicar: no uses ningún producto hasta confirmar el diagnóstico; un producto equivocado no sirve y cuesta.',
+    'Si se confirma antracnosis: sigue las recomendaciones del resultado «antracnosis».',
+    'Si es broca (agujero pequeño en la corona del fruto): trampas con atrayente de alcohol, el hongo Beauveria bassiana como control biológico y recojo de frutos caídos; el insecticida, solo con indicación técnica.',
+    'Si es quemadura de sol o falta de nutrientes: regula la sombra y corrige el abonamiento según el análisis de suelo o de hojas.',
+  ].join('\n')],
+  ['productos', 'Antracnosis', [
+    'Fungicida protectante a base de cobre: oxicloruro de cobre, hidróxido de cobre u óxido cuproso. Es el más usado contra la antracnosis del fruto: protege los frutos sanos, no cura los enfermos. Aplícalo antes de las lluvias.',
+    'Fungicida sistémico (con asesoría técnica): estrobilurinas como la azoxistrobina, o mezclas de estrobilurina con triazol. Alterna grupos de fungicidas para que el hongo no se vuelva resistente.',
+    'Bioinsumo: Trichoderma como complemento; cepas nativas inhibieron al hongo de la antracnosis del café en laboratorio, pero en campo el efecto es variable.',
+    'Abonamiento: potasio y calcio equilibrados según el análisis de suelo, sin excesos de nitrógeno.',
+    'Insecticida: no sirve contra la antracnosis, porque la causa un hongo.',
+    'Seguridad: usa solo productos registrados ante SENASA para café, en la dosis de la etiqueta, con equipo de protección, respetando el periodo de carencia antes de cosechar y con triple lavado de los envases.',
+  ].join('\n')],
 ];
 
 export const METHOD_ITEMS = [
@@ -263,6 +305,8 @@ export const METHOD_ITEMS = [
   ['alcance', 'No incluye', 'Análisis de hojas, ramas o plantas completas\nEstimación de la severidad (infección incipiente o avanzada)\nSensores de temperatura y humedad (trabajo futuro)\nReemplazo del diagnóstico de laboratorio\nServicios de nube pagados: el sistema se ejecuta en la PC del equipo'],
   // Qué estamos haciendo ahora (pasos, en orden)
   ...ESTADO_ITEMS,
+  // Productos de apoyo según el resultado (pantalla de diagnóstico)
+  ...PRODUCT_ITEMS,
   // Limitaciones
   ['limitaciones', 'Etiquetas sin verificar', 'La principal fuente con antracnosis (Coffee berry disease, Roboflow) reutiliza las fotos de un conjunto colombiano de madurez de Zenodo, etiquetadas por un usuario anónimo como Colletotrichum kahawae, especie reportada solo en África; algunos frutos marcados como enfermos figuran como secos o sobremaduros. Un especialista debe revisar esas 559 imágenes antes del modelo final.'],
   ['limitaciones', 'Pocos frutos enfermos', 'Solo 768 de las 3 840 imágenes tienen antracnosis y vienen de dos fuentes. Se compensa con pesos por clase y aumento de datos, pero el modelo puede no reconocer síntomas poco representados.'],
@@ -511,6 +555,308 @@ Los registros de campo son el punto de partida, no el diagnóstico final. Si la 
   },
 ].map((a) => ({ ...a, published_at: PUBLISHED_AT }));
 
+// ── Base de conocimiento (RF07) ─────────────────────────────────────────
+// Cada artículo puede vincularse a un resultado del diagnóstico (clase_relacionada). La pantalla del
+// resultado muestra primero la ficha de manejo de esa clase y después los demás artículos vinculados.
+export const FICHA_CATEGORY = 'FICHA DE MANEJO';
+const FOTO_FUENTE = 'Foto: coffee cherry 20251206, Roboflow Universe (CC BY 4.0)';
+const FOTO_URL = 'https://universe.roboflow.com/1-hqah6/coffee-cherry-20251206';
+const PUBLISHED_FICHAS = '2026-11-21T12:00:00-05:00';
+
+export const KNOWLEDGE_ARTICLES = [
+  {
+    slug: 'ficha-fruto-sano-prevencion-y-vigilancia',
+    category: FICHA_CATEGORY,
+    clase_relacionada: 'sano',
+    title: 'Fruto sano: prevención y vigilancia',
+    subtitle: 'El resultado «sano» no es el final del trabajo: cuidar la parcela y seguir observando evita que la antracnosis llegue sin aviso.',
+    image_url: '/img/fichas/fruto-sano.jpg',
+    source_text: FOTO_FUENTE,
+    source_url: FOTO_URL,
+    content: `## Qué significa el resultado
+
+El modelo no encontró señales de antracnosis en **este fruto**. Eso no garantiza que toda la planta o la parcela estén sanas: una foto representa a un solo fruto y el modelo puede equivocarse. Úsalo como un dato más de tu recorrido, no como un certificado.
+
+## Qué hacer ahora
+
+- Registra el resultado: el sistema ya lo guardó en tu historial con la fecha y la versión del modelo.
+- Si en la misma rama ves frutos con manchas, fotografíalos también: la enfermedad suele empezar en pocos frutos.
+- Mantén el recorrido de vigilancia de la parcela, con más frecuencia en las semanas de lluvia.
+
+## Prevención en la parcela
+
+- **Saneamiento:** retira los frutos secos o momificados que quedan en las ramas y en el suelo; son la principal fuente de esporas para la siguiente campaña.
+- **Poda y sombra:** una copa aireada y una sombra regulada reducen el tiempo que el fruto permanece mojado.
+- **Nutrición equilibrada:** una planta bien nutrida, según el análisis de suelo, tolera mejor las enfermedades.
+- **Herramientas limpias:** desinfecta tijeras y machetes al pasar de una planta con síntomas a otra.
+- **Cosecha oportuna:** los frutos sobremaduros que quedan en la planta se dañan con más facilidad.
+
+## Cuándo volver a revisar
+
+Repite la observación después de lluvias seguidas, cuando el fruto cambia de verde a pintón y antes de cada pase de cosecha. Si en un recorrido encuentras más frutos con manchas que la vez anterior, avisa al especialista.
+
+## Recuerda
+
+El sistema apoya la vigilancia, pero no reemplaza el criterio del técnico de campo ni el análisis de laboratorio.`,
+  },
+  {
+    slug: 'recorridos-de-vigilancia-en-el-cafetal',
+    category: 'CAMPO',
+    clase_relacionada: 'sano',
+    title: 'Recorridos de vigilancia: cómo detectar la antracnosis a tiempo',
+    subtitle: 'Un recorrido corto y constante, con fotos de los frutos dudosos, permite actuar antes de que la enfermedad se extienda.',
+    image_url: '/img/fichas/vigilancia-cafetal.jpg',
+    source_text: FOTO_FUENTE,
+    source_url: FOTO_URL,
+    content: `## Por qué vigilar aunque el fruto se vea sano
+
+La antracnosis empieza con lesiones pequeñas que pasan desapercibidas. Detectarlas cuando afectan a pocos frutos da tiempo para retirar el material enfermo y consultar al especialista antes de que se pierda parte de la cosecha.
+
+## Cómo organizar el recorrido
+
+- Elige un camino fijo que pase por bordes, zonas con más sombra, zonas más expuestas y partes bajas donde se acumula humedad.
+- Marca de 10 a 20 plantas de referencia y revísalas siempre en el mismo orden.
+- En cada planta mira al menos tres ramas: una baja, una media y una alta.
+- Hazlo cada una o dos semanas, y con más frecuencia en temporada de lluvias o durante el llenado del fruto.
+
+## Qué observar
+
+- Manchas oscuras y hundidas en la cáscara, con borde definido.
+- Frutos que se secan, ennegrecen y quedan pegados a la rama.
+- Polvo o masas de color rosado sobre las lesiones cuando hay mucha humedad.
+- Caída de frutos jóvenes sin causa aparente.
+
+## Cómo usar el sistema en el recorrido
+
+Fotografía con el teléfono cada fruto dudoso siguiendo la guía de captura y analízalo en **Nuevo diagnóstico**. Cada análisis queda en el **Historial**, y el **Tablero** muestra cómo cambia la incidencia mes a mes. Así el recorrido deja de depender de la memoria de una sola persona.
+
+## Cuándo pedir ayuda
+
+Consulta al especialista si los frutos con síntomas aumentan entre dos recorridos, si aparecen en varias zonas de la parcela o si el sistema devuelve varios resultados «revisar» o «antracnosis» en la misma zona.`,
+  },
+  {
+    slug: 'ficha-resultado-revisar',
+    category: FICHA_CATEGORY,
+    clase_relacionada: 'revisar',
+    title: 'Resultado «revisar»: qué hacer cuando el modelo no está seguro',
+    subtitle: 'Cómo tomar otra foto, qué observar en el fruto y cuándo consultar al especialista.',
+    image_url: '/img/fichas/fruto-revisar.jpg',
+    source_text: FOTO_FUENTE,
+    source_url: FOTO_URL,
+    content: `## Qué significa el resultado
+
+La probabilidad de antracnosis quedó entre los dos umbrales del modelo: no es lo bastante baja para decir «sano» ni lo bastante alta para decir «antracnosis». Puede deberse a una foto poco clara, a un daño distinto de la antracnosis (golpe, insecto, quemadura de sol, fruto sobremaduro) o a una lesión muy inicial. Por eso el caso queda **pendiente para que lo revise un especialista**.
+
+## 1. Toma otra foto
+
+- Un solo fruto, centrado y ocupando la mayor parte de la imagen.
+- A 10–20 cm de distancia, con el fruto enfocado.
+- Luz natural pareja, sin sol directo ni contraluz, y sin flash.
+- Si puedes, fotografía también el otro lado del fruto.
+- Fondo uniforme: la rama o las hojas del propio cafetal funcionan bien.
+
+Si la nueva foto da «sano» o «antracnosis» con claridad, sigue la ficha de ese resultado. Si vuelve a salir «revisar», no repitas muchas veces: pasa al punto 2.
+
+## 2. Observa el fruto con atención
+
+- **¿La mancha está hundida y es oscura, con borde definido?** Es más compatible con antracnosis.
+- **¿Hay polvo o masas rosadas sobre la lesión?** Con humedad, también es una señal de antracnosis.
+- **¿Hay un agujero pequeño en la corona del fruto?** Puede ser broca, no antracnosis.
+- **¿La mancha es clara, seca y en el lado expuesto al sol?** Puede ser quemadura de sol.
+- **¿Hay otros frutos con el mismo síntoma en la rama?** Fotografíalos también.
+
+## 3. Cuándo consultar al especialista
+
+- Si el resultado se repite como «revisar» con buenas fotos.
+- Si en la misma planta o zona hay varios frutos con lesiones.
+- Si la lesión no se parece a ninguna de las descritas.
+
+El especialista verá tu caso en **Validación**, con la foto y el mapa Grad-CAM, y registrará si es sano, antracnosis u otro daño. Su respuesta queda en tu **Historial** y ayuda a mejorar el modelo en la siguiente versión.
+
+## Mientras tanto
+
+Separa los frutos dudosos de la cosecha sana y no los dejes en el suelo de la parcela hasta tener una respuesta.`,
+  },
+  {
+    slug: 'como-tomar-la-foto-del-fruto',
+    category: 'CAMPO',
+    clase_relacionada: 'revisar',
+    title: 'Cómo tomar la foto de un fruto para el diagnóstico',
+    subtitle: 'La calidad de la foto pesa tanto como el modelo: cinco reglas para obtener un resultado confiable.',
+    image_url: '/img/fichas/foto-del-fruto.jpg',
+    source_text: FOTO_FUENTE,
+    source_url: FOTO_URL,
+    content: `## Por qué importa la foto
+
+El modelo aprendió con fotos de frutos individuales, bien enfocados y tomados en el cafetal. Cuanto más se parezca tu foto a esas condiciones, más confiable es el resultado. Muchas respuestas «revisar» se resuelven solo con una mejor foto.
+
+## Las cinco reglas
+
+- **Un solo fruto:** acércate hasta que el fruto ocupe la mayor parte de la imagen. Si hay varios, el modelo no sabe cuál evaluar.
+- **Enfocado:** toca la pantalla sobre el fruto para enfocar y espera un segundo antes de tomar la foto.
+- **A 10–20 cm:** más cerca, la cámara no enfoca; más lejos, se pierden los detalles de la lesión.
+- **Luz pareja:** busca sombra clara. Evita el sol directo, el contraluz y el flash, que borran el color de las manchas.
+- **Fondo natural:** fotografía el fruto en la rama, con las hojas detrás. Evita fondos de papel o mesas de colores muy distintos.
+
+## Errores frecuentes
+
+- Fotos movidas por el viento: sujeta la rama con la otra mano.
+- Fruto cortado en el borde de la imagen.
+- Gotas de agua que reflejan la luz y parecen manchas.
+- Fotos de la pantalla de otro teléfono o fotos de fotos.
+
+## Privacidad
+
+El sistema reduce el tamaño de la foto y elimina sus metadatos (incluida la ubicación GPS) antes de enviarla. La ubicación solo se guarda si marcas la casilla correspondiente.`,
+  },
+  {
+    slug: 'ficha-fruto-con-antracnosis',
+    category: FICHA_CATEGORY,
+    clase_relacionada: 'antracnosis',
+    title: 'Fruto con antracnosis: qué hacer con los frutos y la parcela',
+    subtitle: 'Pasos inmediatos para frenar la diseminación y por qué conviene confirmar el diagnóstico con un especialista.',
+    image_url: '/img/fichas/fruto-antracnosis.jpg',
+    source_text: FOTO_FUENTE,
+    source_url: FOTO_URL,
+    content: `## Qué significa el resultado
+
+El modelo encontró en el fruto un patrón compatible con antracnosis: manchas oscuras y hundidas causadas por hongos del género *Colletotrichum*. Es una **alerta temprana**, no un diagnóstico de laboratorio: el especialista revisará el caso en **Validación** y su respuesta quedará en tu **Historial**.
+
+## Qué hacer con los frutos
+
+- Retira de la planta los frutos con lesiones y los que estén secos o momificados.
+- No los dejes en el suelo ni los mezcles con la cosecha sana: recógelos en un saco aparte.
+- Elimínalos lejos del cafetal, enterrándolos o según la indicación del técnico; no los uses como abono dentro de la parcela.
+- Lávate las manos y limpia las herramientas antes de pasar a plantas sanas.
+
+## Qué hacer en la parcela
+
+- **Mira las plantas vecinas:** fotografía los frutos dudosos para saber si es un caso aislado o un foco.
+- **Marca la zona** en tu registro para volver a revisarla en una o dos semanas.
+- **Mejora la aireación:** poda las ramas improductivas y regula la sombra para que el fruto se seque más rápido después de la lluvia.
+- **Evita mover material** (frutos, ramas, sacos) desde la zona afectada hacia zonas sanas.
+- **Cosecha a tiempo** los frutos maduros de la zona afectada y procésalos por separado si tienen daño.
+
+## Cuándo consultar al especialista
+
+Siempre que el resultado se repita en varias plantas, y antes de aplicar cualquier producto. El control químico solo debe usarse con productos registrados ante SENASA, en la dosis y el momento que indique un ingeniero agrónomo; aplicarlos sin diagnóstico puede ser inútil y costoso.
+
+## Más información
+
+Lee la guía de **manejo integrado** para ver cómo combinar las medidas culturales, biológicas y químicas en la siguiente campaña.`,
+  },
+  {
+    slug: 'manejo-integrado-de-la-antracnosis-del-fruto',
+    category: 'MANEJO',
+    clase_relacionada: 'antracnosis',
+    title: 'Manejo integrado de la antracnosis del fruto',
+    subtitle: 'Ninguna medida funciona sola: prevención, saneamiento, control biológico y químico con asesoría, y seguimiento.',
+    image_url: '/img/fichas/manejo-integrado.jpg',
+    source_text: FOTO_FUENTE,
+    source_url: FOTO_URL,
+    content: `## Qué es el manejo integrado
+
+Es combinar varias medidas que se refuerzan entre sí, en lugar de depender de una sola. Para la antracnosis del fruto, el objetivo es reducir la cantidad de esporas en la parcela, evitar las condiciones que favorecen la infección y actuar a tiempo cuando aparecen los primeros frutos afectados.
+
+## 1. Medidas culturales (la base)
+
+- Retirar frutos momificados y ramas secas después de la cosecha y antes de la floración.
+- Podar para airear la copa y regular la sombra.
+- Mantener una nutrición equilibrada basada en el análisis de suelo.
+- Controlar las malezas alrededor de la planta para reducir la humedad.
+- Cosechar a tiempo y no dejar frutos sobremaduros en la planta.
+
+## 2. Vigilancia
+
+Recorridos fijos cada una o dos semanas, con fotos de los frutos dudosos en el sistema. El **Tablero** muestra la incidencia por mes y ayuda a decidir cuándo intensificar las medidas.
+
+## 3. Control biológico
+
+Algunos hongos benéficos, como *Trichoderma*, inhiben a *Colletotrichum* en ensayos de laboratorio. En campo sus resultados son variables, por lo que deben usarse como complemento y con productos de calidad comprobada.
+
+## 4. Control químico, solo con asesoría
+
+Puede ser necesario cuando la incidencia es alta y las condiciones son muy favorables a la enfermedad. Debe decidirlo un ingeniero agrónomo, con productos registrados ante SENASA, respetando la dosis, el momento de aplicación, el periodo de carencia antes de la cosecha y el equipo de protección. Alternar productos evita que el hongo se vuelva resistente.
+
+## 5. Registro y aprendizaje
+
+Anota qué medidas aplicaste, cuándo y qué pasó después. Con el historial de capturas, las validaciones del especialista y el tablero, la finca construye su propio conocimiento sobre cómo se comporta la enfermedad en sus parcelas.
+
+## Recuerda
+
+Las recomendaciones de este artículo son generales. Las especies de *Colletotrichum* presentes en el Perú y las condiciones de cada finca son distintas: confirma el diagnóstico y el plan de manejo con un especialista.`,
+  },
+].map((a) => ({ ...a, published_at: PUBLISHED_FICHAS }));
+
+// Segunda carga (21/11/2026): productos, abonos y bioinsumos de apoyo.
+export const KNOWLEDGE_ARTICLES_V2 = [
+  {
+    slug: 'fungicidas-abonos-y-bioinsumos-contra-la-antracnosis',
+    category: 'MANEJO',
+    clase_relacionada: 'antracnosis',
+    title: 'Fungicidas, abonos y bioinsumos frente a la antracnosis del café',
+    subtitle: 'Qué productos se usan, para qué sirve cada uno y cómo aplicarlos con seguridad. Sin dosis: la dosis la fijan la etiqueta y el técnico.',
+    image_url: '/img/fichas/productos-apoyo.jpg',
+    source_text: 'Foto: coffee cherry 20251206, Roboflow Universe (CC BY 4.0). Referencias en el texto.',
+    source_url: 'https://universe.roboflow.com/1-hqah6/coffee-cherry-20251206',
+    content: `## Antes de comprar un producto
+
+La antracnosis la causa un **hongo** (*Colletotrichum*). Por eso los insecticidas no la controlan, y los fungicidas solo ayudan si se aplican en el momento correcto y junto con el manejo cultural: retirar frutos enfermos, podar y regular la sombra. Confirma el diagnóstico con el especialista antes de aplicar: si el daño es broca o quemadura de sol, el fungicida no sirve.
+
+## 1. Fungicidas protectantes a base de cobre
+
+- **Ejemplos de ingrediente activo:** oxicloruro de cobre, hidróxido de cobre, óxido cuproso.
+- **Para qué sirven:** forman una capa sobre el fruto que impide que la espora germine. Son los más usados contra las enfermedades del fruto del café causadas por *Colletotrichum*, como la Coffee Berry Disease en África.
+- **Cuándo:** de forma preventiva, en floración y fruto pequeño, y antes de periodos de lluvia. No curan los frutos que ya tienen lesión.
+- **Cuidado:** la lluvia los lava; aplicarlos muchas veces encarece el manejo y acumula cobre en el suelo.
+
+## 2. Fungicidas sistémicos
+
+- **Ejemplos:** estrobilurinas como la azoxistrobina o la piraclostrobina, y mezclas de estrobilurina con un triazol.
+- **Para qué sirven:** entran en el tejido y protegen por más tiempo. En ensayos con café, las plantas tratadas con azoxistrobina contra la Coffee Berry Disease duplicaron la cosecha en Camerún, y una mezcla de estrobilurina y triazol redujo la antracnosis en Hawái.
+- **Cuidado:** el hongo se vuelve resistente si se repite siempre el mismo grupo. Alterna grupos y respeta el número máximo de aplicaciones por campaña que indica la etiqueta.
+
+## 3. Bioinsumos
+
+- **Trichoderma:** hongo benéfico que compite con *Colletotrichum*. Cepas nativas inhibieron al hongo de la antracnosis del café en laboratorio ([estudio en México, 2025](https://www.scielo.org.mx/scielo.php?pid=S0185-33092025000200007&script=sci_arttext)). En campo el efecto es variable: úsalo como complemento, no como único control.
+- **Beauveria bassiana:** no actúa sobre la antracnosis; sirve para la broca del café, una plaga que a veces se confunde con la enfermedad.
+
+## 4. Abonos y enmiendas
+
+- **Análisis de suelo primero:** el plan de nitrógeno, fósforo y potasio debe salir del análisis, no de una receta general.
+- **Potasio y calcio:** una planta bien nutrida forma tejidos más resistentes; en otros cultivos, el equilibrio de potasio y calcio redujo la severidad de la antracnosis.
+- **Cal agrícola o dolomita:** corrige la acidez del suelo cuando el pH es menor que 5 y aporta calcio y magnesio.
+- **Sin excesos de nitrógeno:** el exceso produce brotes tiernos y follaje denso que retiene humedad.
+- **Abono orgánico:** compost o pulpa bien descompuesta, nunca preparada con frutos enfermos.
+
+## 5. Seguridad y normas
+
+- Usa solo productos **registrados ante SENASA para el cultivo de café** y verifica el registro en la etiqueta.
+- Aplica la **dosis de la etiqueta**: más producto no controla mejor y aumenta los residuos.
+- Usa **equipo de protección**: guantes, mascarilla, lentes y ropa de manga larga.
+- Respeta el **periodo de carencia** (días entre la última aplicación y la cosecha).
+- No mezcles productos sin indicación técnica, y haz el **triple lavado** de los envases vacíos antes de entregarlos al punto de acopio.
+
+## Referencias
+
+- [Revisión de los hongos del café (Pathogens, 2022)](https://www.doi.org/10.3390/pathogens11040411).
+- [Fungicidas convencionales y biológicos contra la roya y la antracnosis del café en Hawái](https://scholarspace.manoa.hawaii.edu/items/0effc41a-e509-4d86-93ae-69bbe8ab9409/full).
+- [Manejo integrado de plagas y enfermedades del café, Anacafé](https://www.anacafe.org/uploads/file/9ca51328e6734c6b8e0d88f604266591/09_Manejo_integrado_de_plagas.pdf).
+
+Las recomendaciones son generales y no reemplazan la indicación de un ingeniero agrónomo.`,
+  },
+].map((a) => ({ ...a, published_at: '2026-11-21T18:00:00-05:00' }));
+
+// Artículos existentes que se vinculan a un resultado (solo si nadie les asignó otro).
+export const ARTICLE_CLASS_LINKS = {
+  'practicas-culturales-cafetal-sano': 'sano',
+  'lluvias-y-antracnosis': 'sano',
+  'observar-y-registrar-frutos-con-sintomas': 'revisar',
+  'colletotrichum-conociendo-al-patogeno': 'antracnosis',
+  'trichoderma-control-biologico': 'antracnosis',
+  'frutos-enfermos-y-calidad-del-cafe': 'antracnosis',
+};
+
 // Versiones anteriores de la Metodología. Una sección se actualiza solo si sigue igual a alguna.
 // v2 (tercer avance) incluía una CNN entrenada desde cero como línea base, que se descartó.
 export const LEGACY_METHOD_VERSIONS = [
@@ -526,6 +872,8 @@ export const LEGACY_METHOD_VERSIONS = [
   ESTADO_ITEMS_V7,
   ESTADO_ITEMS_V8,
   ESTADO_ITEMS_V9,
+  ESTADO_ITEMS_V10,
+  ESTADO_ITEMS_V11,
   METHOD_ITEMS_V3.map((i) =>
     i[0] === 'flujo' && i[1] === 'Modelos' ? [i[0], i[1], 'EfficientNet-B0 como modelo principal, MobileNetV2 como alternativa ligera y una CNN sencilla entrenada desde cero como línea base.'] : i,
   ),

@@ -5,6 +5,7 @@ import { AdminLayout } from '../../components/templates';
 import { useAsync } from '../../hooks/useAsync.js';
 import { api } from '../../lib/api.js';
 import { formatDate } from '../../lib/format.js';
+import { healthClass } from '../../lib/diagnosis.js';
 
 export function ArticlesAdminPage() {
   const { data, error, setData } = useAsync(() => api.get('/articles?all=1&limit=100').then((d) => d.articles), []);
@@ -29,6 +30,11 @@ export function ArticlesAdminPage() {
       ),
     },
     { key: 'category', label: 'Categoría' },
+    {
+      key: 'clase_relacionada',
+      label: 'Resultado',
+      render: (a) => (a.clase_relacionada ? healthClass(a.clase_relacionada)?.short : '—'),
+    },
     {
       key: 'published',
       label: 'Estado',

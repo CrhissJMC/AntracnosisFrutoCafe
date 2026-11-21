@@ -1,7 +1,9 @@
 import { Icon, Spinner } from '../atoms';
 import { Alert, Callout, EmptyState } from '../molecules';
-import { healthClass } from '../../lib/diagnosis.js';
+import { healthClass, knowledgeClass } from '../../lib/diagnosis.js';
 import { DiagnosisResult } from './DiagnosisResult.jsx';
+import { KnowledgeLinks } from './KnowledgeLinks.jsx';
+import { ProductAdvice } from './ProductAdvice.jsx';
 import './DiagnosisPanel.css';
 
 /** Recuadro de resultado: estado vacío, cargando, aviso, un resultado o la comparación de ambos modelos. */
@@ -59,6 +61,8 @@ export function DiagnosisPanel({ status, error, response, photo, descriptions })
           </div>
         ))}
       </div>
+      <ProductAdvice clase={knowledgeClass(ready.map((r) => r.class))} />
+      <KnowledgeLinks clase={knowledgeClass(ready.map((r) => r.class))} />
       <p className="dx-panel__note">Herramienta de apoyo a la decisión: no reemplaza el diagnóstico de laboratorio.</p>
     </div>
   );

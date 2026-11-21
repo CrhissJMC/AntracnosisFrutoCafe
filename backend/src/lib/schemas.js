@@ -11,6 +11,14 @@ export const httpUrl = z
   .url('URL inválida')
   .refine((u) => /^https?:\/\//i.test(u), 'Debe empezar con http:// o https://');
 
+// Imagen de un artículo: URL http(s) o una imagen del propio sitio (/img/…), como las de las fichas de manejo.
+export const imageUrl = z.union([
+  httpUrl,
+  z.string().trim().max(200).regex(/^\/img\/[a-z0-9/_-]+\.(jpe?g|png|webp)$/i, 'URL inválida'),
+]);
+
+export const DIAGNOSIS_CLASSES = ['sano', 'revisar', 'antracnosis'];
+
 export const email = z.string().trim().toLowerCase().max(160).email('Correo inválido');
 
 export const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -48,7 +56,8 @@ export const articleSchema = z
     category: z.string().trim().min(2).max(40).transform((s) => s.toUpperCase()),
     subtitle: z.string().trim().max(400).default(''),
     content: z.string().max(50_000).default(''),
-    image_url: emptyToNull(httpUrl.nullable()).optional(),
+    image_url: emptyToNull(imageUrl.nullable()).optional(),
+    clase_relacionada: emptyToNull(z.enum(DIAGNOSIS_CLASSES).nullable()).optional(),
     read_minutes: z.coerce.number().int().min(1).max(120).default(3),
     source_text: emptyToNull(z.string().trim().max(200).nullable()).optional(),
     source_url: emptyToNull(httpUrl.nullable()).optional(),
@@ -64,7 +73,7 @@ export const commentSchema = z
 
 export const SECTIONS = [
   'sintomas', 'ciclo', 'manejo', 'mision', 'equipo', 'universidad',
-  'problema', 'clases', 'flujo', 'metricas', 'tecnologias', 'alcance', 'estado', 'limitaciones',
+  'problema', 'clases', 'flujo', 'metricas', 'tecnologias', 'alcance', 'estado', 'limitaciones', 'productos',
 ];
 
 export const contentItemSchema = z

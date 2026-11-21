@@ -1,0 +1,5 @@
+.product-advice { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; padding: var(--space-3) var(--space-4); border: 1px solid var(--color-border); border-left: 4px solid var(--pa-color, var(--color-brand)); border-radius: var(--radius); background: var(--color-surface); }
+.product-advice__title { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; font-size: var(--text-sm); font-weight: 700; }
+.product-advice__class { color: var(--pa-color, var(--color-text)); }
+.product-advice__list { margin: 0; padding-left: var(--space-5); display: flex; flex-direction: column; gap: var(--space-2); font-size: var(--text-sm); line-height: 1.5; overflow-wrap: anywhere; }
+.product-advice__note { color: var(--color-text-muted); }

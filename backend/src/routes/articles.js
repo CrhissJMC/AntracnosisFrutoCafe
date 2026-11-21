@@ -2,7 +2,9 @@ import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import { query } from '../db/pool.js';
 import { asyncHandler, HttpError, notFound, parseId } from '../lib/http.js';
-import { articleSchema, commentSchema, paginationSchema, slugify } from '../lib/schemas.js';
+import { z } from 'zod';
+import { DIAGNOSIS_CLASSES, articleSchema, commentSchema, paginationSchema, slugify } from '../lib/schemas.js';
+import { FICHA_CATEGORY } from '../db/seed-data.js';
 import { requireAdmin, requireAuth } from '../middleware/auth.js';
 import { readingMinutes } from '../lib/readingTime.js';
 
@@ -18,24 +20,30 @@ const commentLimiter = rateLimit({
 
 const LIST_COLUMNS = `
   a.id, a.slug, a.category, a.title, a.subtitle, a.image_url, a.read_minutes,
-  a.published, a.published_at, a.updated_at,
+  a.published, a.published_at, a.updated_at, a.clase_relacionada,
   (SELECT count(*)::int FROM comments c WHERE c.article_id = a.id) AS comment_count`;
 
 const isAdmin = (req) => req.user?.role === 'admin';
+
+// Base de conocimiento (RF07): ?clase=sano|revisar|antracnosis devuelve los artículos publicados
+// vinculados a ese resultado del diagnóstico, con las fichas de manejo primero.
+const claseSchema = z.object({ clase: z.enum(DIAGNOSIS_CLASSES).optional() });
 
 // GET /api/articles — públicos; el admin puede pedir ?all=1 para ver borradores
 router.get(
   '/',
   asyncHandler(async (req, res) => {
     const { limit, offset } = paginationSchema.parse(req.query);
-    const includeDrafts = isAdmin(req) && req.query.all === '1';
+    const { clase } = claseSchema.parse({ clase: req.query.clase || undefined });
+    const includeDrafts = isAdmin(req) && req.query.all === '1' && !clase;
     const { rows } = await query(
       `SELECT ${LIST_COLUMNS}
          FROM articles a
         WHERE ($1::boolean OR a.published)
-        ORDER BY a.published_at DESC, a.id DESC
+          AND ($4::varchar IS NULL OR a.clase_relacionada = $4::varchar)
+        ORDER BY ($4::varchar IS NOT NULL AND a.category = $5) DESC, a.published_at DESC, a.id DESC
         LIMIT $2 OFFSET $3`,
-      [includeDrafts, limit, offset],
+      [includeDrafts, limit, offset, clase ?? null, FICHA_CATEGORY],
     );
     res.json({ articles: rows });
   }),
@@ -68,12 +76,13 @@ async function saveArticle(req, id) {
   const values = [
     slug, data.category, data.title, data.subtitle, data.content, data.image_url ?? null,
     readingMinutes(data.content), data.source_text ?? null, data.source_url ?? null, data.published,
+    data.clase_relacionada ?? null,
   ];
   try {
     if (id === undefined) {
       const { rows } = await query(
-        `INSERT INTO articles (slug, category, title, subtitle, content, image_url, read_minutes, source_text, source_url, published)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+        `INSERT INTO articles (slug, category, title, subtitle, content, image_url, read_minutes, source_text, source_url, published, clase_relacionada)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
          RETURNING *`,
         values,
       );
@@ -82,10 +91,12 @@ async function saveArticle(req, id) {
     const { rows } = await query(
       `UPDATE articles
           SET slug = $1, category = $2, title = $3, subtitle = $4, content = $5, image_url = $6,
-              read_minutes = $7, source_text = $8, source_url = $9, published = $10, updated_at = now()
-        WHERE id = $11
+              read_minutes = $7, source_text = $8, source_url = $9, published = $10,
+              clase_relacionada = CASE WHEN $13 THEN $11 ELSE clase_relacionada END, -- sin el campo, se conserva
+              updated_at = now()
+        WHERE id = $12
         RETURNING *`,
-      [...values, id],
+      [...values, id, data.clase_relacionada !== undefined],
     );
     if (!rows[0]) throw notFound('Artículo');
     return rows[0];

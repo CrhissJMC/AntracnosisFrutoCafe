@@ -1,5 +1,5 @@
 {
-  "exported_at": "2026-11-15T23:05:08.249Z",
+  "exported_at": "2026-11-21T22:54:55.581Z",
   "objectives": [
     {
       "code": 1,
@@ -15,7 +15,7 @@
     },
     {
       "code": 4,
-      "progress": 90
+      "progress": 95
     },
     {
       "code": 5,
@@ -49,7 +49,7 @@
     },
     {
       "code": "RF07",
-      "status": "disenado"
+      "status": "implementado"
     },
     {
       "code": "RF08",
@@ -496,6 +496,33 @@
       "seci_phase": "externalizacion",
       "author_name": "Administrador",
       "created_at": "2026-11-15T23:05:07.750Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RF07 · Base de conocimiento: Diseñado → Implementado. Base de conocimiento: cada artículo del blog puede vincularse a un resultado (sano, revisar o antracnosis) desde el panel; tres fichas de manejo y tres artículos nuevos, más seis existentes vinculados. El resultado del diagnóstico y el detalle de cada captura (Historial y Validación) muestran la ficha de manejo y las lecturas relacionadas, que se pueden comentar. Con esto RF04 también muestra la ficha de manejo asociada.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-21T22:45:03.132Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": 90,
+      "new_progress": 95,
+      "note": "Base de conocimiento (RF07) implementada: fichas de manejo por resultado en el blog, enlazadas desde el diagnóstico, el historial y la validación. Pruebas: 19 casos de API (orden de las fichas, vínculo desde el panel, validación de imágenes, borradores ocultos) y 14 páginas sin desplazamiento horizontal en 360, 768 y 1280 px. Falta reflejar los cambios del módulo en el informe.",
+      "seci_phase": "combinacion",
+      "author_name": "Administrador",
+      "created_at": "2026-11-21T22:45:03.143Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "Base de conocimiento: el resultado del diagnóstico y cada captura muestran productos y abonos de apoyo según el resultado (fungicidas a base de cobre y sistémicos con asesoría, bioinsumos, abonamiento según análisis de suelo y precauciones), sin dosis y con la indicación de usar productos registrados ante SENASA. Se editan en el panel → Contenido → Productos de apoyo. Nuevo artículo: «Fungicidas, abonos y bioinsumos frente a la antracnosis del café», con referencias.",
+      "seci_phase": "combinacion",
+      "author_name": "Administrador",
+      "created_at": "2026-11-21T22:54:54.888Z"
     }
   ]
 }

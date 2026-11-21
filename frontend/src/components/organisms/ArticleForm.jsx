@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Checkbox, Input, Text, Textarea } from '../atoms';
+import { Button, Checkbox, Input, Select, Text, Textarea } from '../atoms';
 import { Alert, FormField } from '../molecules';
 import { useForm } from '../../hooks/useForm.js';
 import { renderMarkdown } from '../../lib/markdown.jsx';
@@ -14,8 +14,17 @@ export const EMPTY_ARTICLE = {
   image_url: '',
   source_text: '',
   source_url: '',
+  clase_relacionada: '',
   published: true,
 };
+
+// Base de conocimiento (RF07): el artículo aparece junto al resultado del diagnóstico elegido.
+const RESULT_LINKS = [
+  { id: '', label: 'Ninguno' },
+  { id: 'sano', label: 'Sano' },
+  { id: 'revisar', label: 'Revisar' },
+  { id: 'antracnosis', label: 'Antracnosis' },
+];
 
 // Misma regla que el servidor (backend/src/lib/readingTime.js): ~200 palabras por minuto.
 function estimateReadingMinutes(markdown = '') {
@@ -74,7 +83,7 @@ export function ArticleForm({ initial = EMPTY_ARTICLE, onSubmit, onCancel, submi
             <Input {...f('category')} required maxLength={40} list="article-categories" />
           </FormField>
           <datalist id="article-categories">
-            {['PREVENCIÓN', 'CIENCIA', 'CLIMA', 'MANEJO', 'CALIDAD', 'CAMPO'].map((c) => (
+            {['FICHA DE MANEJO', 'PREVENCIÓN', 'CIENCIA', 'CLIMA', 'MANEJO', 'CALIDAD', 'CAMPO'].map((c) => (
               <option key={c} value={c} />
             ))}
           </datalist>
@@ -82,15 +91,29 @@ export function ArticleForm({ initial = EMPTY_ARTICLE, onSubmit, onCancel, submi
             Tiempo de lectura estimado: <strong>{estimateReadingMinutes(form.values.content)} min</strong> (se calcula
             automáticamente a partir del contenido).
           </Text>
+          <FormField
+            label="Vincular al resultado del diagnóstico"
+            optional
+            error={e.clase_relacionada}
+            hint="Se muestra junto a ese resultado. Usa la categoría FICHA DE MANEJO para que aparezca primero."
+          >
+            <Select {...f('clase_relacionada')}>
+              {RESULT_LINKS.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {r.label}
+                </option>
+              ))}
+            </Select>
+          </FormField>
           <FormField label="Slug (URL)" optional error={e.slug} hint="Se genera del título si lo dejas vacío.">
             <Input {...f('slug')} maxLength={160} placeholder="mi-articulo" />
           </FormField>
         </div>
         <div className="article-form__panel">
           <FormField label="Imagen (URL)" optional error={e.image_url}>
-            <Input {...f('image_url')} type="url" placeholder="https://…" />
+            <Input {...f('image_url')} placeholder="https://… o /img/fichas/…" />
           </FormField>
-          {form.values.image_url && /^https?:\/\//.test(form.values.image_url) && (
+          {form.values.image_url && /^(https?:\/\/|\/img\/)/.test(form.values.image_url) && (
             <img className="article-form__thumb" src={form.values.image_url} alt="Vista previa de la imagen" />
           )}
           <FormField label="Fuente (texto)" optional error={e.source_text}>

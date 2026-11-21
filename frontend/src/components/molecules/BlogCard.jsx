@@ -1,9 +1,11 @@
-import { Heading, Icon, Link, Tag, Text } from '../atoms';
+import { Dot, Heading, Icon, Link, Tag, Text } from '../atoms';
+import { healthClass } from '../../lib/diagnosis.js';
 import { formatDate } from '../../lib/format.js';
 import './BlogCard.css';
 
 export function BlogCard({ article }) {
   const href = `/blog/${article.slug}`;
+  const cls = article.clase_relacionada ? healthClass(article.clase_relacionada) : null;
   return (
     <article className="blog-card">
       <Link to={href} className="blog-card__media" tabIndex={-1} aria-hidden="true">
@@ -28,6 +30,11 @@ export function BlogCard({ article }) {
         <Text size="sm" className="blog-card__excerpt">
           {article.subtitle}
         </Text>
+        {cls && (
+          <p className="blog-card__result">
+            <Dot color={cls.color} size={8} /> Para el resultado «{cls.short}»
+          </p>
+        )}
         <div className="blog-card__footer">
           <time dateTime={article.published_at}>{formatDate(article.published_at)}</time>
           <span className="blog-card__comments">
