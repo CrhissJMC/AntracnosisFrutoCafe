@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { query, withTransaction } from '../db/pool.js';
 import { asyncHandler, HttpError, notFound, parseId } from '../lib/http.js';
 import { canSeeCapture } from '../lib/modulo.js';
+import { climateConfig, refreshForecast } from '../lib/clima.js';
 import { requireAuth } from '../middleware/auth.js';
 
 const router = Router();
@@ -144,6 +145,10 @@ router.post(
       await unlink(image.file).catch(() => {});
       throw err;
     }
+    // Guarda el clima de estos días para la captura (sin esperar: si no hay conexión, no afecta al diagnóstico).
+    climateConfig()
+      .then((cfg) => refreshForecast(cfg))
+      .catch(() => {});
 
     res.status(201).json({
       compared: models.length > 1,

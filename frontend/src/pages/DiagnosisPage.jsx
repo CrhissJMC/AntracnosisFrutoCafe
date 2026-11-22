@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Button, Checkbox, Icon, Text } from '../components/atoms';
 import { Alert, Callout } from '../components/molecules';
-import { DiagnosisPanel, ImageCapture, ModelPicker, ModuleTabs, PageHero } from '../components/organisms';
+import { ClimateRisk, DiagnosisPanel, ImageCapture, ModelPicker, ModuleTabs, PageHero } from '../components/organisms';
 import { DiagnosisLayout } from '../components/templates';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useSite } from '../context/SiteContext.jsx';
@@ -90,6 +90,7 @@ export function DiagnosisPage() {
           <ModuleTabs />
         </>
       }
+      aside={<ClimateRisk compact />}
       form={
         <div className="dx-form">
 

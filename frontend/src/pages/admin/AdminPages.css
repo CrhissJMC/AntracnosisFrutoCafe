@@ -19,3 +19,4 @@
 .settings-form__group legend { float: left; width: 100%; margin-bottom: var(--space-1); }
 .settings-form__bar { position: sticky; bottom: 0; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--space-3); padding: var(--space-4) 0; background: linear-gradient(transparent, var(--color-surface-alt) 30%); }
 .settings-form__bar .alert { flex: 1; min-width: 220px; }
+.settings-form__note { font-size: var(--text-sm); color: var(--color-text-muted); }

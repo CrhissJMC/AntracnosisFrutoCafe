@@ -177,6 +177,20 @@ Analizar requiere iniciar sesión.
   No incluye dosis a propósito: la dosis la fija la etiqueta del producto registrado ante SENASA y el plan, un ingeniero agrónomo. El texto se edita en el panel → Contenido → **Productos de apoyo** (una recomendación por línea, «Tipo: detalle»). El artículo «Fungicidas, abonos y bioinsumos frente a la antracnosis del café» lo explica con más detalle y referencias.
 - Se cargan una sola vez (tabla `migraciones_aplicadas`): lo que el administrador borre o edite después no vuelve a aparecer al reiniciar.
 
+### Clima de la finca y riesgo de antracnosis (sin sensores)
+- **Datos:** [Open-Meteo](https://open-meteo.com/), gratuito y sin clave. Da lluvia diaria, humedad relativa media y temperatura media para las coordenadas de la finca, configuradas en el panel → Textos → **Clima y riesgo de antracnosis**. Por defecto son las del distrito de Shipasbamba. Son datos estimados por modelos meteorológicos para una zona de algunos kilómetros, **no medidos en la parcela**.
+- **Privacidad:** solo se envían las coordenadas de la finca, nunca la ubicación de los usuarios ni de las capturas.
+- **Caché y conexión:** se guardan en la tabla `clima_diario`. El pronóstico se renueva como máximo cada 3 horas y el historial (hasta 2 años) se pide al archivo de Open-Meteo solo para los días que faltan. Sin conexión, el sitio sigue funcionando con lo guardado y la tarjeta lo avisa.
+- **Riesgo (regla de conocimiento experto, no ML):**
+  - Un día es **favorable** a la antracnosis si la temperatura media está entre 18 y 26 °C y llueve al menos 2 mm o la humedad media llega al 90 %.
+  - El nivel de los próximos 7 días es **alto** con 5 o más días favorables, **medio** con 3 o 4, y **bajo** con menos.
+  - Todos los umbrales se editan en el panel.
+- **Dónde aparece:**
+  - en **Nuevo diagnóstico** y en el **Tablero**, la tarjeta de riesgo con el pronóstico de 7 días;
+  - en el detalle de cada captura (Historial y Validación), el clima de los 7 días previos;
+  - en el Tablero, la **lluvia por mes** junto a la incidencia, en gráficos separados, y en la tabla de datos.
+- **Por qué no entra al modelo de las fotos:** el modelo clasifica lo que se ve en el fruto. Las fotos públicas de entrenamiento no tienen datos de clima, y no hay suficientes datos de la finca para aprender esa relación.
+
 ### El servicio de los modelos (`ml/`)
 - Python 3.11 + FastAPI + TensorFlow (CPU). Solo lo llama la API del sitio por la red interna de Docker; **no se expone a internet**.
 - Se enciende con `docker compose --profile ml up -d --build`. Sin él, la página avisa que el servicio no está activo.
@@ -255,6 +269,8 @@ Se ejecuta después de `schema.sql` en cada arranque, sin duplicar nada (informe
 | `v_validacion_vigente`, `v_diagnostico_final` | La validación más reciente prevalece sobre el resultado del modelo |
 | `v_incidencia_mensual` | Incidencia por mes, para el tablero (RF08) |
 | `v_dataset_reentrenamiento` | Imágenes validadas como sano o antracnosis, para reentrenar (RF09) |
+| `clima_diario` | Clima diario de la finca (lluvia, humedad y temperatura de Open-Meteo), como caché; marca los días de pronóstico |
+| `migraciones_aplicadas` | Cargas de contenido que se aplican una sola vez (fichas de manejo, artículos) |
 
 **Validación experta** (decisión del equipo): solo validan los usuarios con perfil `especialista` y el administrador. Las validaciones no se editan ni se borran; una corrección es una validación nueva y vale la más reciente. Un disparador de la base de datos rechaza a cualquier otro usuario, impide editar una validación y toma el nombre del validador de su cuenta, así no se puede falsificar.
 
@@ -321,7 +337,8 @@ Cada nivel solo usa los niveles inferiores (átomos → moléculas → organismo
 | `GET /diagnostico/capturas/:id/imagen`, `POST /diagnostico/capturas/:id/gradcam` | autor de la captura, especialista o admin |
 | `GET /validacion/casos` (`estado` = `pendientes`, `validados` o `todos`), `GET /validacion/casos/:id`, `POST /validacion/casos/:id` (`{ clase_confirmada, comentario }`) | especialista o admin |
 | `GET /historial` (`desde`, `hasta`, `clase`, `estado`, `limit`, `offset`), `GET /historial/:id`, `GET /historial/exportar` (CSV con los mismos filtros) | con sesión: cada usuario ve sus capturas; propietario, especialista y admin, todas |
-| `GET /tablero` (`desde`, `hasta`): resumen, incidencia por mes y distribución por clase | propietario, especialista o admin |
+| `GET /tablero` (`desde`, `hasta`): resumen, incidencia por mes, lluvia y días favorables por mes, y distribución por clase | propietario, especialista o admin |
+| `GET /clima`: últimos 7 días, pronóstico de 7 días y nivel de riesgo de antracnosis | público |
 | `GET /admin/modelos`, `PATCH /admin/modelos/:id` (`{ activo: true }` o `{ notas }`), `GET /admin/modelos/reentrenamiento` (ZIP con `sano/`, `antracnosis/` y `manifiesto.csv`) | admin |
 | `GET /health` | público (estado de la API y la base de datos) |
 
@@ -374,6 +391,7 @@ El servicio `ml` expone `GET /health` y `POST /predict` **solo en la red interna
 | 15/11/2026 | Pantalla Modelo de diagnóstico en el panel (`/admin/modelo`): versiones con umbrales y métricas, versión activa por modelo, aviso si el servicio tiene cargada otra versión y descarga en ZIP de las fotos validadas para reentrenar |
 | 21/11/2026 | Base de conocimiento (RF07): artículos vinculados a cada resultado desde el panel; tres fichas de manejo y tres artículos nuevos; las fichas aparecen junto al resultado del diagnóstico y en el detalle de cada captura |
 | 21/11/2026 | Productos y abonos de apoyo por resultado (fungicidas, abonos, bioinsumos y precauciones, sin dosis), editables en el panel, y artículo sobre fungicidas, abonos y bioinsumos |
+| 21/11/2026 | Clima de la finca y riesgo de antracnosis sin sensores (Open-Meteo): tarjeta de riesgo de 7 días en el diagnóstico y el tablero, clima de los días previos a cada captura, lluvia por mes en el tablero y umbrales editables en el panel |
 
 ---
 

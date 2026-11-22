@@ -66,6 +66,21 @@ const GROUPS = [
     ],
   },
   {
+    title: 'Clima y riesgo de antracnosis',
+    note: 'Datos de Open-Meteo (gratuitos, sin sensores) para estas coordenadas. Usa las de la finca: se ven en Google Maps con clic derecho. Solo se envían las coordenadas, nunca datos de los usuarios.',
+    fields: [
+      ['clima_nombre', 'Nombre de la ubicación'],
+      ['clima_lat', 'Latitud (p. ej., -5.9069)'],
+      ['clima_lon', 'Longitud (p. ej., -78.0431)'],
+      ['riesgo_temp_min', 'Día favorable: temperatura media mínima (°C)'],
+      ['riesgo_temp_max', 'Día favorable: temperatura media máxima (°C)'],
+      ['riesgo_lluvia_mm', 'Día favorable: lluvia de al menos (mm)'],
+      ['riesgo_hr', 'Día favorable: o humedad relativa media de al menos (%)'],
+      ['riesgo_dias_medio', 'Riesgo medio desde (días favorables de 7)'],
+      ['riesgo_dias_alto', 'Riesgo alto desde (días favorables de 7)'],
+    ],
+  },
+  {
     title: 'Contacto',
     fields: [
       ['contact_email', 'Correo'],
@@ -90,6 +105,7 @@ function SettingsForm({ initial, onSaved }) {
           <Heading as="legend" size="md">
             {g.title}
           </Heading>
+          {g.note && <p className="settings-form__note">{g.note}</p>}
           {g.fields.map(([key, label, type]) => (
             <FormField key={key} label={label} error={form.errors[key]}>
               {type === 'area' ? <Textarea {...form.field(key)} rows={3} maxLength={5000} /> : <Input {...form.field(key)} maxLength={5000} />}

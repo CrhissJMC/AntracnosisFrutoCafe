@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { query } from '../db/pool.js';
 import { notFound } from './http.js';
+import { climateBefore } from './clima.js';
 
 /**
  * Quién ve qué en el historial (RF05): cada usuario, sus capturas; el propietario,
@@ -40,6 +41,7 @@ export function historyWhere(filters, user) {
 export async function captureDetail(id) {
   const { rows } = await query(
     `SELECT c.id, c.autor_id, c.tomada_en, c.latitud, c.longitud, u.name AS autor,
+            to_char(c.tomada_en AT TIME ZONE 'America/Lima', 'YYYY-MM-DD') AS fecha_local,
             f.resultado, f.clase_final, f.validado
        FROM capturas c
        JOIN v_diagnostico_final f ON f.captura_id = c.id
@@ -62,5 +64,7 @@ export async function captureDetail(id) {
       [id],
     ),
   ]);
-  return { ...rows[0], diagnosticos: diagnoses.rows, historial: history.rows };
+  // Clima de los 7 días previos a la captura (si no hay conexión ni datos guardados, queda en null).
+  const clima = await climateBefore(rows[0].fecha_local).catch(() => null);
+  return { ...rows[0], diagnosticos: diagnoses.rows, historial: history.rows, clima };
 }

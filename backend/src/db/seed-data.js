@@ -45,6 +45,17 @@ export const SETTINGS = {
     'Seguimiento del avance del proyecto: cada etapa del ciclo del café representa un 5 % de lo realizado, y cada cambio queda registrado en la bitácora.',
   traz_general:
     'Desarrollar un sistema web de gestión del conocimiento que utilice un modelo de deep learning para detectar la antracnosis en frutos de café mediante imágenes digitales, y que permita registrar, validar y compartir el conocimiento técnico sobre la enfermedad en la empresa cafetalera El Alizal, del distrito de Shipasbamba (Bongará, Amazonas).',
+  // Clima y riesgo (datos de Open-Meteo, sin sensores). Coordenadas aproximadas del distrito de
+  // Shipasbamba; se ajustan en el panel a la finca. La regla de riesgo es conocimiento experto, no ML.
+  clima_nombre: 'Shipasbamba (Bongará, Amazonas)',
+  clima_lat: '-5.9069',
+  clima_lon: '-78.0431',
+  riesgo_temp_min: '18',
+  riesgo_temp_max: '26',
+  riesgo_lluvia_mm: '2',
+  riesgo_hr: '90',
+  riesgo_dias_medio: '3',
+  riesgo_dias_alto: '5',
 };
 
 // Datos de la universidad (Nosotros). [título, detalle]
@@ -230,10 +241,17 @@ const ESTADO_ITEMS_V11 = [
   ESTADO_VALIDACION,
 ];
 
-// Versión vigente (21/11/2026): base de conocimiento con fichas de manejo y productos de apoyo por resultado.
-const ESTADO_ITEMS = [
+// 21/11/2026: base de conocimiento con fichas de manejo y productos de apoyo por resultado.
+const ESTADO_ITEMS_V12 = [
   ...ESTADO_ITEMS_V1.slice(0, 4),
   ['estado', 'Módulos de gestión del conocimiento', 'Hecho. Registro de capturas; validación experta con historial de quién validó y con qué perfil; historial de capturas con exportación en CSV; tablero de incidencia por periodo; base de conocimiento, con fichas de manejo, artículos del blog y productos de apoyo (fungicidas, abonos y bioinsumos, sin dosis) para cada resultado (sano, revisar y antracnosis), que se muestran junto al diagnóstico y en cada captura; y, en el panel, el modelo de diagnóstico con sus versiones, la versión activa y la descarga de las fotos validadas para reentrenar. Probado: tiempo de respuesta (menos de 3 s en 60 análisis), permisos por perfil y diseño adaptable. Pendiente: reflejar los cambios en el informe.'],
+  ESTADO_VALIDACION,
+];
+
+// Versión vigente (21/11/2026): clima de la finca y riesgo de antracnosis, sin sensores.
+const ESTADO_ITEMS = [
+  ...ESTADO_ITEMS_V1.slice(0, 4),
+  ['estado', 'Módulos de gestión del conocimiento', 'Hecho. Registro de capturas; validación experta con historial de quién validó y con qué perfil; historial de capturas con exportación en CSV; tablero de incidencia por periodo, con la lluvia de cada mes; base de conocimiento, con fichas de manejo, artículos del blog y productos de apoyo (fungicidas, abonos y bioinsumos, sin dosis) para cada resultado; riesgo de antracnosis por el clima de los próximos 7 días (datos de Open-Meteo, sin sensores) y clima de los días previos a cada captura; y, en el panel, el modelo de diagnóstico con sus versiones, la versión activa y la descarga de las fotos validadas para reentrenar. Probado: tiempo de respuesta (menos de 3 s en 60 análisis), permisos por perfil y diseño adaptable. Pendiente: reflejar los cambios en el informe.'],
   ESTADO_VALIDACION,
 ];
 
@@ -263,6 +281,30 @@ export const PRODUCT_ITEMS = [
     'Insecticida: no sirve contra la antracnosis, porque la causa un hongo.',
     'Seguridad: usa solo productos registrados ante SENASA para café, en la dosis de la etiqueta, con equipo de protección, respetando el periodo de carencia antes de cosechar y con triple lavado de los envases.',
   ].join('\n')],
+];
+
+// Metodología antes del módulo de clima (21/11/2026): tecnologías y limitaciones.
+const TECNOLOGIAS_LIMITACIONES_V1 = [
+  ['tecnologias', 'Python', 'Entrenamiento e inferencia del modelo.'],
+  ['tecnologias', 'TensorFlow · Keras', 'Construcción y entrenamiento de la CNN.'],
+  ['tecnologias', 'Docker · CUDA', 'Entrenamiento con la GPU RTX 4060 de la PC del equipo, en un contenedor con TensorFlow y cuDNN.'],
+  ['tecnologias', 'NumPy', 'Matriz de confusión, recall, precisión, F1, AUC y detección de fotos borrosas y duplicadas.'],
+  ['tecnologias', 'Pillow', 'Recorte de cada fruto, redimensionado y lectura de las imágenes.'],
+  ['tecnologias', 'FastAPI', 'Servicio interno que ejecuta el modelo y Grad-CAM.'],
+  ['tecnologias', 'React · Vite', 'Sitio del proyecto y pantallas del módulo de diagnóstico.'],
+  ['tecnologias', 'Node.js · Express', 'API del sitio: sesión, perfiles y datos.'],
+  ['tecnologias', 'PostgreSQL', 'Base de datos del sitio y del módulo.'],
+  ['tecnologias', 'Docker', 'Levanta la base de datos, la API, el modelo y la web.'],
+  ['tecnologias', 'nginx', 'Sirve la interfaz y reenvía /api a la API.'],
+  ['tecnologias', 'Cloudflare Tunnel', 'URL pública HTTPS sin abrir puertos.'],
+  ['tecnologias', 'Git · GitHub', 'Control de versiones del código y de los scripts de la base de datos.'],
+  ['limitaciones', 'Etiquetas sin verificar', 'La principal fuente con antracnosis (Coffee berry disease, Roboflow) reutiliza las fotos de un conjunto colombiano de madurez de Zenodo, etiquetadas por un usuario anónimo como Colletotrichum kahawae, especie reportada solo en África; algunos frutos marcados como enfermos figuran como secos o sobremaduros. Un especialista debe revisar esas 559 imágenes antes del modelo final.'],
+  ['limitaciones', 'Pocos frutos enfermos', 'Solo 768 de las 3 840 imágenes tienen antracnosis y vienen de dos fuentes. Se compensa con pesos por clase y aumento de datos, pero el modelo puede no reconocer síntomas poco representados.'],
+  ['limitaciones', 'Datos de otras regiones', 'No hay fotos de frutos de Amazonas en el entrenamiento y en el Perú la antracnosis la causan otras especies de Colletotrichum. El desempeño real se medirá con al menos 100 fotos de la finca revisadas por un especialista.'],
+  ['limitaciones', 'El modelo se guía en parte por el fondo', 'Cada fuente tiene su propio fondo, cámara e iluminación, y casi todos los frutos enfermos vienen de fotos sobre fondo claro. En la versión v0, ningún fruto sano de ese tipo de foto sale como «sano» y los mapas Grad-CAM muestran atención en el fondo: el resultado es fiable en fotos del cafetal pero no en fotos sobre fondo claro. Se corregirá con más frutos sanos sobre fondo claro y revisando las etiquetas.'],
+  ['limitaciones', 'Sin severidad ni planta completa', 'El modelo clasifica un fruto por foto en sano o antracnosis. No estima la severidad ni analiza ramas completas: en las fotos de rama solo se usaron frutos de al menos 40 píxeles.'],
+  ['limitaciones', 'Modelo preliminar', 'La versión v0 se entrenó antes de la revisión experta de las etiquetas: sus métricas son orientativas, EfficientNet-B0 aún no alcanza el recall de 85 % en el conjunto de prueba (0,82) y el sistema no reemplaza el diagnóstico de un especialista ni de laboratorio.'],
+  ['limitaciones', 'Un solo equipo de cómputo', 'El entrenamiento se hace en la PC del equipo (GPU RTX 4060 de 8 GB): se usan lotes pequeños y no se hizo una búsqueda amplia de hiperparámetros.'],
 ];
 
 export const METHOD_ITEMS = [
@@ -300,6 +342,7 @@ export const METHOD_ITEMS = [
   ['tecnologias', 'nginx', 'Sirve la interfaz y reenvía /api a la API.'],
   ['tecnologias', 'Cloudflare Tunnel', 'URL pública HTTPS sin abrir puertos.'],
   ['tecnologias', 'Git · GitHub', 'Control de versiones del código y de los scripts de la base de datos.'],
+  ['tecnologias', 'Open-Meteo', 'Clima diario de la finca (lluvia, humedad y temperatura) sin sensores, gratuito y sin clave.'],
   // Alcance (un punto por línea)
   ['alcance', 'Incluye', 'Clasificación de frutos individuales en sano o antracnosis, con el estado «revisar» para los casos dudosos\nEntrenamiento y comparación de EfficientNet-B0 y MobileNetV2 con transferencia de aprendizaje\nMódulo web de diagnóstico, validación experta y tablero de incidencia para productor, propietario, especialista y administrador\nPrueba local con fotos de la finca y prueba de usabilidad (SUS), de octubre a diciembre de 2026'],
   ['alcance', 'No incluye', 'Análisis de hojas, ramas o plantas completas\nEstimación de la severidad (infección incipiente o avanzada)\nSensores de temperatura y humedad (trabajo futuro)\nReemplazo del diagnóstico de laboratorio\nServicios de nube pagados: el sistema se ejecuta en la PC del equipo'],
@@ -315,6 +358,7 @@ export const METHOD_ITEMS = [
   ['limitaciones', 'Sin severidad ni planta completa', 'El modelo clasifica un fruto por foto en sano o antracnosis. No estima la severidad ni analiza ramas completas: en las fotos de rama solo se usaron frutos de al menos 40 píxeles.'],
   ['limitaciones', 'Modelo preliminar', 'La versión v0 se entrenó antes de la revisión experta de las etiquetas: sus métricas son orientativas, EfficientNet-B0 aún no alcanza el recall de 85 % en el conjunto de prueba (0,82) y el sistema no reemplaza el diagnóstico de un especialista ni de laboratorio.'],
   ['limitaciones', 'Un solo equipo de cómputo', 'El entrenamiento se hace en la PC del equipo (GPU RTX 4060 de 8 GB): se usan lotes pequeños y no se hizo una búsqueda amplia de hiperparámetros.'],
+  ['limitaciones', 'Clima estimado, no medido', 'El riesgo climático usa datos de Open-Meteo calculados por modelos meteorológicos para una zona de algunos kilómetros, no medidos en la parcela; en la montaña el clima cambia en poca distancia. La regla de riesgo es conocimiento experto con umbrales editables, no un modelo entrenado, y no entra al modelo de las fotos.'],
 ];
 
 // v4: Metodología del tercer avance antes de reunir y depurar los datos (Croppie y Coffee Fruit Maturity, WSL2).
@@ -874,6 +918,8 @@ export const LEGACY_METHOD_VERSIONS = [
   ESTADO_ITEMS_V9,
   ESTADO_ITEMS_V10,
   ESTADO_ITEMS_V11,
+  ESTADO_ITEMS_V12,
+  TECNOLOGIAS_LIMITACIONES_V1,
   METHOD_ITEMS_V3.map((i) =>
     i[0] === 'flujo' && i[1] === 'Modelos' ? [i[0], i[1], 'EfficientNet-B0 como modelo principal, MobileNetV2 como alternativa ligera y una CNN sencilla entrenada desde cero como línea base.'] : i,
   ),

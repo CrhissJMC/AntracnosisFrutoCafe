@@ -12,12 +12,24 @@ const router = Router();
 const KEYS = Object.keys(SETTINGS);
 // Las claves que guardan un enlace o una imagen solo aceptan http(s) (evita enlaces `javascript:`).
 const isLinkKey = (k) => /(_url|_image)$/.test(k);
+// Ubicación del clima y umbrales del riesgo: números dentro de un rango (se acepta coma decimal).
+const NUMERIC = {
+  clima_lat: [-90, 90], clima_lon: [-180, 180],
+  riesgo_temp_min: [-10, 50], riesgo_temp_max: [-10, 50], riesgo_lluvia_mm: [0, 500], riesgo_hr: [0, 100],
+  riesgo_dias_medio: [1, 7], riesgo_dias_alto: [1, 7],
+};
+const numeric = ([min, max]) =>
+  z
+    .string()
+    .trim()
+    .max(20)
+    .refine((v) => {
+      const n = Number(v.replace(',', '.'));
+      return v !== '' && Number.isFinite(n) && n >= min && n <= max;
+    }, `Debe ser un número entre ${min} y ${max}`);
+const fieldSchema = (k) => (NUMERIC[k] ? numeric(NUMERIC[k]) : isLinkKey(k) ? z.union([z.literal(''), httpUrl]) : z.string().max(5000));
 const settingsSchema = z
-  .object(
-    Object.fromEntries(
-      KEYS.map((k) => [k, (isLinkKey(k) ? z.union([z.literal(''), httpUrl]) : z.string().max(5000)).optional()]),
-    ),
-  )
+  .object(Object.fromEntries(KEYS.map((k) => [k, fieldSchema(k).optional()])))
   .strict();
 
 async function readAll() {

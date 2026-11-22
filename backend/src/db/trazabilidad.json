@@ -1,5 +1,5 @@
 {
-  "exported_at": "2026-11-21T22:54:55.581Z",
+  "exported_at": "2026-11-22T02:47:52.604Z",
   "objectives": [
     {
       "code": 1,
@@ -523,6 +523,15 @@
       "seci_phase": "combinacion",
       "author_name": "Administrador",
       "created_at": "2026-11-21T22:54:54.888Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "Clima de la finca y riesgo de antracnosis, sin sensores: datos diarios de Open-Meteo (lluvia, humedad y temperatura) para las coordenadas de la finca, guardados como caché. El diagnóstico y el tablero muestran el riesgo de los próximos 7 días según una regla de conocimiento experto con umbrales editables en el panel; cada captura muestra el clima de los 7 días previos, y el tablero, la lluvia de cada mes junto a la incidencia. No entra al modelo de las fotos. Pruebas: 15 casos de API, funcionamiento sin conexión y 6 páginas en 360, 768 y 1280 px.",
+      "seci_phase": "combinacion",
+      "author_name": "Administrador",
+      "created_at": "2026-11-22T02:47:50.449Z"
     }
   ]
 }

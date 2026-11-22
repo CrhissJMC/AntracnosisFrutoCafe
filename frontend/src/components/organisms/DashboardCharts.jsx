@@ -181,6 +181,65 @@ export function StackedColumns({ data, series, label }) {
   );
 }
 
+/**
+ * Columnas de una sola serie por mes (p. ej., lluvia en mm). Los meses sin dato (`null`) quedan vacíos.
+ * `tipRows(d)` devuelve las filas del tooltip.
+ */
+export function ValueColumns({ data, valueKey, color, unit, label, tipRows }) {
+  const [ref, width] = useWidth();
+  const [tip, setTip] = useState(null);
+  const innerW = Math.max(0, width - M.left - M.right);
+  const band = data.length ? innerW / data.length : 0;
+  const barW = Math.min(24, band * 0.6);
+  const scale = niceScale(Math.max(0, ...data.map((d) => d[valueKey] ?? 0)));
+  const y = (v) => M.top + (HEIGHT - M.top - M.bottom) * (1 - v / scale.max);
+  const x = (i) => M.left + i * band;
+  const fmt = (v) => `${v.toLocaleString('es-PE')} ${unit}`;
+
+  const show = (d, i) =>
+    setTip({
+      title: monthLabel(d.mes, true),
+      rows: d[valueKey] === null ? [{ label: 'sin datos', value: '—' }] : tipRows(d),
+      x: Math.min(x(i) + band / 2, width - 120),
+      y: y(d[valueKey] ?? 0) - 8,
+    });
+
+  return (
+    <div className="dash-chart" ref={ref}>
+      {width > 0 && (
+        <svg width={width} height={HEIGHT} role="img" aria-label={label}>
+          <YAxis scale={scale} width={width} y={y} />
+          {data.map((d, i) => {
+            const v = d[valueKey];
+            const bx = x(i) + (band - barW) / 2;
+            return (
+              <g key={d.mes}>
+                {v > 0 && <path d={topRounded(bx, y(v), barW, y(0) - y(v))} fill={color} />}
+                <rect
+                  className="dash-hit"
+                  x={x(i)}
+                  y={M.top}
+                  width={band}
+                  height={HEIGHT - M.top - M.bottom}
+                  tabIndex={0}
+                  aria-label={`${monthLabel(d.mes, true)}: ${v === null ? 'sin datos' : fmt(v)}`}
+                  onPointerEnter={() => show(d, i)}
+                  onFocus={() => show(d, i)}
+                  onPointerLeave={() => setTip(null)}
+                  onBlur={() => setTip(null)}
+                />
+              </g>
+            );
+          })}
+          <line x1={M.left} x2={width - M.right} y1={y(0)} y2={y(0)} className="dash-baseline" />
+          <XLabels months={data.map((d) => d.mes)} x={x} band={band} />
+        </svg>
+      )}
+      <Tooltip tip={tip} />
+    </div>
+  );
+}
+
 /** Línea de un porcentaje por mes (0–100 %). Los meses sin capturas cortan la línea. */
 export function PercentLine({ data, valueKey, color, label }) {
   const [ref, width] = useWidth();

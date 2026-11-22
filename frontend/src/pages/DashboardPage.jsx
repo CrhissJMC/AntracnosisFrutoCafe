@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react';
 import { Button, Input, Spinner, Text } from '../components/atoms';
 import { Alert, Callout, EmptyState } from '../components/molecules';
 import {
+  ClimateRisk,
+  ValueColumns,
   Legend,
   ModuleTabs,
   monthLabel,
@@ -18,6 +20,7 @@ import { useAsync } from '../hooks/useAsync.js';
 import { api } from '../lib/api.js';
 import { HEALTH_COLORS } from '../lib/traceability.js';
 import { seesAllCaptures } from '../lib/modulo.js';
+import { RAIN_COLOR } from '../components/organisms/ClimateRisk.jsx';
 import './DashboardPage.css';
 
 // Clase vigente de cada captura, en el orden del semáforo (de abajo hacia arriba en las columnas).
@@ -104,6 +107,7 @@ function Dashboard() {
   const s = d?.resumen;
   return (
     <div className="dash">
+      <ClimateRisk />
       {/* Filtros: una fila sobre todo el tablero; afectan a todos los indicadores y gráficos */}
       <form className="dash-filters" onSubmit={applyCustom}>
         <div className="dash-presets" role="group" aria-label="Periodo">
@@ -193,6 +197,27 @@ function Dashboard() {
               </div>
 
               <div className="dash-card">
+                <h2 className="dash-card__title">Lluvia por mes (mm) · {d.clima.ubicacion}</h2>
+                <ValueColumns
+                  data={d.mensual}
+                  valueKey="lluvia_mm"
+                  color={RAIN_COLOR}
+                  unit="mm"
+                  label="Columnas: lluvia acumulada por mes en milímetros. Los valores están en la tabla de abajo."
+                  tipRows={(m) => [
+                    { label: 'de lluvia', value: `${m.lluvia_mm.toLocaleString('es-PE')} mm`, color: RAIN_COLOR },
+                    { label: 'días favorables a la antracnosis', value: `${m.dias_favorables} de ${m.dias_clima}` },
+                    { label: 'de incidencia', value: m.incidencia_pct === null ? '—' : `${m.incidencia_pct} %` },
+                  ]}
+                />
+                <Text size="sm" className="dash-note">
+                  Compárala con la incidencia de arriba: si los meses lluviosos coinciden con más antracnosis, la finca puede
+                  anticipar la vigilancia. Datos estimados de Open-Meteo para la zona, no medidos en la parcela
+                  {d.clima.completo ? '' : '; sin conexión, algunos meses pueden estar incompletos'}.
+                </Text>
+              </div>
+
+              <div className="dash-card">
                 <h2 className="dash-card__title">Datos por mes</h2>
                 <div className="dash-table-wrap">
                   <table className="dash-table">
@@ -207,6 +232,8 @@ function Dashboard() {
                         ))}
                         <th scope="col">Incidencia</th>
                         <th scope="col">Validados</th>
+                        <th scope="col">Lluvia</th>
+                        <th scope="col">Días favorables</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -219,6 +246,8 @@ function Dashboard() {
                           ))}
                           <td>{m.incidencia_pct === null ? '—' : `${m.incidencia_pct} %`}</td>
                           <td>{m.validadas}</td>
+                          <td>{m.lluvia_mm === null ? '—' : `${m.lluvia_mm.toLocaleString('es-PE')} mm`}</td>
+                          <td>{m.dias_favorables === null ? '—' : `${m.dias_favorables} de ${m.dias_clima}`}</td>
                         </tr>
                       ))}
                     </tbody>

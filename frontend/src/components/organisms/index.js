@@ -33,4 +33,5 @@ export { ModuleTabs } from './ModuleTabs.jsx';
 export { CaptureView, ValidationHistory } from './CaptureView.jsx';
 export { KnowledgeLinks } from './KnowledgeLinks.jsx';
 export { ProductAdvice } from './ProductAdvice.jsx';
-export { Legend, monthLabel, PercentLine, SegmentedBar, StackedColumns, StatTile } from './DashboardCharts.jsx';
+export { Legend, monthLabel, PercentLine, SegmentedBar, StackedColumns, StatTile, ValueColumns } from './DashboardCharts.jsx';
+export { ClimateRisk, CaptureClimate } from './ClimateRisk.jsx';

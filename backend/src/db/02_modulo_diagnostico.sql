@@ -25,6 +25,19 @@ ALTER TABLE articles ADD COLUMN IF NOT EXISTS clase_relacionada VARCHAR(12)
 CREATE INDEX IF NOT EXISTS articles_clase_idx ON articles (clase_relacionada)
   WHERE clase_relacionada IS NOT NULL;
 
+-- Clima diario de la finca (Open-Meteo, sin sensores) -------------------------
+--   Caché de datos meteorológicos estimados para la ubicación configurada en el panel. Si cambia la
+--   ubicación, se vacía. «pronostico» marca los días futuros (se reemplazan al actualizar).
+CREATE TABLE IF NOT EXISTS clima_diario (
+  fecha          DATE         PRIMARY KEY,
+  temp_media     NUMERIC(4,1),
+  hr_media       NUMERIC(4,1) CHECK (hr_media BETWEEN 0 AND 100),
+  lluvia_mm      NUMERIC(6,1) CHECK (lluvia_mm >= 0),
+  pronostico     BOOLEAN      NOT NULL DEFAULT FALSE,
+  ubicacion      VARCHAR(40)  NOT NULL,
+  actualizado_en TIMESTAMPTZ  NOT NULL DEFAULT now()
+);
+
 -- Cargas de contenido que se aplican una sola vez (p. ej. las fichas de manejo):
 -- si el administrador borra o edita lo cargado, no vuelve a aparecer al reiniciar.
 CREATE TABLE IF NOT EXISTS migraciones_aplicadas (

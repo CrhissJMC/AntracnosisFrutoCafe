@@ -8,3 +8,4 @@
 @media (max-width: 600px) {
   .dx-layout__card { padding: var(--space-4); }
 }
+.dx-layout__aside { margin-bottom: var(--space-5); }

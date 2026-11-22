@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { query } from '../db/pool.js';
 import { asyncHandler, HttpError } from '../lib/http.js';
 import { seesAllCaptures } from '../lib/capturas.js';
+import { climateByMonth, climateConfig } from '../lib/clima.js';
 import { requireAuth } from '../middleware/auth.js';
 
 // Tablero de incidencia (RF08): propietario, especialista y administrador.
@@ -78,6 +79,16 @@ router.get(
 
     const s = summary.rows[0];
     const pct = (a, b) => (b ? Math.round((1000 * a) / b) / 10 : null);
+
+    // Lluvia y días favorables a la antracnosis de cada mes (Open-Meteo); si no hay conexión, lo guardado.
+    const months = monthly.rows.map((m) => m.mes);
+    let clima = { meses: {}, completo: false };
+    if (months.length) {
+      const last = months.at(-1);
+      const end = new Date(Date.UTC(Number(last.slice(0, 4)), Number(last.slice(5, 7)), 0)).toISOString().slice(0, 10);
+      clima = await climateByMonth(`${months[0]}-01`, end).catch(() => clima);
+    }
+    const cfg = await climateConfig();
     res.json({
       periodo: { desde: f.desde ?? null, hasta: f.hasta ?? null, primera: s.primera, ultima: s.ultima },
       resumen: {
@@ -86,7 +97,14 @@ router.get(
         validadas_pct: pct(s.validadas, s.capturas),
         concordancia_pct: pct(s.concordantes, s.comparables),
       },
-      mensual: monthly.rows.map((m) => ({ ...m, incidencia_pct: pct(m.antracnosis, m.total) })),
+      mensual: monthly.rows.map((m) => ({
+        ...m,
+        incidencia_pct: pct(m.antracnosis, m.total),
+        lluvia_mm: clima.meses[m.mes]?.lluvia_mm ?? null,
+        dias_favorables: clima.meses[m.mes]?.dias_favorables ?? null,
+        dias_clima: clima.meses[m.mes]?.dias ?? 0,
+      })),
+      clima: { ubicacion: cfg.nombre, completo: clima.completo, fuente: 'Open-Meteo' },
     });
   }),
 );
