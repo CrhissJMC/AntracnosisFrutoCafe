@@ -10,7 +10,8 @@ import { api } from '../lib/api.js';
 import { classDescriptions } from '../lib/diagnosis.js';
 import './DiagnosisPage.css';
 
-const DEFAULT_MODEL = 'efficientnet_b0';
+// MobileNetV2 es el recomendado: en el conjunto de prueba es el único que cumple el recall de 85 % (RNF01).
+const DEFAULT_MODEL = 'mobilenet_v2';
 
 /** Pide la ubicación al navegador (solo si el usuario la activa). */
 function getLocation() {

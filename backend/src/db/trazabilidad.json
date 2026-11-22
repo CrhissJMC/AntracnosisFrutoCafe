@@ -1,5 +1,5 @@
 {
-  "exported_at": "2026-11-22T02:47:52.604Z",
+  "exported_at": "2026-11-22T04:06:21.486Z",
   "objectives": [
     {
       "code": 1,
@@ -7,11 +7,11 @@
     },
     {
       "code": 2,
-      "progress": 60
+      "progress": 70
     },
     {
       "code": 3,
-      "progress": 35
+      "progress": 45
     },
     {
       "code": 4,
@@ -19,17 +19,17 @@
     },
     {
       "code": 5,
-      "progress": 25
+      "progress": 45
     }
   ],
   "requirements": [
     {
       "code": "RF01",
-      "status": "implementado"
+      "status": "probado"
     },
     {
       "code": "RF02",
-      "status": "implementado"
+      "status": "probado"
     },
     {
       "code": "RF03",
@@ -37,35 +37,35 @@
     },
     {
       "code": "RF04",
-      "status": "implementado"
+      "status": "probado"
     },
     {
       "code": "RF05",
-      "status": "implementado"
+      "status": "probado"
     },
     {
       "code": "RF06",
-      "status": "implementado"
+      "status": "probado"
     },
     {
       "code": "RF07",
-      "status": "implementado"
+      "status": "probado"
     },
     {
       "code": "RF08",
-      "status": "implementado"
+      "status": "probado"
     },
     {
       "code": "RF09",
-      "status": "implementado"
+      "status": "probado"
     },
     {
       "code": "RF10",
-      "status": "implementado"
+      "status": "probado"
     },
     {
       "code": "RNF01",
-      "status": "implementado"
+      "status": "probado"
     },
     {
       "code": "RNF02",
@@ -81,7 +81,7 @@
     },
     {
       "code": "RNF05",
-      "status": "implementado"
+      "status": "probado"
     },
     {
       "code": "RNF06",
@@ -89,7 +89,7 @@
     },
     {
       "code": "RNF07",
-      "status": "implementado"
+      "status": "probado"
     },
     {
       "code": "RNF08",
@@ -532,6 +532,150 @@
       "seci_phase": "combinacion",
       "author_name": "Administrador",
       "created_at": "2026-11-22T02:47:50.449Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RF01 · Ingesta de imagen del fruto: Implementado → Probado. CP01 aprobado: JPG y PNG aceptadas; texto y archivos de más de 8 MB rechazados con mensaje claro en la pantalla y en la API.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-22T03:59:50.646Z"
+    },
+    {
+      "objective_code": 2,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RF02 · Preprocesamiento: Implementado → Probado. CP02 aprobado: fotos de 120 a 2400 px, horizontales, verticales y giradas por EXIF llegan al modelo en 224 × 224.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-22T03:59:50.670Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RF04 · Diagnóstico visual inmediato: Implementado → Probado. CP04 aprobado: fruto sano, con antracnosis y dudoso muestran semáforo, probabilidad, Grad-CAM, productos de apoyo y el botón a las fichas.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-22T03:59:50.688Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RF05 · Registro de capturas: Implementado → Probado. CP05 aprobado: la captura guarda la foto, la fecha, el autor, la versión de cada modelo y la ubicación solo si se autorizó.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-22T03:59:50.699Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RF06 · Validación experta: Implementado → Probado. CP06 aprobado: el especialista y el administrador validan con registro de perfil; al productor se le niega (403) y la base de datos rechaza la inserción directa y la edición.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-22T03:59:50.713Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RF07 · Base de conocimiento: Implementado → Probado. CP07 aprobado: el botón del resultado abre /blog?clase=antracnosis con solo fichas de antracnosis, el filtro se puede quitar, el productor comenta y el número de artículos no cambia con 13 diagnósticos nuevos.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-22T03:59:50.724Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RF08 · Tablero de incidencia: Implementado → Probado. CP08 aprobado: los totales del tablero del día coinciden con el conteo directo en la base de datos.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-22T03:59:50.742Z"
+    },
+    {
+      "objective_code": 2,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RF09 · Reentrenamiento y versionado: Implementado → Probado. CP09 aprobado: el ZIP tiene sano/, antracnosis/, manifiesto y LEEME, e incluye las capturas validadas; al activar otra versión queda una sola activa por arquitectura.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-22T03:59:50.756Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RF10 · Gestión de usuarios y perfiles: Implementado → Probado. CP10 aprobado: el administrador asigna los tres perfiles y cada uno ve solo sus pestañas y rutas; un productor no puede cambiarse el perfil.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-22T03:59:50.771Z"
+    },
+    {
+      "objective_code": 3,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RNF01 · Sensibilidad del modelo: Implementado → Probado. Medido en el conjunto de prueba (568 imágenes): MobileNetV2 alcanza un recall de 88,8 % y cumple; EfficientNet-B0, 82,2 %. MobileNetV2 pasa a ser el modelo recomendado y elegido por defecto.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-22T03:59:50.790Z"
+    },
+    {
+      "objective_code": 3,
+      "previous_progress": 35,
+      "new_progress": 45,
+      "note": "MobileNetV2 cumple el recall de 85 % en el conjunto de prueba (88,8 %) y pasa a ser el modelo recomendado y elegido por defecto en el diagnóstico; RNF01 probado. Falta que EfficientNet-B0 también lo alcance en la versión v1 y confirmar el recall con fotos de campo.",
+      "seci_phase": "externalizacion",
+      "author_name": "Administrador",
+      "created_at": "2026-11-22T03:59:50.807Z"
+    },
+    {
+      "objective_code": 5,
+      "previous_progress": 25,
+      "new_progress": 45,
+      "note": "Casos de prueba CP01–CP10 ejecutados contra el sistema real: los 10 aprobados (50 verificaciones automáticas y 12 en el navegador), con actas y evidencia en pruebas/. Falta: encuesta SUS, fotos de campo (RNF04) y confirmar la cámara en un teléfono físico.",
+      "seci_phase": "externalizacion",
+      "author_name": "Administrador",
+      "created_at": "2026-11-22T03:59:50.818Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RNF05 · Interfaz simplificada: Implementado → Probado. Comprobado en CP04: un fruto sano, uno con antracnosis y uno dudoso muestran el semáforo verde, rojo y ámbar, con su texto y la probabilidad; el color nunca va solo.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-22T04:06:15.968Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "RNF07 · Mantenibilidad: Implementado → Probado. Revisión del repositorio: frontend con diseño atómico (átomos, moléculas, organismos, plantillas y páginas), API separada en rutas y librerías, 24 commits con mensajes descriptivos en GitHub, README completo y guías en ml/, datos/ y pruebas/. Quien clona obtiene el mismo sistema: se comprobó con una base de datos nueva, que carga los mismos datos, contenidos y trazabilidad.",
+      "seci_phase": null,
+      "author_name": "Administrador",
+      "created_at": "2026-11-22T04:06:15.982Z"
+    },
+    {
+      "objective_code": 2,
+      "previous_progress": 60,
+      "new_progress": 70,
+      "note": "Validación completa de la versión v0 documentada en el informe de validación de los modelos: métricas en el conjunto de prueba con intervalos de confianza (AUC 0,960 en ambos), curvas ROC y precisión–recall, matrices de confusión, comparación con la línea base sin entrenar, brecha entre entrenamiento y prueba (no hay memorización), análisis por fuente (sesgo de fondo) y comparación estadística entre modelos (McNemar p = 0,42). Tiempo de entrenamiento: unos 15 min de GPU RTX 4060. Falta la versión v1 con las etiquetas revisadas por el especialista.",
+      "seci_phase": "externalizacion",
+      "author_name": "Administrador",
+      "created_at": "2026-11-22T04:06:15.994Z"
+    },
+    {
+      "objective_code": 5,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "Documentación del proyecto: documento técnico completo (requisitos, datos, entrenamiento, módulos, pruebas, avances, limitaciones y mejoras), informe de validación de los modelos y actas de los casos CP01–CP10, en Word.",
+      "seci_phase": "externalizacion",
+      "author_name": "Administrador",
+      "created_at": "2026-11-22T04:06:16.009Z"
     }
   ]
 }

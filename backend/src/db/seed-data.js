@@ -248,11 +248,17 @@ const ESTADO_ITEMS_V12 = [
   ESTADO_VALIDACION,
 ];
 
-// Versión vigente (21/11/2026): clima de la finca y riesgo de antracnosis, sin sensores.
-const ESTADO_ITEMS = [
+// 21/11/2026: clima de la finca y riesgo de antracnosis, sin sensores.
+const ESTADO_ITEMS_V13 = [
   ...ESTADO_ITEMS_V1.slice(0, 4),
   ['estado', 'Módulos de gestión del conocimiento', 'Hecho. Registro de capturas; validación experta con historial de quién validó y con qué perfil; historial de capturas con exportación en CSV; tablero de incidencia por periodo, con la lluvia de cada mes; base de conocimiento, con fichas de manejo, artículos del blog y productos de apoyo (fungicidas, abonos y bioinsumos, sin dosis) para cada resultado; riesgo de antracnosis por el clima de los próximos 7 días (datos de Open-Meteo, sin sensores) y clima de los días previos a cada captura; y, en el panel, el modelo de diagnóstico con sus versiones, la versión activa y la descarga de las fotos validadas para reentrenar. Probado: tiempo de respuesta (menos de 3 s en 60 análisis), permisos por perfil y diseño adaptable. Pendiente: reflejar los cambios en el informe.'],
   ESTADO_VALIDACION,
+];
+
+// Versión vigente (21/11/2026): casos de prueba CP01–CP10 aprobados y MobileNetV2 como modelo recomendado.
+const ESTADO_ITEMS = [
+  ...ESTADO_ITEMS_V13.slice(0, 5),
+  ['estado', 'Validación del sistema', 'En curso. Hecho: los casos de prueba CP01–CP10 se ejecutaron contra el sistema completo y los diez quedaron aprobados, con actas y evidencia en el repositorio (carpeta pruebas/); y el modelo se evaluó con el conjunto de prueba, donde MobileNetV2 cumple el recall de 85 % y pasa a ser el recomendado. Falta: la encuesta de usabilidad (SUS) con compañeros del curso y, si es posible, la prueba con fotos de la finca (RNF04).'],
 ];
 
 // Productos y abonos de apoyo según el resultado del diagnóstico (se muestran junto al resultado y
@@ -281,6 +287,15 @@ export const PRODUCT_ITEMS = [
     'Insecticida: no sirve contra la antracnosis, porque la causa un hongo.',
     'Seguridad: usa solo productos registrados ante SENASA para café, en la dosis de la etiqueta, con equipo de protección, respetando el periodo de carencia antes de cosechar y con triple lavado de los envases.',
   ].join('\n')],
+];
+
+// Arquitectura experimental antes de recomendar MobileNetV2 (22/11/2026).
+const FLUJO_V1 = [
+  ['flujo', 'Datos', 'Tres conjuntos públicos (CC BY 4.0): Coffee berry disease y coffee cherry 20251206 de Roboflow, con frutos sanos y con lesiones, y Cherry Coffee Bean de Zenodo, con frutos sanos en cinco estados de madurez. Se recorta un fruto por imagen, se unifican las etiquetas en sano y antracnosis, se descartan frutos pequeños, fotos borrosas y duplicados, y se limitan los sanos a cuatro por cada fruto con antracnosis: 3 840 imágenes (768 con antracnosis).'],
+  ['flujo', 'Preprocesamiento', 'Recorte, redimensionamiento a 224 × 224 píxeles y normalización. El aumento de datos (rotaciones, volteos, brillo y contraste) se aplica solo al entrenamiento.'],
+  ['flujo', 'Modelos', 'EfficientNet-B0 como modelo principal y MobileNetV2 como alternativa más ligera, ambos preentrenados y ajustados con transferencia de aprendizaje.'],
+  ['flujo', 'Entrenamiento', 'Transferencia de aprendizaje en dos fases con Adam (primero solo la cabeza y luego las últimas capas de la red), pesos por clase y parada temprana según la AUC de validación, con la GPU RTX 4060 de la PC del equipo. Una neurona sigmoide entrega la probabilidad de antracnosis y dos umbrales, elegidos con validación, la convierten en sano, revisar o antracnosis.'],
+  ['flujo', 'Evaluación', 'Matriz de confusión, recall, precisión, F1, AUC y porcentaje de casos «revisar» en el conjunto de prueba, comparados con la línea base de las redes sin entrenar para comprobar que el modelo aprendió, y la diferencia entre entrenamiento y prueba para descartar que haya memorizado. Luego, mapas Grad-CAM y una prueba local con al menos 100 fotos de frutos tomadas en la finca.'],
 ];
 
 // Metodología antes del módulo de clima (21/11/2026): tecnologías y limitaciones.
@@ -320,7 +335,7 @@ export const METHOD_ITEMS = [
   // Arquitectura experimental (pasos)
   ['flujo', 'Datos', 'Tres conjuntos públicos (CC BY 4.0): Coffee berry disease y coffee cherry 20251206 de Roboflow, con frutos sanos y con lesiones, y Cherry Coffee Bean de Zenodo, con frutos sanos en cinco estados de madurez. Se recorta un fruto por imagen, se unifican las etiquetas en sano y antracnosis, se descartan frutos pequeños, fotos borrosas y duplicados, y se limitan los sanos a cuatro por cada fruto con antracnosis: 3 840 imágenes (768 con antracnosis).'],
   ['flujo', 'Preprocesamiento', 'Recorte, redimensionamiento a 224 × 224 píxeles y normalización. El aumento de datos (rotaciones, volteos, brillo y contraste) se aplica solo al entrenamiento.'],
-  ['flujo', 'Modelos', 'EfficientNet-B0 como modelo principal y MobileNetV2 como alternativa más ligera, ambos preentrenados y ajustados con transferencia de aprendizaje.'],
+  ['flujo', 'Modelos', 'EfficientNet-B0 y MobileNetV2, ambos preentrenados y ajustados con transferencia de aprendizaje. MobileNetV2 es el recomendado: con la misma AUC, es el que cumple el recall de 85 % en el conjunto de prueba y responde más rápido.'],
   ['flujo', 'Entrenamiento', 'Transferencia de aprendizaje en dos fases con Adam (primero solo la cabeza y luego las últimas capas de la red), pesos por clase y parada temprana según la AUC de validación, con la GPU RTX 4060 de la PC del equipo. Una neurona sigmoide entrega la probabilidad de antracnosis y dos umbrales, elegidos con validación, la convierten en sano, revisar o antracnosis.'],
   ['flujo', 'Evaluación', 'Matriz de confusión, recall, precisión, F1, AUC y porcentaje de casos «revisar» en el conjunto de prueba, comparados con la línea base de las redes sin entrenar para comprobar que el modelo aprendió, y la diferencia entre entrenamiento y prueba para descartar que haya memorizado. Luego, mapas Grad-CAM y una prueba local con al menos 100 fotos de frutos tomadas en la finca.'],
   // Métricas
@@ -919,7 +934,9 @@ export const LEGACY_METHOD_VERSIONS = [
   ESTADO_ITEMS_V10,
   ESTADO_ITEMS_V11,
   ESTADO_ITEMS_V12,
+  ESTADO_ITEMS_V13,
   TECNOLOGIAS_LIMITACIONES_V1,
+  FLUJO_V1,
   METHOD_ITEMS_V3.map((i) =>
     i[0] === 'flujo' && i[1] === 'Modelos' ? [i[0], i[1], 'EfficientNet-B0 como modelo principal, MobileNetV2 como alternativa ligera y una CNN sencilla entrenada desde cero como línea base.'] : i,
   ),

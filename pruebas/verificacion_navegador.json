@@ -1,0 +1,27 @@
+{
+  "fecha": "2026-11-21",
+  "navegador": "Chromium (navegador integrado), http://localhost:8080, ancho de escritorio",
+  "nota": "Partes de los casos que solo se ven en la pantalla. Se usaron usuarios de prueba con cada perfil, borrados al terminar junto con su captura.",
+  "casos": {
+    "CP01": [
+      { "ok": true, "desc": "«Tomar foto» pide la cámara trasera del teléfono", "detalle": "input type=file accept=\"image/jpeg,image/png\" capture=\"environment\"; falta confirmarlo en un teléfono físico" },
+      { "ok": true, "desc": "«Subir foto» acepta JPG y PNG desde la PC", "detalle": "input type=file accept=\"image/jpeg,image/png\"" },
+      { "ok": true, "desc": "un archivo de texto se rechaza en la pantalla con un mensaje claro", "detalle": "«Usa una foto JPG o PNG.»" },
+      { "ok": true, "desc": "un archivo de 9 MB se rechaza en la pantalla con un mensaje claro", "detalle": "«La foto supera los 8 MB.»" }
+    ],
+    "CP04": [
+      { "ok": true, "desc": "el resultado muestra semáforo, probabilidad, Grad-CAM, «Qué hacer», productos de apoyo y el botón a las fichas", "detalle": "fruto con antracnosis: semáforo «Antracnosis», Grad-CAM visible, botón «Ver fichas de manejo para este resultado»" },
+      { "ok": true, "desc": "MobileNetV2 aparece elegido por defecto y marcado como recomendado", "detalle": "«MobileNetV2 · Recomendado · Cumple la meta de recall»" }
+    ],
+    "CP07": [
+      { "ok": true, "desc": "el botón del resultado abre el blog filtrado por la clase", "detalle": "/blog?clase=antracnosis: 6 artículos, todos «Para el resultado «Antracnosis»»" },
+      { "ok": true, "desc": "el filtro se ve y se puede quitar", "detalle": "«Quitar filtro» vuelve a /blog con los 13 artículos" }
+    ],
+    "CP10": [
+      { "ok": true, "desc": "productor: solo las pestañas «Nuevo diagnóstico» e «Historial»", "detalle": "Nuevo diagnóstico, Historial" },
+      { "ok": true, "desc": "propietario: además «Tablero»", "detalle": "Nuevo diagnóstico, Historial, Tablero" },
+      { "ok": true, "desc": "especialista: además «Validación» y «Tablero»", "detalle": "Nuevo diagnóstico, Historial, Validación, Tablero" },
+      { "ok": true, "desc": "un usuario que no es administrador no entra al panel", "detalle": "/admin muestra «Acceso restringido»" }
+    ]
+  }
+}

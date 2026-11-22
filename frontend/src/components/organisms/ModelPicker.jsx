@@ -3,7 +3,7 @@ import './ModelPicker.css';
 
 export const COMPARE = 'ambos';
 
-/** Selector del modelo: siempre visible, con EfficientNet-B0 por defecto y la opción de comparar ambos. */
+/** Selector del modelo: siempre visible, con MobileNetV2 (recomendado) por defecto y la opción de comparar ambos. */
 export function ModelPicker({ models, value, onChange, legend = 'Modelo de análisis' }) {
   const pending = (m) => (m.available ? null : 'Aún no entrenado');
   return (

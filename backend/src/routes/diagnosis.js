@@ -18,8 +18,8 @@ export const CAPTURES_DIR = process.env.CAPTURAS_DIR || '/data/capturas';
 
 // Modelos que ofrece el sitio. "ambos" analiza la misma foto con los dos.
 export const MODELS = [
-  { id: 'efficientnet_b0', name: 'EfficientNet-B0', description: 'Más preciso · modelo principal', recommended: true },
-  { id: 'mobilenet_v2', name: 'MobileNetV2', description: 'Más rápido · más ligero', recommended: false },
+  { id: 'mobilenet_v2', name: 'MobileNetV2', description: 'Cumple la meta de recall · más rápido y ligero', recommended: true },
+  { id: 'efficientnet_b0', name: 'EfficientNet-B0', description: 'Menos falsas alarmas · recall algo menor', recommended: false },
 ];
 const MODEL_IDS = MODELS.map((m) => m.id);
 

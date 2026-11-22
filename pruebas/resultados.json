@@ -1,0 +1,345 @@
+{
+  "fecha": "2026-11-22T03:54:47.954Z",
+  "casos": [
+    {
+      "codigo": "CP01",
+      "rf": "RF01 · Ingesta de imagen del fruto",
+      "procedimiento": "Cargar una JPG y una PNG, y luego un archivo que no es imagen o pesa más de 8 MB",
+      "esperado": "La foto se acepta; el archivo inválido se rechaza con un mensaje claro",
+      "pasos": [
+        {
+          "ok": true,
+          "desc": "una foto JPG se acepta y se analiza",
+          "detalle": "captura N.º 191"
+        },
+        {
+          "ok": true,
+          "desc": "una foto PNG se acepta y se analiza",
+          "detalle": "captura N.º 192"
+        },
+        {
+          "ok": true,
+          "desc": "un archivo de texto se rechaza",
+          "detalle": "400: Revisa los datos enviados"
+        },
+        {
+          "ok": true,
+          "desc": "un texto con extensión de imagen se rechaza y no se registra",
+          "detalle": "400: No se pudo leer la imagen"
+        },
+        {
+          "ok": true,
+          "desc": "un archivo de 8,5 MB se rechaza",
+          "detalle": "400: Revisa los datos enviados"
+        }
+      ],
+      "estado": "Aprobado"
+    },
+    {
+      "codigo": "CP02",
+      "rf": "RF02 · Preprocesamiento",
+      "procedimiento": "Enviar fotos de distinta resolución y orientación",
+      "esperado": "La imagen llega al modelo en 224 × 224",
+      "pasos": [
+        {
+          "ok": true,
+          "desc": "res_2400x2400.jpg: se analiza y la imagen que vio el modelo mide 224 × 224",
+          "detalle": "224 × 224, p = 0.921"
+        },
+        {
+          "ok": true,
+          "desc": "res_120x120.jpg: se analiza y la imagen que vio el modelo mide 224 × 224",
+          "detalle": "224 × 224, p = 0.9475"
+        },
+        {
+          "ok": true,
+          "desc": "horizontal_1600x1200.jpg: se analiza y la imagen que vio el modelo mide 224 × 224",
+          "detalle": "224 × 224, p = 0.9207"
+        },
+        {
+          "ok": true,
+          "desc": "vertical_1200x1600.jpg: se analiza y la imagen que vio el modelo mide 224 × 224",
+          "detalle": "224 × 224, p = 0.9167"
+        },
+        {
+          "ok": true,
+          "desc": "orient_base.jpg: se analiza y la imagen que vio el modelo mide 224 × 224",
+          "detalle": "224 × 224, p = 0.9174"
+        },
+        {
+          "ok": true,
+          "desc": "orient_exif6.jpg: se analiza y la imagen que vio el modelo mide 224 × 224",
+          "detalle": "224 × 224, p = 0.914"
+        },
+        {
+          "ok": true,
+          "desc": "una foto girada solo con la etiqueta EXIF da el mismo resultado que la original (se respeta la orientación)",
+          "detalle": "diferencia de probabilidad 0.0034"
+        }
+      ],
+      "estado": "Aprobado"
+    },
+    {
+      "codigo": "CP03",
+      "rf": "RF03 · Clasificación con CNN",
+      "procedimiento": "Clasificar imágenes con etiqueta conocida",
+      "esperado": "Cada imagen recibe sano, revisar o antracnosis según los umbrales",
+      "pasos": [
+        {
+          "ok": true,
+          "desc": "las 24 clasificaciones (12 imágenes × 2 modelos) siguen los umbrales de su versión",
+          "detalle": "24 de 24"
+        },
+        {
+          "ok": true,
+          "desc": "coincidencia con la etiqueta (informativo)",
+          "detalle": "MobileNetV2 8/12, EfficientNet-B0 8/12; el resto queda en «revisar» o es un error del modelo"
+        },
+        {
+          "ok": true,
+          "desc": "detalle por imagen",
+          "detalle": "antracnosis_1_coffee_berry.jpg: MNV2 antracnosis (0.9196), EffB0 antracnosis (0.8856) | antracnosis_2_coffee_berry.jpg: MNV2 antracnosis (0.9872), EffB0 antracnosis (0.9256) | antracnosis_3_coffee_berry.jpg: MNV2 antracnosis (0.8965), EffB0 antracnosis (0.9669) | antracnosis_4_coffee_cherry.jpg: MNV2 antracnosis (0.9496), EffB0 antracnosis (0.9623) | antracnosis_5_coffee_cherry.jpg: MNV2 antracnosis (0.9595), EffB0 antracnosis (0.8189) | antracnosis_6_coffee_cherry.jpg: MNV2 antracnosis (0.9731), EffB0 antracnosis (0.9422) | sano_1_coffee_cherry.jpg: MNV2 sano (0.0018), EffB0 sano (0.0032) | sano_2_coffee_cherry.jpg: MNV2 revisar (0.1062), EffB0 revisar (0.0926) | sano_3_coffee_cherry.jpg: MNV2 sano (0.0307), EffB0 sano (0.002) | sano_4_zenodo.jpg: MNV2 antracnosis (0.9507), EffB0 antracnosis (0.9363) | sano_5_zenodo.jpg: MNV2 antracnosis (0.892), EffB0 antracnosis (0.9643) | sano_6_coffee_berry.jpg: MNV2 revisar (0.6838), EffB0 antracnosis (0.8958)"
+        },
+        {
+          "ok": true,
+          "desc": "evidencia: evaluación en el conjunto de prueba (568 imágenes)",
+          "detalle": "MobileNetV2 recall 0.8879, AUC 0.9602; EfficientNet-B0 recall 0.8224, AUC 0.96"
+        }
+      ],
+      "estado": "Aprobado"
+    },
+    {
+      "codigo": "CP04",
+      "rf": "RF04 · Diagnóstico visual inmediato",
+      "procedimiento": "Diagnosticar un fruto sano, uno con antracnosis y uno dudoso",
+      "esperado": "Semáforo, probabilidad, Grad-CAM, recomendación y botón a fichas",
+      "pasos": [
+        {
+          "ok": true,
+          "desc": "fruto sano: resultado, probabilidad, umbrales, Grad-CAM, productos de apoyo y fichas de su clase",
+          "detalle": "sano (p = 0.0018), ficha «Fruto sano: prevención y vigilancia»"
+        },
+        {
+          "ok": true,
+          "desc": "fruto con antracnosis: resultado, probabilidad, umbrales, Grad-CAM, productos de apoyo y fichas de su clase",
+          "detalle": "antracnosis (p = 0.9196), ficha «Fruto con antracnosis: qué hacer con los frutos y la parcela»"
+        },
+        {
+          "ok": true,
+          "desc": "fruto dudoso: resultado, probabilidad, umbrales, Grad-CAM, productos de apoyo y fichas de su clase",
+          "detalle": "revisar (p = 0.541), ficha «Resultado «revisar»: qué hacer cuando el modelo no está seguro»"
+        },
+        {
+          "ok": true,
+          "desc": "los tres resultados del semáforo aparecen (sano, revisar y antracnosis)",
+          "detalle": "sano, antracnosis, revisar"
+        }
+      ],
+      "estado": "Aprobado"
+    },
+    {
+      "codigo": "CP05",
+      "rf": "RF05 · Registro de capturas",
+      "procedimiento": "Buscar en la base de datos la captura recién registrada",
+      "esperado": "Foto, fecha, autor, versión del modelo y ubicación si se autorizó",
+      "pasos": [
+        {
+          "ok": true,
+          "desc": "captura N.º 202 con ubicación: foto guardada, fecha, autor, versión del modelo y ubicación guardada",
+          "detalle": "efficientnet_b0:v0-preliminar, mobilenet_v2:v0-preliminar; 2026-11-22T03:54:45.653Z; ubicación -5.906900, -78.043100"
+        },
+        {
+          "ok": true,
+          "desc": "captura N.º 203 sin ubicación: foto guardada, fecha, autor, versión del modelo y ubicación vacía",
+          "detalle": "mobilenet_v2:v0-preliminar; 2026-11-22T03:54:47.693Z; ubicación —, —"
+        }
+      ],
+      "estado": "Aprobado"
+    },
+    {
+      "codigo": "CP06",
+      "rf": "RF06 · Validación experta",
+      "procedimiento": "Validar con un especialista y repetir con un productor",
+      "esperado": "El especialista registra; al productor se le niega (403) y la base de datos rechaza el intento",
+      "pasos": [
+        {
+          "ok": true,
+          "desc": "el especialista valida y queda registrado quién y con qué perfil",
+          "detalle": "201, especialista, Prueba especialista"
+        },
+        {
+          "ok": true,
+          "desc": "al productor se le niega la validación (403)",
+          "detalle": "403"
+        },
+        {
+          "ok": true,
+          "desc": "la base de datos rechaza una validación de un productor aunque se inserte directamente",
+          "detalle": "Solo un especialista o un administrador puede validar un diagnóstico"
+        },
+        {
+          "ok": true,
+          "desc": "una validación no se puede editar",
+          "detalle": "Las validaciones no se modifican: registra una nueva"
+        },
+        {
+          "ok": true,
+          "desc": "el administrador también valida y queda registrado como administrador",
+          "detalle": "admin"
+        }
+      ],
+      "estado": "Aprobado"
+    },
+    {
+      "codigo": "CP07",
+      "rf": "RF07 · Base de conocimiento",
+      "procedimiento": "Publicar fichas de las tres clases, diagnosticar un fruto «antracnosis», pulsar el botón y comentar una ficha",
+      "esperado": "El blog muestra solo fichas de antracnosis; el comentario se publica; el número de artículos no cambia con nuevos diagnósticos",
+      "pasos": [
+        {
+          "ok": true,
+          "desc": "hay fichas de manejo publicadas de las tres clases",
+          "detalle": "antracnosis: 1, revisar: 1, sano: 1"
+        },
+        {
+          "ok": true,
+          "desc": "/articles?clase=antracnosis (lo que pide el blog filtrado) devuelve solo artículos de antracnosis",
+          "detalle": "6 artículos"
+        },
+        {
+          "ok": true,
+          "desc": "un productor comenta la ficha de antracnosis",
+          "detalle": "201, «Fruto con antracnosis: qué hacer con los frutos y la parcela»"
+        },
+        {
+          "ok": true,
+          "desc": "sin iniciar sesión no se puede comentar (401)",
+          "detalle": "401"
+        },
+        {
+          "ok": true,
+          "desc": "el número de artículos no cambió después de 13 diagnósticos nuevos",
+          "detalle": "13 → 13"
+        }
+      ],
+      "estado": "Aprobado"
+    },
+    {
+      "codigo": "CP08",
+      "rf": "RF08 · Tablero de incidencia",
+      "procedimiento": "Registrar capturas de prueba y abrir el tablero",
+      "esperado": "Los totales coinciden con un conteo directo en la base de datos",
+      "pasos": [
+        {
+          "ok": true,
+          "desc": "los totales del tablero de hoy coinciden con el conteo en la base de datos",
+          "detalle": "capturas 18=18, sano 4=4, revisar 4=4, antracnosis 10=10, otro_dano 0=0, validadas 2=2"
+        },
+        {
+          "ok": true,
+          "desc": "el tablero incluye las capturas de prueba",
+          "detalle": "13 de prueba, 18 en total hoy"
+        },
+        {
+          "ok": true,
+          "desc": "la suma por mes coincide con el total",
+          "detalle": "18"
+        }
+      ],
+      "estado": "Aprobado"
+    },
+    {
+      "codigo": "CP09",
+      "rf": "RF09 · Reentrenamiento y versionado",
+      "procedimiento": "Exportar el ZIP, verificar su estructura y activar otra versión",
+      "esperado": "La estructura coincide con la que espera entrenar.py; solo una versión activa por arquitectura",
+      "pasos": [
+        {
+          "ok": true,
+          "desc": "el ZIP tiene sano/, antracnosis/, manifiesto.csv y LEEME.txt, como espera entrenar.py",
+          "detalle": "3 fotos; 5 archivos"
+        },
+        {
+          "ok": true,
+          "desc": "incluye las capturas validadas en CP06, en la carpeta de su clase",
+          "detalle": "captura_202 y captura_203"
+        },
+        {
+          "ok": true,
+          "desc": "al activar otra versión, queda una sola activa en MobileNetV2",
+          "detalle": "prueba-cp09"
+        },
+        {
+          "ok": true,
+          "desc": "se vuelve a activar v0-preliminar; cada arquitectura tiene una versión activa",
+          "detalle": "efficientnet_b0: 1, mobilenet_v2: 1"
+        },
+        {
+          "ok": true,
+          "desc": "cada versión registra sus métricas (AUC, recall, F1)",
+          "detalle": "efficientnet_b0: AUC 0.9600, recall 0.8224; mobilenet_v2: AUC 0.9602, recall 0.8879"
+        }
+      ],
+      "estado": "Aprobado"
+    },
+    {
+      "codigo": "CP10",
+      "rf": "RF10 · Gestión de usuarios y perfiles",
+      "procedimiento": "Asignar cada perfil a usuarios distintos",
+      "esperado": "Cada perfil ve solo sus pestañas y rutas",
+      "pasos": [
+        {
+          "ok": true,
+          "desc": "el administrador asigna el perfil «productor»",
+          "detalle": "200"
+        },
+        {
+          "ok": true,
+          "desc": "el administrador asigna el perfil «propietario»",
+          "detalle": "200"
+        },
+        {
+          "ok": true,
+          "desc": "el administrador asigna el perfil «especialista»",
+          "detalle": "200"
+        },
+        {
+          "ok": true,
+          "desc": "la sesión de «productor» incluye su perfil",
+          "detalle": ""
+        },
+        {
+          "ok": true,
+          "desc": "la sesión de «propietario» incluye su perfil",
+          "detalle": ""
+        },
+        {
+          "ok": true,
+          "desc": "la sesión de «especialista» incluye su perfil",
+          "detalle": ""
+        },
+        {
+          "ok": true,
+          "desc": "«productor»: historial propias, validación 403, tablero 403, panel 403",
+          "detalle": "historial propias, validación 403, tablero 403, panel 403"
+        },
+        {
+          "ok": true,
+          "desc": "«propietario»: historial todas, validación 403, tablero 200, panel 403",
+          "detalle": "historial todas, validación 403, tablero 200, panel 403"
+        },
+        {
+          "ok": true,
+          "desc": "«especialista»: historial todas, validación 200, tablero 200, panel 403",
+          "detalle": "historial todas, validación 200, tablero 200, panel 403"
+        },
+        {
+          "ok": true,
+          "desc": "un productor no puede cambiarse el perfil (403)",
+          "detalle": "403"
+        }
+      ],
+      "estado": "Aprobado"
+    }
+  ]
+}

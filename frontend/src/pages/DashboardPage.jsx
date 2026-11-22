@@ -126,7 +126,7 @@ function Dashboard() {
             <span>Hasta</span>
             <Input type="date" value={custom.hasta} min={custom.desde || undefined} onChange={(e) => setCustom((c) => ({ ...c, hasta: e.target.value }))} />
           </label>
-          <Button type="submit" size="sm" variant="outline" disabled={badRange}>
+          <Button type="submit" size="sm" variant="secondary" disabled={badRange}>
             Aplicar
           </Button>
         </div>

@@ -1,4 +1,4 @@
-import { Icon, Link, Spinner, Text } from '../atoms';
+import { Button, Icon, Link, Spinner, Text } from '../atoms';
 import { useAsync } from '../../hooks/useAsync.js';
 import { api } from '../../lib/api.js';
 import { healthClass } from '../../lib/diagnosis.js';
@@ -45,6 +45,9 @@ export function KnowledgeLinks({ clase, limit = 3, title = 'Fichas de manejo' })
           })}
         </ul>
       )}
+      <Button to={`/blog?clase=${clase}`} variant="secondary" size="sm">
+        Ver fichas de manejo para este resultado
+      </Button>
       <Text size="sm" className="kb-links__note">
         Puedes comentar cada ficha y compartir tu experiencia con otros productores.
       </Text>

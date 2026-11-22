@@ -3,3 +3,6 @@
 .blog-filter { flex-shrink: 0; min-height: 36px; padding: 0 var(--space-4); border: 1px solid var(--color-border); border-radius: 999px; background: var(--color-surface); font-size: var(--text-sm); font-weight: 500; color: var(--color-text-muted); cursor: pointer; transition: background-color var(--duration-fast) ease, color var(--duration-fast) ease, border-color var(--duration-fast) ease; }
 .blog-filter[aria-pressed='true'] { background: var(--color-forest-900); border-color: var(--color-forest-900); color: #fff; }
 @media (hover: hover) { .blog-filter:not([aria-pressed='true']):hover { border-color: var(--color-text-muted); color: var(--color-text); } }
+/* Filtro por resultado del diagnóstico (?clase=…) */
+.blog-class { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; margin-bottom: var(--space-6); padding: var(--space-3) var(--space-4); border-left: 4px solid var(--blog-class); background: var(--color-surface-tint); border-radius: var(--radius); }
+.blog-class__label { display: inline-flex; align-items: center; gap: var(--space-2); font-weight: 600; }

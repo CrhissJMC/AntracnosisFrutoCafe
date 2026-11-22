@@ -153,7 +153,7 @@ function VersionRow({ v, onActivate, onSaved }) {
         <td title={v.ultimo_uso ? `Último: ${formatDateTime(v.ultimo_uso)}` : undefined}>{v.diagnosticos}</td>
         <td className="mdl-actions">
           {!v.activo && (
-            <Button size="sm" variant="outline" onClick={() => onActivate(v)}>
+            <Button size="sm" variant="secondary" onClick={() => onActivate(v)}>
               Marcar activa
             </Button>
           )}
