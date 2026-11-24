@@ -97,7 +97,7 @@ const admin = session('admin');
 await admin('POST', '/auth/login', { email: process.env.ADMIN_EMAIL, password: process.env.ADMIN_PASSWORD });
 const stamp = Date.now();
 const users = {};
-for (const perfil of ['productor', 'propietario', 'especialista']) {
+for (const perfil of ['productor', 'especialista']) {
   const s = session(perfil);
   const email = `cp-${perfil}-${stamp}@ejemplo.test`;
   const r = await s('POST', '/auth/register', { name: `Prueba ${perfil}`, email, password: randomBytes(12).toString('base64url') });
@@ -109,17 +109,16 @@ const articlesBefore = (await sql('SELECT count(*)::int AS n FROM articles')).ro
 try {
   // ── CP10 · perfiles (primero: los demás casos los usan) ───────────────
   caso('CP10', 'RF10 · Gestión de usuarios y perfiles', 'Asignar cada perfil a usuarios distintos', 'Cada perfil ve solo sus pestañas y rutas');
-  for (const perfil of ['productor', 'propietario', 'especialista']) {
+  for (const perfil of ['productor', 'especialista']) {
     const r = await admin('PATCH', `/admin/users/${users[perfil].id}`, { perfil });
     check(r.status === 200 && r.body.user.perfil === perfil, `el administrador asigna el perfil «${perfil}»`, r.status);
   }
-  for (const perfil of ['productor', 'propietario', 'especialista']) {
+  for (const perfil of ['productor', 'especialista']) {
     const me = (await users[perfil].s('GET', '/auth/me')).body;
     check(me.user?.perfil === perfil, `la sesión de «${perfil}» incluye su perfil`);
   }
   const matrix = {
     productor: { historial: 'propias', validacion: 403, tablero: 403 },
-    propietario: { historial: 'todas', validacion: 403, tablero: 200 },
     especialista: { historial: 'todas', validacion: 200, tablero: 200 },
   };
   for (const [perfil, exp] of Object.entries(matrix)) {
@@ -276,7 +275,7 @@ try {
   // ── CP08 · tablero ────────────────────────────────────────────────────
   caso('CP08', 'RF08 · Tablero de incidencia', 'Registrar capturas de prueba y abrir el tablero', 'Los totales coinciden con un conteo directo en la base de datos');
   const today = limaToday();
-  const t = (await users.propietario.s('GET', `/tablero?desde=${today}&hasta=${today}`)).body;
+  const t = (await users.especialista.s('GET', `/tablero?desde=${today}&hasta=${today}`)).body;
   const db = (
     await sql(
       `SELECT count(*)::int AS capturas,

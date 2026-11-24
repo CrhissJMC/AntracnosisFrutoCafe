@@ -6,12 +6,12 @@ import { seesAllCaptures } from '../lib/capturas.js';
 import { climateByMonth, climateConfig } from '../lib/clima.js';
 import { requireAuth } from '../middleware/auth.js';
 
-// Tablero de incidencia (RF08): propietario, especialista y administrador.
+// Tablero de incidencia (RF08): especialista y administrador.
 // Usa la clase vigente de cada captura: la validada si existe; si no, el resultado del modelo.
 const router = Router();
 router.use(requireAuth, (req, res, next) => {
   if (!seesAllCaptures(req.user)) {
-    return next(new HttpError(403, 'El tablero está disponible para el propietario, el especialista y el administrador'));
+    return next(new HttpError(403, 'El tablero está disponible para el especialista y el administrador'));
   }
   next();
 });

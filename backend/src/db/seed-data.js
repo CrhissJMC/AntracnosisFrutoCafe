@@ -111,7 +111,7 @@ export const LEGACY_DEFAULTS = {
     RF06: 'Permitir que el agrónomo confirme o corrija un diagnóstico y lo comente.',
     RF05: 'Guardar la foto con su diagnóstico, fecha, hora, coordenadas, parcela y versión del modelo.',
     RF08: ['Mostrar indicadores de incidencia por parcela, zona y periodo.', 'Mostrar indicadores de incidencia por parcela y periodo.'],
-    RF10: ['Asignar perfiles del módulo (productor, técnico, agrónomo, gerencia) y registrar parcelas.', 'Asignar perfiles del módulo (productor, propietario o especialista) y registrar las parcelas.'],
+    RF10: ['Asignar perfiles del módulo (productor, técnico, agrónomo, gerencia) y registrar parcelas.', 'Asignar perfiles del módulo (productor, propietario o especialista) y registrar las parcelas.', 'Asignar perfiles del módulo (productor, propietario o especialista) a los usuarios.'],
     RNF01: 'Recall de al menos 85 % en la clase de infección incipiente, medido en el conjunto de prueba.',
     RNF03: 'El sistema se ejecuta en contenedores Docker en la PC del equipo, sin servicios de nube pagados.',
     RNF05: 'Resultado con semáforo: verde (sano), amarillo (incipiente) y rojo (avanzado).',
@@ -394,7 +394,7 @@ export const METHOD_ITEMS = [
   ['tecnologias', 'Git · GitHub', 'Control de versiones del código y de los scripts de la base de datos.'],
   ['tecnologias', 'Open-Meteo', 'Clima diario de la finca (lluvia, humedad y temperatura) sin sensores, gratuito y sin clave.'],
   // Alcance (un punto por línea)
-  ['alcance', 'Incluye', 'Clasificación de frutos individuales en sano o antracnosis, con el estado «revisar» para los casos dudosos\nEntrenamiento y comparación de EfficientNet-B0 y MobileNetV2 con transferencia de aprendizaje\nMódulo web de diagnóstico, validación experta y tablero de incidencia para productor, propietario, especialista y administrador\nPrueba local con fotos de la finca y prueba de usabilidad (SUS), de octubre a diciembre de 2026'],
+  ['alcance', 'Incluye', 'Clasificación de frutos individuales en sano o antracnosis, con el estado «revisar» para los casos dudosos\nEntrenamiento y comparación de EfficientNet-B0 y MobileNetV2 con transferencia de aprendizaje\nMódulo web de diagnóstico, validación experta y tablero de incidencia para productor, especialista y administrador\nPrueba local con fotos de la finca y prueba de usabilidad (SUS), de octubre a diciembre de 2026'],
   ['alcance', 'No incluye', 'Análisis de hojas, ramas o plantas completas\nEstimación de la severidad (infección incipiente o avanzada)\nSensores de temperatura y humedad (trabajo futuro)\nReemplazo del diagnóstico de laboratorio\nServicios de nube pagados: el sistema se ejecuta en la PC del equipo'],
   // Qué estamos haciendo ahora (pasos, en orden)
   ...ESTADO_ITEMS,
@@ -976,6 +976,10 @@ export const LEGACY_METHOD_VERSIONS = [
   LIMITACIONES_V2,
   TECNOLOGIAS_LIMITACIONES_V1,
   FLUJO_V1,
+  // Alcance cuando existía el perfil «propietario»
+  METHOD_ITEMS.map((i) =>
+    i[0] === 'alcance' && i[1] === 'Incluye' ? [i[0], i[1], i[2].replace('productor, especialista y administrador', 'productor, propietario, especialista y administrador')] : i,
+  ),
   METHOD_ITEMS_V3.map((i) =>
     i[0] === 'flujo' && i[1] === 'Modelos' ? [i[0], i[1], 'EfficientNet-B0 como modelo principal, MobileNetV2 como alternativa ligera y una CNN sencilla entrenada desde cero como línea base.'] : i,
   ),
@@ -994,7 +998,7 @@ export const REQUIREMENTS = [
   ['RF07', 'Base de conocimiento', 'Publicar en el blog fichas de manejo vinculadas a cada categoría, y consultarlas y comentarlas.', 4, 'Blog', 'CP07', 'Media', 'disenado'],
   ['RF08', 'Tablero de incidencia', 'Mostrar indicadores de incidencia por periodo.', 4, 'Tablero', 'CP08', 'Media', 'disenado'],
   ['RF09', 'Reentrenamiento y versionado', 'Reentrenar el modelo con imágenes validadas y registrar sus métricas por versión.', 2, 'Panel · Modelo de diagnóstico', 'CP09', 'Media', 'disenado'],
-  ['RF10', 'Gestión de usuarios y perfiles', 'Asignar perfiles del módulo (productor, propietario o especialista) a los usuarios.', 4, 'Panel · Usuarios', 'CP10', 'Alta', 'disenado'],
+  ['RF10', 'Gestión de usuarios y perfiles', 'Asignar perfiles del módulo a los usuarios: productor (por defecto en toda cuenta nueva) o especialista.', 4, 'Panel · Usuarios', 'CP10', 'Alta', 'disenado'],
   ['RNF01', 'Sensibilidad del modelo', 'Recall de al menos 85 % en la clase antracnosis, medido en el conjunto de prueba.', 3, 'Modelo', 'Evaluación en el conjunto de prueba', null, 'pendiente'],
   ['RNF02', 'Tiempo de respuesta', 'El diagnóstico tarda como máximo 3 segundos desde el envío de la foto.', 4, 'Servicio del modelo', 'Prueba de rendimiento (30 imágenes)', null, 'pendiente'],
   ['RNF03', 'Ejecución local', 'El sistema se ejecuta en contenedores Docker y el modelo se entrena con la GPU de la PC del equipo, sin servicios de nube pagados.', 4, 'Infraestructura', 'Despliegue con Docker Compose', null, 'implementado'],

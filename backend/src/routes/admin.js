@@ -49,7 +49,7 @@ router.patch(
     const data = z
       .object({
         role: z.enum(['admin', 'user']).optional(),
-        perfil: z.preprocess((v) => (v === '' ? null : v), z.enum(['productor', 'propietario', 'especialista']).nullable()).optional(),
+        perfil: z.enum(['productor', 'especialista']).optional(),
       })
       .strict()
       .refine((d) => d.role !== undefined || d.perfil !== undefined, { message: 'Nada que cambiar' })

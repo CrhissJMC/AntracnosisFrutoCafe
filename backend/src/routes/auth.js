@@ -33,7 +33,7 @@ router.post(
       const { rows } = await query(
         `INSERT INTO users (name, email, password_hash, role)
          VALUES ($1, $2, $3, 'user')
-         RETURNING id, name, email, role`,
+         RETURNING id, name, email, role, perfil`,
         [data.name, data.email, hash],
       );
       user = rows[0];

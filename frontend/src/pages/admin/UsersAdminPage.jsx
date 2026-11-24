@@ -71,12 +71,11 @@ export function UsersAdminPage() {
       label: 'Perfil del módulo',
       render: (u) => (
         <Select
-          value={u.perfil ?? ''}
+          value={u.perfil ?? 'productor'}
           onChange={(e) => changeProfile(u, e.target.value)}
           aria-label={`Perfil del módulo de ${u.name}`}
           style={{ minWidth: 150 }}
         >
-          <option value="">Sin perfil</option>
           {PROFILES.map((p) => (
             <option key={p.id} value={p.id}>
               {p.label}

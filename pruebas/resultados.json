@@ -1,5 +1,5 @@
 {
-  "fecha": "2026-11-24T15:38:04.939Z",
+  "fecha": "2026-11-24T18:52:53.958Z",
   "casos": [
     {
       "codigo": "CP01",
@@ -10,12 +10,12 @@
         {
           "ok": true,
           "desc": "una foto JPG se acepta y se analiza",
-          "detalle": "captura N.º 209"
+          "detalle": "captura N.º 227"
         },
         {
           "ok": true,
           "desc": "una foto PNG se acepta y se analiza",
-          "detalle": "captura N.º 210"
+          "detalle": "captura N.º 228"
         },
         {
           "ok": true,
@@ -145,13 +145,13 @@
       "pasos": [
         {
           "ok": true,
-          "desc": "captura N.º 220 con ubicación: foto guardada, fecha, autor, versión activa del modelo, ubicación guardada y condiciones del lugar guardadas",
-          "detalle": "efficientnet_b0:v0-preliminar, mobilenet_v2:v1-aumento; 2026-11-24T15:38:02.137Z; ubicación -5.906900, -78.043100; altitud 1650, temperatura 21.5"
+          "desc": "captura N.º 238 con ubicación: foto guardada, fecha, autor, versión activa del modelo, ubicación guardada y condiciones del lugar guardadas",
+          "detalle": "efficientnet_b0:v0-preliminar, mobilenet_v2:v1-aumento; 2026-11-24T18:52:51.128Z; ubicación -5.906900, -78.043100; altitud 1650, temperatura 21.5"
         },
         {
           "ok": true,
-          "desc": "captura N.º 221 sin ubicación: foto guardada, fecha, autor, versión activa del modelo, ubicación vacía y condiciones del lugar vacías (opcionales)",
-          "detalle": "mobilenet_v2:v1-aumento; 2026-11-24T15:38:04.801Z; ubicación —, —; altitud —, temperatura —"
+          "desc": "captura N.º 239 sin ubicación: foto guardada, fecha, autor, versión activa del modelo, ubicación vacía y condiciones del lugar vacías (opcionales)",
+          "detalle": "mobilenet_v2:v1-aumento; 2026-11-24T18:52:53.815Z; ubicación —, —; altitud —, temperatura —"
         }
       ],
       "estado": "Aprobado"
@@ -257,12 +257,12 @@
         {
           "ok": true,
           "desc": "el ZIP tiene sano/, antracnosis/, manifiesto.csv y LEEME.txt, como espera entrenar.py",
-          "detalle": "3 fotos; 5 archivos"
+          "detalle": "4 fotos; 6 archivos"
         },
         {
           "ok": true,
           "desc": "incluye las capturas validadas en CP06, en la carpeta de su clase",
-          "detalle": "captura_220 y captura_221"
+          "detalle": "captura_238 y captura_239"
         },
         {
           "ok": true,
@@ -295,22 +295,12 @@
         },
         {
           "ok": true,
-          "desc": "el administrador asigna el perfil «propietario»",
-          "detalle": "200"
-        },
-        {
-          "ok": true,
           "desc": "el administrador asigna el perfil «especialista»",
           "detalle": "200"
         },
         {
           "ok": true,
           "desc": "la sesión de «productor» incluye su perfil",
-          "detalle": ""
-        },
-        {
-          "ok": true,
-          "desc": "la sesión de «propietario» incluye su perfil",
           "detalle": ""
         },
         {
@@ -322,11 +312,6 @@
           "ok": true,
           "desc": "«productor»: historial propias, validación 403, tablero 403, panel 403",
           "detalle": "historial propias, validación 403, tablero 403, panel 403"
-        },
-        {
-          "ok": true,
-          "desc": "«propietario»: historial todas, validación 403, tablero 200, panel 403",
-          "detalle": "historial todas, validación 403, tablero 200, panel 403"
         },
         {
           "ok": true,

@@ -17,7 +17,15 @@
 
 -- Perfil del módulo (lo asigna solo el administrador) -----------------------
 ALTER TABLE users ADD COLUMN IF NOT EXISTS perfil VARCHAR(12)
-  CHECK (perfil IN ('productor', 'propietario', 'especialista'));
+  CHECK (perfil IN ('productor', 'especialista'));
+-- El perfil «propietario» se quitó: veía todas las capturas sin estar vinculado a ninguna finca.
+UPDATE users SET perfil = 'productor' WHERE perfil = 'propietario';
+ALTER TABLE users DROP CONSTRAINT IF EXISTS users_perfil_check;
+ALTER TABLE users ADD CONSTRAINT users_perfil_check CHECK (perfil IN ('productor', 'especialista'));
+-- Toda cuenta es productor salvo que el administrador le asigne otro perfil (antes había «sin perfil»,
+-- que hacía lo mismo que productor).
+UPDATE users SET perfil = 'productor' WHERE perfil IS NULL;
+ALTER TABLE users ALTER COLUMN perfil SET DEFAULT 'productor', ALTER COLUMN perfil SET NOT NULL;
 
 -- Fichas de manejo del blog vinculadas a un resultado (RF07) -----------------
 ALTER TABLE articles ADD COLUMN IF NOT EXISTS clase_relacionada VARCHAR(12)

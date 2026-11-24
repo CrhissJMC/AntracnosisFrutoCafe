@@ -5,7 +5,7 @@ import { captureDetail, historyFilters, historyWhere, seesAllCaptures } from '..
 import { canSeeCapture } from '../lib/modulo.js';
 import { requireAuth } from '../middleware/auth.js';
 
-// Historial de capturas (RF05): cada usuario ve las suyas; propietario, especialista y administrador, todas.
+// Historial de capturas (RF05): cada usuario ve las suyas; especialista y administrador, todas.
 const router = Router();
 router.use(requireAuth);
 

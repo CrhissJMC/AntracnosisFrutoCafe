@@ -46,11 +46,11 @@ El repositorio contiene el sitio del proyecto (React + Node.js + PostgreSQL), el
 ### Roles
 
 - **Administrador:** gestiona artículos, comentarios, contenido de las páginas, textos del sitio, mensajes, usuarios y la **trazabilidad** (avance de objetivos, notas de bitácora y estado de cada requisito).
-- **Usuario registrado:** comenta en el blog, borra sus propios comentarios y **usa el diagnóstico** (cada análisis queda registrado).
+- **Usuario registrado:** comenta en el blog, borra sus propios comentarios y **usa el diagnóstico** (cada análisis queda registrado). Toda cuenta nueva tiene el perfil de **productor**: ve solo sus capturas.
 - **Especialista** (perfil del módulo, lo asigna el administrador en `/admin/usuarios`): **valida los diagnósticos** en `/validacion`. El administrador también puede validar; cada validación guarda quién la hizo y con qué perfil.
 - **Notificaciones** (campana en la barra superior, con sesión): cuando una captura queda en «revisar» o los dos modelos no coinciden, se avisa a los especialistas (si no hay ninguno, al administrador) y al autor de la foto. Cuando un especialista o el administrador valida la captura, el autor recibe el resultado y el aviso del especialista queda atendido. Cada aviso lleva al caso: el especialista va a Validación y el autor, a su captura en el Historial. Se actualizan cada minuto y al volver a la pestaña. Son avisos dentro del sitio: no se envían correos.
-- **Historial** (`/historial`): cada usuario ve sus capturas; el propietario, el especialista y el administrador ven todas. Se filtra por periodo, clase vigente y validación, y se exporta en CSV (separado por «;» para Excel).
-- **Tablero** (`/tablero`, propietario, especialista y administrador): frutos analizados, incidencia de antracnosis, pendientes de validar y coincidencia del modelo con el especialista; frutos por mes y clase, incidencia mensual y distribución por clase, con una tabla de los datos. Cuenta la clase validada cuando existe; si no, el resultado del modelo. Los gráficos son SVG propios y su paleta se validó para daltonismo.
+- **Historial** (`/historial`): cada usuario ve sus capturas; el especialista y el administrador ven todas. Se filtra por periodo, clase vigente y validación, y se exporta en CSV (separado por «;» para Excel).
+- **Tablero** (`/tablero`, especialista y administrador): frutos analizados, incidencia de antracnosis, pendientes de validar y coincidencia del modelo con el especialista; frutos por mes y clase, incidencia mensual y distribución por clase, con una tabla de los datos. Cuenta la clase validada cuando existe; si no, el resultado del modelo. Los gráficos son SVG propios y su paleta se validó para daltonismo.
 
 Todo el contenido vive en la base de datos y se edita desde el panel (`/admin`), sin tocar el código.
 
@@ -263,7 +263,7 @@ Se ejecuta después de `schema.sql` en cada arranque, sin duplicar nada (informe
 
 | Tabla / vista | Qué guarda |
 |---|---|
-| `users.perfil` | Perfil del módulo: `productor`, `propietario` o `especialista` (lo asigna el administrador) |
+| `users.perfil` | Perfil del módulo: `productor` (por defecto en toda cuenta nueva) o `especialista` (lo asigna el administrador) |
 | `modelo_versiones` | Cada versión de cada modelo con umbrales y métricas; una activa por arquitectura (RF09) |
 | `capturas` | Foto (archivo en el volumen `capturas-data`), autor, fecha, ubicación si se autoriza (RF05) y, opcionales, las condiciones del lugar que indica el productor: `altitud_m`, `temperatura_c`, `humedad_pct` y `precipitacion_mm` |
 | `diagnosticos` | Resultado de cada modelo para la captura, con la versión que lo generó (RNF08) |
@@ -319,7 +319,7 @@ Cada nivel solo usa los niveles inferiores (átomos → moléculas → organismo
 
 ## 9. Rutas y API
 
-**Sitio público:** `/`, `/nosotros`, `/metodologia`, `/blog`, `/blog/:slug`, `/diagnostico`, `/historial` (con sesión), `/validacion` (especialista o admin), `/tablero` (propietario, especialista o admin), `/trazabilidad`, `/contacto`, `/login`, `/registro` (`/servicios` redirige a Metodología).
+**Sitio público:** `/`, `/nosotros`, `/metodologia`, `/blog`, `/blog/:slug`, `/diagnostico`, `/historial` (con sesión), `/validacion` (especialista o admin), `/tablero` (especialista o admin), `/trazabilidad`, `/contacto`, `/login`, `/registro` (`/servicios` redirige a Metodología).
 
 **Panel (solo admin):** `/admin`, `/admin/articulos`, `/admin/articulos/nuevo`, `/admin/articulos/:id`, `/admin/comentarios`, `/admin/trazabilidad`, `/admin/contenido`, `/admin/textos`, `/admin/mensajes`, `/admin/usuarios`, `/admin/modelo`
 
@@ -339,8 +339,8 @@ Cada nivel solo usa los niveles inferiores (átomos → moléculas → organismo
 | `POST /diagnostico/analizar` (`{ image, model, latitud?, longitud? }`, con `model` = `efficientnet_b0`, `mobilenet_v2` o `ambos`): analiza y registra la captura | usuario registrado |
 | `GET /diagnostico/capturas/:id/imagen`, `POST /diagnostico/capturas/:id/gradcam` | autor de la captura, especialista o admin |
 | `GET /validacion/casos` (`estado` = `pendientes`, `validados` o `todos`), `GET /validacion/casos/:id`, `POST /validacion/casos/:id` (`{ clase_confirmada, comentario }`) | especialista o admin |
-| `GET /historial` (`desde`, `hasta`, `clase`, `estado`, `limit`, `offset`), `GET /historial/:id`, `GET /historial/exportar` (CSV con los mismos filtros) | con sesión: cada usuario ve sus capturas; propietario, especialista y admin, todas |
-| `GET /tablero` (`desde`, `hasta`): resumen, incidencia por mes, lluvia y días favorables por mes, y distribución por clase | propietario, especialista o admin |
+| `GET /historial` (`desde`, `hasta`, `clase`, `estado`, `limit`, `offset`), `GET /historial/:id`, `GET /historial/exportar` (CSV con los mismos filtros) | con sesión: cada usuario ve sus capturas; especialista y admin, todas |
+| `GET /tablero` (`desde`, `hasta`): resumen, incidencia por mes, lluvia y días favorables por mes, y distribución por clase | especialista o admin |
 | `GET /clima`: últimos 7 días, pronóstico de 7 días y nivel de riesgo de antracnosis | público |
 | `GET /notificaciones` (las 20 más recientes y cuántas no se leyeron), `POST /notificaciones/leer` (`{ id }` o todas) | con sesión: cada usuario, solo las suyas |
 | `GET /admin/modelos`, `PATCH /admin/modelos/:id` (`{ activo: true }` o `{ notas }`), `GET /admin/modelos/reentrenamiento` (ZIP con `sano/`, `antracnosis/` y `manifiesto.csv`) | admin |
@@ -357,7 +357,7 @@ El servicio `ml` expone `GET /health` y `POST /predict` **solo en la red interna
 - Todas las entradas se validan en el servidor y se rechazan los campos desconocidos.
 - Límites de intentos en login y registro, comentarios, contacto y análisis de imágenes. El formulario de contacto tiene además un campo trampa contra bots.
 - El contenido se dibuja sin `innerHTML`, y los enlaces y las imágenes de los textos del sitio solo aceptan `http(s)`, lo que evita XSS.
-- Las fotos del diagnóstico solo se aceptan como JPG o PNG de hasta 8 MB, sin metadatos. Se guardan en el volumen `capturas-data` (no en Git) y solo las ven quien tomó la foto, el propietario, los especialistas y el administrador.
+- Las fotos del diagnóstico solo se aceptan como JPG o PNG de hasta 8 MB, sin metadatos. Se guardan en el volumen `capturas-data` (no en Git) y solo las ven quien tomó la foto, los especialistas y el administrador.
 - Un administrador no puede quitarse su propio rol ni borrar su propia cuenta.
 - `.env` (credenciales) y las fotos de las capturas están excluidos de Git.
 - Solo los especialistas y el administrador validan, y solo el administrador asigna perfiles. La base de datos lo vuelve a comprobar con un disparador y no permite editar una validación.

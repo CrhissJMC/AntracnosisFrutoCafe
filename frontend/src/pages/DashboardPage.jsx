@@ -48,7 +48,7 @@ const PRESETS = [
 ];
 const fmtDate = (iso) => (iso ? new Date(`${iso}T12:00:00`).toLocaleDateString('es-PE', { day: 'numeric', month: 'short', year: 'numeric' }) : '');
 
-/** Tablero de incidencia (RF08): propietario, especialista y administrador. */
+/** Tablero de incidencia (RF08): especialista y administrador. */
 export function DashboardPage() {
   const { user, ready } = useAuth();
   let body;
@@ -56,7 +56,7 @@ export function DashboardPage() {
   else if (!user) {
     body = (
       <Callout label="Inicia sesión">
-        <p>El tablero está disponible para el propietario, el especialista y el administrador.</p>
+        <p>El tablero está disponible para el especialista y el administrador.</p>
         <div className="dash-actions">
           <Button to="/login?next=/tablero" size="sm">
             Iniciar sesión
@@ -65,7 +65,7 @@ export function DashboardPage() {
       </Callout>
     );
   } else if (!seesAllCaptures(user)) {
-    body = <Alert tone="info">El tablero está disponible para el propietario, el especialista y el administrador.</Alert>;
+    body = <Alert tone="info">El tablero está disponible para el especialista y el administrador.</Alert>;
   } else body = <Dashboard />;
 
   return (

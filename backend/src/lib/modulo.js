@@ -21,5 +21,5 @@ export function requireValidator(req, res, next) {
   next();
 }
 
-/** Puede ver una captura: quien la tomó, o el propietario, el especialista y el administrador. */
+/** Puede ver una captura: quien la tomó, o el especialista y el administrador. */
 export const canSeeCapture = (user, capture) => Boolean(user && (capture.autor_id === user.id || seesAllCaptures(user)));

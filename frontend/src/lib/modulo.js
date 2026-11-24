@@ -2,10 +2,9 @@
 
 export const PROFILES = [
   { id: 'productor', label: 'Productor' },
-  { id: 'propietario', label: 'Propietario' },
   { id: 'especialista', label: 'Especialista' },
 ];
-export const profileLabel = (id) => PROFILES.find((p) => p.id === id)?.label ?? 'Sin perfil';
+export const profileLabel = (id) => PROFILES.find((p) => p.id === id)?.label ?? 'Productor';
 
 /** Valida como especialista si tiene ese perfil; si no, como administrador. */
 export function validatorProfile(user) {
@@ -28,8 +27,8 @@ export const MODEL_NAMES = { efficientnet_b0: 'EfficientNet-B0', mobilenet_v2: '
 export const classTone = (c) => (c === 'antracnosis' ? 'brand' : c === 'sano' ? 'success' : 'warning');
 export const captureImageUrl = (id) => `/api/diagnostico/capturas/${id}/imagen`;
 
-/** Historial: el propietario, el especialista y el administrador ven todas las capturas; el resto, las suyas. */
-export const seesAllCaptures = (user) => Boolean(user && (user.role === 'admin' || ['propietario', 'especialista'].includes(user.perfil)));
+/** Historial: el especialista y el administrador ven todas las capturas; el resto, las suyas. */
+export const seesAllCaptures = (user) => Boolean(user && (user.role === 'admin' || user.perfil === 'especialista'));
 
 /** Pestañas del módulo; cada usuario ve solo las de su perfil. */
 export function moduleTabs(user) {

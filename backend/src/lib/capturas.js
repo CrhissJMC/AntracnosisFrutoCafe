@@ -4,10 +4,10 @@ import { notFound } from './http.js';
 import { climateBefore } from './clima.js';
 
 /**
- * Quién ve qué en el historial (RF05): cada usuario, sus capturas; el propietario,
+ * Quién ve qué en el historial (RF05): cada usuario, sus capturas;
  * el especialista y el administrador, todas.
  */
-export const seesAllCaptures = (user) => Boolean(user && (user.role === 'admin' || ['propietario', 'especialista'].includes(user.perfil)));
+export const seesAllCaptures = (user) => Boolean(user && (user.role === 'admin' || user.perfil === 'especialista'));
 
 const date = z.preprocess((v) => (v === '' ? undefined : v), z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Fecha no válida').optional());
 
