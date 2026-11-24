@@ -1,0 +1,33 @@
+.notif { position: relative; display: inline-flex; }
+.notif__button { position: relative; display: inline-grid; place-items: center; width: var(--tap); height: var(--tap); border: 0; border-radius: 50%; background: transparent; color: var(--color-text); cursor: pointer; }
+.notif__button:hover { background: var(--color-surface-tint); }
+.notif__button:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }
+.notif__badge { position: absolute; top: 6px; right: 4px; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 999px; background: var(--color-brand); color: #fff; font-size: 11px; font-weight: 700; line-height: 18px; text-align: center; box-shadow: 0 0 0 2px var(--color-surface); }
+
+.notif__panel { position: absolute; top: calc(100% + 6px); right: 0; z-index: 60; width: min(360px, calc(100vw - 32px)); max-height: min(70vh, 480px); overflow-y: auto; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); }
+.notif__head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--color-border); position: sticky; top: 0; background: var(--color-surface); }
+.notif__title { font-weight: 700; font-size: var(--text-sm); }
+.notif__readall { border: 0; background: none; padding: 0; font-size: var(--text-xs); font-weight: 600; color: var(--color-brand); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+.notif__empty { padding: var(--space-5) var(--space-4); font-size: var(--text-sm); color: var(--color-text-muted); }
+.notif__list { list-style: none; margin: 0; padding: 0; }
+.notif__item { display: flex; gap: var(--space-3); width: 100%; padding: var(--space-3) var(--space-4); border: 0; border-bottom: 1px solid var(--color-surface-tint); background: transparent; text-align: left; font-size: var(--text-sm); color: var(--color-text-muted); cursor: pointer; }
+.notif__item:hover, .notif__item:focus-visible { background: var(--color-surface-tint); outline: none; }
+.notif__item.is-unread { color: var(--color-text); background: color-mix(in srgb, var(--color-brand) 6%, var(--color-surface)); }
+.notif__item.is-unread .notif__icon { color: var(--color-brand); }
+.notif__icon { flex-shrink: 0; margin-top: 2px; color: var(--color-text-muted); }
+.notif__text { display: flex; flex-direction: column; gap: 2px; min-width: 0; overflow-wrap: anywhere; line-height: 1.4; }
+.notif__time { font-size: var(--text-xs); color: var(--color-text-muted); }
+
+/* En el teléfono la campana va junto al botón del menú */
+@media (max-width: 820px) {
+  .notif { margin-left: auto; }
+  .notif + .navbar__toggle { margin-left: 0; }
+  .notif__panel { position: fixed; top: calc(var(--navbar-h) + 4px); left: var(--space-4); right: var(--space-4); width: auto; }
+}
+
+/* Secciones «Por leer» y «Leídas» */
+.notif__section + .notif__section { border-top: 1px solid var(--color-border); }
+.notif__section-title { display: flex; align-items: center; gap: var(--space-2); margin: 0; padding: var(--space-2) var(--space-4); font-size: var(--text-xs); font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--color-text-muted); background: var(--color-surface-tint); }
+.notif__section-count { min-width: 18px; padding: 0 6px; border-radius: 999px; background: var(--color-surface); font-size: 11px; line-height: 18px; text-align: center; }
+.notif__section.is-highlight .notif__section-count { background: var(--color-brand); color: #fff; }
+.notif__section-empty { margin: 0; padding: var(--space-3) var(--space-4); font-size: var(--text-sm); color: var(--color-text-muted); }

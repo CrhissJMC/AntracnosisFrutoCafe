@@ -193,6 +193,8 @@ export function DiagnosisPage() {
                 .join(' y ')
                 .replace(/^(.+)$/, ', con $1')}
               .
+              {response.captura.especialistas_avisados > 0 &&
+                ' Se avisó al especialista para que la valide; recibirás una notificación con su respuesta.'}
             </Alert>
           )}
           <DiagnosisPanel status={status} error={error} response={response} photo={photo} descriptions={descriptions} />

@@ -48,6 +48,7 @@ El repositorio contiene el sitio del proyecto (React + Node.js + PostgreSQL), el
 - **Administrador:** gestiona artículos, comentarios, contenido de las páginas, textos del sitio, mensajes, usuarios y la **trazabilidad** (avance de objetivos, notas de bitácora y estado de cada requisito).
 - **Usuario registrado:** comenta en el blog, borra sus propios comentarios y **usa el diagnóstico** (cada análisis queda registrado).
 - **Especialista** (perfil del módulo, lo asigna el administrador en `/admin/usuarios`): **valida los diagnósticos** en `/validacion`. El administrador también puede validar; cada validación guarda quién la hizo y con qué perfil.
+- **Notificaciones** (campana en la barra superior, con sesión): cuando una captura queda en «revisar» o los dos modelos no coinciden, se avisa a los especialistas (si no hay ninguno, al administrador) y al autor de la foto. Cuando un especialista o el administrador valida la captura, el autor recibe el resultado y el aviso del especialista queda atendido. Cada aviso lleva al caso: el especialista va a Validación y el autor, a su captura en el Historial. Se actualizan cada minuto y al volver a la pestaña. Son avisos dentro del sitio: no se envían correos.
 - **Historial** (`/historial`): cada usuario ve sus capturas; el propietario, el especialista y el administrador ven todas. Se filtra por periodo, clase vigente y validación, y se exporta en CSV (separado por «;» para Excel).
 - **Tablero** (`/tablero`, propietario, especialista y administrador): frutos analizados, incidencia de antracnosis, pendientes de validar y coincidencia del modelo con el especialista; frutos por mes y clase, incidencia mensual y distribución por clase, con una tabla de los datos. Cuenta la clase validada cuando existe; si no, el resultado del modelo. Los gráficos son SVG propios y su paleta se validó para daltonismo.
 
@@ -272,6 +273,7 @@ Se ejecuta después de `schema.sql` en cada arranque, sin duplicar nada (informe
 | `v_dataset_reentrenamiento` | Imágenes validadas como sano o antracnosis, para reentrenar (RF09) |
 | `clima_diario` | Clima diario de la finca (lluvia, humedad y temperatura de Open-Meteo), como caché; marca los días de pronóstico |
 | `migraciones_aplicadas` | Cargas de contenido que se aplican una sola vez (fichas de manejo, artículos) |
+| `notificaciones` | Avisos dentro del sitio: tipo (`caso_revisar`, `caso_en_revision`, `validacion`), destinatario, captura, mensaje y si se leyó |
 
 **Validación experta** (decisión del equipo): solo validan los usuarios con perfil `especialista` y el administrador. Las validaciones no se editan ni se borran; una corrección es una validación nueva y vale la más reciente. Un disparador de la base de datos rechaza a cualquier otro usuario, impide editar una validación y toma el nombre del validador de su cuenta, así no se puede falsificar.
 
@@ -340,6 +342,7 @@ Cada nivel solo usa los niveles inferiores (átomos → moléculas → organismo
 | `GET /historial` (`desde`, `hasta`, `clase`, `estado`, `limit`, `offset`), `GET /historial/:id`, `GET /historial/exportar` (CSV con los mismos filtros) | con sesión: cada usuario ve sus capturas; propietario, especialista y admin, todas |
 | `GET /tablero` (`desde`, `hasta`): resumen, incidencia por mes, lluvia y días favorables por mes, y distribución por clase | propietario, especialista o admin |
 | `GET /clima`: últimos 7 días, pronóstico de 7 días y nivel de riesgo de antracnosis | público |
+| `GET /notificaciones` (las 20 más recientes y cuántas no se leyeron), `POST /notificaciones/leer` (`{ id }` o todas) | con sesión: cada usuario, solo las suyas |
 | `GET /admin/modelos`, `PATCH /admin/modelos/:id` (`{ activo: true }` o `{ notas }`), `GET /admin/modelos/reentrenamiento` (ZIP con `sano/`, `antracnosis/` y `manifiesto.csv`) | admin |
 | `GET /health` | público (estado de la API y la base de datos) |
 
@@ -398,6 +401,7 @@ El servicio `ml` expone `GET /health` y `POST /predict` **solo en la red interna
 | 21/11/2026 | MobileNetV2 pasa a ser el modelo recomendado y elegido por defecto (cumple RNF01). Casos de prueba CP01–CP10 ejecutados y aprobados, con script, imágenes y evidencia en `pruebas/`. El resultado del diagnóstico enlaza al blog filtrado por su clase (`/blog?clase=…`), con un filtro que se puede quitar |
 | 24/11/2026 | Condiciones del lugar opcionales en Nuevo diagnóstico (altitud, temperatura, humedad y lluvia): se guardan con la captura, se ven en su detalle y se exportan en el CSV |
 | 24/11/2026 | Versión v1 de los modelos con aumento de datos (4 variantes por foto de entrenamiento). MobileNetV2 v1 pasa a ser la activa (AUC 0,972, menos falsas alarmas y menos sesgo de fondo); EfficientNet-B0 sigue en v0. Objetivo 1 cerrado sin revisión experta de las etiquetas |
+| 24/11/2026 | Notificaciones en el sitio: el especialista recibe los casos «revisar» y el autor de la foto recibe el aviso de revisión y el resultado de la validación (campana en la barra superior) |
 
 ---
 

@@ -38,6 +38,21 @@ CREATE TABLE IF NOT EXISTS clima_diario (
   actualizado_en TIMESTAMPTZ  NOT NULL DEFAULT now()
 );
 
+-- Notificaciones dentro del sitio --------------------------------------------
+--   caso_revisar     : al especialista, cuando una captura queda en «revisar» o los modelos no coinciden
+--   caso_en_revision : al autor de esa captura, para que sepa que un especialista la revisará
+--   validacion       : al autor, cuando un especialista o el administrador valida su captura
+CREATE TABLE IF NOT EXISTS notificaciones (
+  id         SERIAL       PRIMARY KEY,
+  usuario_id INTEGER      NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  tipo       VARCHAR(20)  NOT NULL CHECK (tipo IN ('caso_revisar', 'caso_en_revision', 'validacion')),
+  captura_id INTEGER      REFERENCES capturas(id) ON DELETE CASCADE,
+  mensaje    VARCHAR(300) NOT NULL,
+  leida      BOOLEAN      NOT NULL DEFAULT FALSE,
+  created_at TIMESTAMPTZ  NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS notificaciones_usuario_idx ON notificaciones (usuario_id, leida, created_at DESC);
+
 -- Cargas de contenido que se aplican una sola vez (p. ej. las fichas de manejo):
 -- si el administrador borra o edita lo cargado, no vuelve a aparecer al reiniciar.
 CREATE TABLE IF NOT EXISTS migraciones_aplicadas (

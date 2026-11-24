@@ -1,5 +1,5 @@
 {
-  "exported_at": "2026-11-24T15:39:47.197Z",
+  "exported_at": "2026-11-24T16:31:50.778Z",
   "objectives": [
     {
       "code": 1,
@@ -712,6 +712,15 @@
       "seci_phase": "externalizacion",
       "author_name": "Administrador",
       "created_at": "2026-11-24T15:39:46.628Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "Notificaciones dentro del sitio (campana en la barra superior): cuando una captura queda en «revisar» o los modelos no coinciden, se avisa a los especialistas (o al administrador si no hay ninguno) y al autor de la foto; cuando el especialista valida, el autor recibe el resultado y el aviso del especialista queda atendido. Conecta al productor con el especialista sin salir del sistema. Pruebas: 14 casos de API (quién recibe cada aviso, privacidad entre usuarios, marcar como leídas) y el flujo completo en el navegador en 360 y 1280 px.",
+      "seci_phase": "socializacion",
+      "author_name": "Administrador",
+      "created_at": "2026-11-24T16:31:50.234Z"
     }
   ]
 }

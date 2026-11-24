@@ -18,6 +18,7 @@ import validationRoutes from './routes/validation.js';
 import historyRoutes from './routes/history.js';
 import dashboardRoutes from './routes/dashboard.js';
 import climaRoutes from './routes/clima.js';
+import notificacionesRoutes from './routes/notificaciones.js';
 import modelRoutes from './routes/models.js';
 
 export function createApp() {
@@ -87,6 +88,7 @@ export function createApp() {
   app.use('/api/historial', historyRoutes);
   app.use('/api/tablero', dashboardRoutes);
   app.use('/api/clima', climaRoutes);
+  app.use('/api/notificaciones', notificacionesRoutes);
 
   app.use('/api', (req, res, next) => next(new HttpError(404, 'Ruta no encontrada')));
   app.use(errorHandler);

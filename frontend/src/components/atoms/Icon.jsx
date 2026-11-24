@@ -1,6 +1,7 @@
 // Iconos SVG de trazo, heredan el color del texto (currentColor).
 const PATHS = {
   menu: 'M4 7h16M4 12h16M4 17h16',
+  bell: 'M6 9a6 6 0 1 1 12 0c0 6 3 8 3 8H3s3-2 3-8M10 20a2 2 0 0 0 4 0',
   close: 'M6 6l12 12M18 6L6 18',
   clock: 'M12 7v5l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z',
   mail: 'M4 6h16v12H4zM4 7l8 6 8-6',

@@ -4,6 +4,7 @@ import { NavItem } from '../molecules';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { useSite } from '../../context/SiteContext.jsx';
 import { useRouter } from '../../lib/router.jsx';
+import { NotificationBell } from './NotificationBell.jsx';
 import './Navbar.css';
 
 export const NAV_LINKS = [
@@ -90,6 +91,8 @@ export function Navbar() {
             </>
           )}
         </div>
+
+        <NotificationBell />
 
         <Button
           variant="ghost"

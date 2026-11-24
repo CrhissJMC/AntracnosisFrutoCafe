@@ -4,6 +4,7 @@ import { query } from '../db/pool.js';
 import { asyncHandler, HttpError, notFound, parseId } from '../lib/http.js';
 import { captureDetail } from '../lib/capturas.js';
 import { requireValidator, validatorProfile } from '../lib/modulo.js';
+import { notifyValidated } from '../lib/notificaciones.js';
 
 // Validación experta (RF06): solo especialistas y el administrador.
 // Las validaciones son un historial: cada una es un registro nuevo y vale la más reciente.
@@ -83,6 +84,8 @@ router.post(
       if (err.code === '23514') throw new HttpError(403, err.message);
       throw err;
     }
+    // Avisa al autor de la foto y da por atendido el aviso de los especialistas.
+    await notifyValidated(id, req.user, perfil, data.clase_confirmada);
     res.status(201).json({ caso: await captureDetail(id) });
   }),
 );

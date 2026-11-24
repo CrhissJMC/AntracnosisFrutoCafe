@@ -267,13 +267,20 @@ const ESTADO_ITEMS_V15 = [
   ESTADO_VALIDACION_V2,
 ];
 
-// Versión vigente (24/11/2026): modelos v1 con aumento de datos y objetivo 1 cerrado sin revisión experta.
-const ESTADO_ITEMS = [
+// 24/11/2026: modelos v1 con aumento de datos y objetivo 1 cerrado sin revisión experta.
+const ESTADO_ITEMS_V16 = [
   ['estado', 'Datos reunidos y depurados', 'Hecho. 3 840 imágenes de un fruto cada una (768 con antracnosis y 3 072 sanas) de tres conjuntos públicos, divididas en 70 % entrenamiento, 15 % validación y 15 % prueba sin repartir una misma foto entre conjuntos. Para la v1, cada foto de entrenamiento tiene 4 variantes (espejo, rotada, con zoom y borrosa): 13 515 imágenes de entrenamiento. Las etiquetas se usan como se publicaron: el equipo no cuenta con un especialista para revisarlas.'],
   ['estado', 'Modelos entrenados (v0 y v1)', 'Hecho. La v1 se entrenó con aumento de datos en la GPU de la PC. MobileNetV2 v1 sube la AUC en el conjunto de prueba de 0,960 a 0,972 (diferencia significativa), mantiene el recall en 87,8 % y baja las falsas alarmas de 45 a 26: es la versión que usa el sistema. EfficientNet-B0 v1 también mejora la AUC (0,969) y las falsas alarmas, pero su recall baja de 82,2 % a 78,5 %, por eso sigue en uso su v0.'],
   ['estado', 'Revisión de lo que aprendió el modelo', 'Hecho. El aumento de datos reduce el sesgo de fondo: con MobileNetV2 v1, los frutos sanos fotografiados sobre fondo claro marcados como antracnosis bajan de 45 % a 13 % (la mayoría pasa a «revisar»). Aún no se elimina del todo y queda como limitación.'],
   ['estado', 'Etiquetas de los datos públicos', 'Cerrado sin revisión experta. El equipo no cuenta con un especialista ni puede contratarlo, así que las etiquetas se usan como se publicaron y el posible error queda documentado en las limitaciones.'],
   ESTADO_ITEMS_V15[4],
+  ESTADO_VALIDACION_V2,
+];
+
+// Versión vigente (24/11/2026): notificaciones al especialista y al autor de la foto.
+const ESTADO_ITEMS = [
+  ...ESTADO_ITEMS_V16.slice(0, 4),
+  ['estado', 'Módulos de gestión del conocimiento', ESTADO_ITEMS_V15[4][2].replace('validación experta con historial de quién validó y con qué perfil;', 'validación experta con historial de quién validó y con qué perfil, y notificaciones en el sitio: el especialista recibe los casos «revisar» y el autor de la foto, la respuesta;')],
   ESTADO_VALIDACION_V2,
 ];
 
@@ -965,6 +972,7 @@ export const LEGACY_METHOD_VERSIONS = [
   ESTADO_ITEMS_V13,
   ESTADO_ITEMS_V14,
   ESTADO_ITEMS_V15,
+  ESTADO_ITEMS_V16,
   LIMITACIONES_V2,
   TECNOLOGIAS_LIMITACIONES_V1,
   FLUJO_V1,
