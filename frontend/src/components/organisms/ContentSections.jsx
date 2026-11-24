@@ -57,3 +57,49 @@ export function ListColumnsSection({ title, items, tone = 'dark', id, min = 200 
     </Section>
   );
 }
+
+/**
+ * Resultados de los modelos: una tarjeta por modelo con una métrica por línea («Nombre: valor»).
+ * Las líneas sin «:» se muestran como nota; un título con «en uso» resalta la tarjeta.
+ */
+export function ResultsSection({ title, items, tone = 'default', id, children }) {
+  return (
+    <Section title={title} tone={tone} id={id}>
+      <Grid min={230}>
+        {items.map((i) => {
+          const lines = i.body.split('\n').map((l) => l.trim()).filter(Boolean);
+          const rows = lines.filter((l) => l.includes(':')).map((l) => [l.slice(0, l.indexOf(':')).trim(), l.slice(l.indexOf(':') + 1).trim()]);
+          const notes = lines.filter((l) => !l.includes(':'));
+          const inUse = /en uso/i.test(i.title);
+          const [name, ...tags] = i.title.split('·').map((t) => t.trim());
+          return (
+            <article key={i.id} className={`result-card ${inUse ? 'is-in-use' : ''}`}>
+              <h3 className="result-card__title">
+                {name}
+                {tags.map((t) => (
+                  <span key={t} className="result-card__tag">
+                    {t}
+                  </span>
+                ))}
+              </h3>
+              <dl className="result-card__list">
+                {rows.map(([k, v]) => (
+                  <div key={k} className="result-card__row">
+                    <dt>{k}</dt>
+                    <dd>{v}</dd>
+                  </div>
+                ))}
+              </dl>
+              {notes.map((n) => (
+                <p key={n} className="result-card__note">
+                  {n}
+                </p>
+              ))}
+            </article>
+          );
+        })}
+      </Grid>
+      {children && <div className="content-section__extra">{children}</div>}
+    </Section>
+  );
+}

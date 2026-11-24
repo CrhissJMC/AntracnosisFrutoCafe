@@ -22,7 +22,7 @@ export { ProgressNoteForm } from './ProgressNoteForm.jsx';
 export { ProgressTimeline } from './ProgressTimeline.jsx';
 export { TraceabilitySummary } from './TraceabilitySummary.jsx';
 export { UniversitySection } from './UniversitySection.jsx';
-export { CardGridSection, ListColumnsSection, StepsSection } from './ContentSections.jsx';
+export { CardGridSection, ListColumnsSection, ResultsSection, StepsSection } from './ContentSections.jsx';
 export { CallToAction } from './CallToAction.jsx';
 export { RequirementMatrix, RequirementStatusBadge } from './RequirementMatrix.jsx';
 export { DiagnosisPanel } from './DiagnosisPanel.jsx';

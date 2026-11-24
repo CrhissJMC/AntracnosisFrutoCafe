@@ -26,6 +26,10 @@ export const SETTINGS = {
     'División estratificada de 70 % para entrenamiento, 15 % para validación y 15 % para prueba, con semilla fija. Los recortes de una misma foto quedan siempre en el mismo conjunto y el conjunto de prueba solo se usa en la evaluación final.',
   metodo_metricas_nota:
     'Meta: recall de al menos 85 % en la clase antracnosis, porque un fruto enfermo clasificado como sano cuesta más que una falsa alarma. También se mide el tiempo de respuesta (máximo 3 segundos) y se generan mapas Grad-CAM para comprobar que el modelo se fije en las lesiones y no en el fondo.',
+  metodo_resultados_nota:
+    'Conjunto de prueba: 568 frutos (107 con antracnosis) que los modelos nunca vieron al entrenar. MobileNetV2 v1 mejora la AUC de 0,960 a 0,972 (diferencia significativa: intervalo de confianza de 95 % entre 0,002 y 0,023; prueba de McNemar, p = 0,012) y baja las falsas alarmas de 45 a 26: es la versión que usa el sistema y cumple la meta de recall de 85 %. EfficientNet-B0 v1 no se activó porque su recall baja a 78,5 %.',
+  metodo_conocimiento_nota:
+    'El sistema sigue el modelo SECI de Nonaka y Takeuchi: el criterio del especialista, que antes quedaba solo en su experiencia, se convierte en validaciones registradas y fichas de manejo que vuelven al productor y alimentan una nueva versión del modelo en cada ciclo.',
   blog_label: 'CUADERNO DE CAMPO · 2026',
   blog_title: 'Ciencia que cuida el café',
   blog_desc:
@@ -278,11 +282,16 @@ const ESTADO_ITEMS_V16 = [
 ];
 
 // Versión vigente (24/11/2026): notificaciones al especialista y al autor de la foto.
-const ESTADO_ITEMS = [
+const ESTADO_ITEMS_V17 = [
   ...ESTADO_ITEMS_V16.slice(0, 4),
   ['estado', 'Módulos de gestión del conocimiento', ESTADO_ITEMS_V15[4][2].replace('validación experta con historial de quién validó y con qué perfil;', 'validación experta con historial de quién validó y con qué perfil, y notificaciones en el sitio: el especialista recibe los casos «revisar» y el autor de la foto, la respuesta;')],
   ESTADO_VALIDACION_V2,
 ];
+
+// Versión vigente (24/11/2026): el recall de MobileNetV2 pasa de 88,8 % (v0) a 87,9 % (v1), según las evaluaciones.
+const ESTADO_ITEMS = ESTADO_ITEMS_V17.map((i) =>
+  i[1] === 'Modelos entrenados (v0 y v1)' ? [i[0], i[1], i[2].replace('mantiene el recall en 87,8 %', 'mantiene el recall casi igual (de 88,8 % a 87,9 %: un fruto enfermo menos)')] : i,
+);
 
 // Productos y abonos de apoyo según el resultado del diagnóstico (se muestran junto al resultado y
 // se editan en el panel → Contenido → Productos de apoyo). Título = resultado; una recomendación por línea,
@@ -369,15 +378,27 @@ export const METHOD_ITEMS = [
   ['clases', 'Fruto con antracnosis', 'Una o más lesiones oscuras, hundidas o necróticas; frutos deformados o momificados. Acción: retirar los frutos afectados y aplicar el manejo de la ficha del blog.'],
   // Arquitectura experimental (pasos)
   ['flujo', 'Datos', 'Tres conjuntos públicos (CC BY 4.0): Coffee berry disease y coffee cherry 20251206 de Roboflow, con frutos sanos y con lesiones, y Cherry Coffee Bean de Zenodo, con frutos sanos en cinco estados de madurez. Se recorta un fruto por imagen, se unifican las etiquetas en sano y antracnosis, se descartan frutos pequeños, fotos borrosas y duplicados, y se limitan los sanos a cuatro por cada fruto con antracnosis: 3 840 imágenes (768 con antracnosis).'],
-  ['flujo', 'Preprocesamiento', 'Recorte, redimensionamiento a 224 × 224 píxeles y normalización. El aumento de datos (rotaciones, volteos, brillo y contraste) se aplica solo al entrenamiento.'],
-  ['flujo', 'Modelos', 'EfficientNet-B0 y MobileNetV2, ambos preentrenados y ajustados con transferencia de aprendizaje. MobileNetV2 es el recomendado: con la misma AUC, es el que cumple el recall de 85 % en el conjunto de prueba y responde más rápido.'],
-  ['flujo', 'Entrenamiento', 'Transferencia de aprendizaje en dos fases con Adam (primero solo la cabeza y luego las últimas capas de la red), pesos por clase y parada temprana según la AUC de validación, con la GPU RTX 4060 de la PC del equipo. Una neurona sigmoide entrega la probabilidad de antracnosis y dos umbrales, elegidos con validación, la convierten en sano, revisar o antracnosis.'],
+  ['flujo', 'Preprocesamiento', 'Recorte, redimensionamiento a 224 × 224 píxeles y normalización. En la v1, cada foto de entrenamiento se amplía con 4 variantes (espejo, rotada, con zoom y borrosa): de 2 703 a 13 515 imágenes. Además, durante el entrenamiento se aplican al azar rotaciones, volteos, brillo y contraste. La validación y la prueba usan solo las fotos originales.'],
+  ['flujo', 'Modelos', 'EfficientNet-B0 y MobileNetV2, ambos preentrenados y ajustados con transferencia de aprendizaje. MobileNetV2 es el recomendado: en el conjunto de prueba tiene la mejor AUC (0,972), es el único que cumple el recall de 85 % y responde más rápido.'],
+  ['flujo', 'Entrenamiento', 'Transferencia de aprendizaje en dos fases con Adam (primero solo la cabeza y luego las últimas capas de la red), pesos por clase y parada temprana según la AUC de validación, con la GPU RTX 4060 de la PC del equipo. Una neurona sigmoide entrega la probabilidad de antracnosis y dos umbrales, elegidos con validación, la convierten en sano, revisar o antracnosis. Hay dos versiones: v0, con las fotos originales, y v1, con aumento de datos. El sistema usa la de mejor recall de cada red (MobileNetV2 v1 y EfficientNet-B0 v0), y el panel permite cambiar la versión activa.'],
   ['flujo', 'Evaluación', 'Matriz de confusión, recall, precisión, F1, AUC y porcentaje de casos «revisar» en el conjunto de prueba, comparados con la línea base de las redes sin entrenar para comprobar que el modelo aprendió, y la diferencia entre entrenamiento y prueba para descartar que haya memorizado. Luego, mapas Grad-CAM y una prueba local con al menos 100 fotos de frutos tomadas en la finca.'],
   // Métricas
   ['metricas', 'Recall (sensibilidad)', 'De los frutos realmente enfermos, cuántos detecta el modelo. Es la métrica prioritaria.'],
   ['metricas', 'Precisión', 'De los frutos que el modelo marca como enfermos, cuántos lo están de verdad.'],
   ['metricas', 'F1-score', 'Equilibrio entre precisión y recall en una sola cifra.'],
   ['metricas', 'Exactitud', 'Aciertos totales. Puede ser engañosa si las clases están desbalanceadas, por eso no se usa sola.'],
+  ['metricas', 'AUC', 'Qué tan bien separa el modelo los frutos sanos de los enfermos con cualquier umbral (1 es perfecto; 0,5, al azar). Sirve para comparar modelos y versiones.'],
+  ['metricas', 'Casos «revisar»', 'Porcentaje de frutos que quedan entre los dos umbrales y pasan al especialista. Mientras menos, mejor, siempre que no baje el recall.'],
+  // Resultados en el conjunto de prueba (una métrica por línea, «Nombre: valor»; «en uso» resalta la tarjeta)
+  ['resultados', 'MobileNetV2 v1 · en uso', 'AUC: 0,972\nRecall: 87,9 % (94 de 107)\nPrecisión: 78,3 %\nF1: 0,828\nFalsas alarmas: 26\nCasos «revisar»: 15,5 %'],
+  ['resultados', 'MobileNetV2 v0', 'AUC: 0,960\nRecall: 88,8 % (95 de 107)\nPrecisión: 67,9 %\nF1: 0,769\nFalsas alarmas: 45\nCasos «revisar»: 19,0 %'],
+  ['resultados', 'EfficientNet-B0 v0 · en uso', 'AUC: 0,960\nRecall: 82,2 % (88 de 107)\nPrecisión: 73,3 %\nF1: 0,775\nFalsas alarmas: 32\nCasos «revisar»: 22,0 %'],
+  ['resultados', 'EfficientNet-B0 v1', 'AUC: 0,969\nRecall: 78,5 % (84 de 107)\nPrecisión: 77,8 %\nF1: 0,781\nFalsas alarmas: 24\nCasos «revisar»: 13,7 %'],
+  // Ciclo de gestión del conocimiento (modelo SECI)
+  ['conocimiento', 'Socialización', 'El productor y el especialista comparten experiencia sobre los casos dudosos: cada foto en «revisar» avisa al especialista, y su respuesta le llega al productor como notificación.'],
+  ['conocimiento', 'Exteriorización', 'El criterio del especialista se vuelve explícito: confirma o corrige el resultado con un comentario, y la validación queda registrada con quién la hizo, sin borrar las anteriores.'],
+  ['conocimiento', 'Combinación', 'Las capturas validadas se reúnen en el historial, el tablero de incidencia, el CSV y el ZIP de fotos validadas, que sirve para reentrenar una nueva versión del modelo.'],
+  ['conocimiento', 'Interiorización', 'El productor aprende a reconocer y manejar la enfermedad con el resultado y su semáforo, las fichas de manejo del blog, los productos de apoyo y el riesgo climático de su zona.'],
   // Tecnologías
   ['tecnologias', 'Python', 'Entrenamiento e inferencia del modelo.'],
   ['tecnologias', 'TensorFlow · Keras', 'Construcción y entrenamiento de la CNN.'],
@@ -394,7 +415,7 @@ export const METHOD_ITEMS = [
   ['tecnologias', 'Git · GitHub', 'Control de versiones del código y de los scripts de la base de datos.'],
   ['tecnologias', 'Open-Meteo', 'Clima diario de la finca (lluvia, humedad y temperatura) sin sensores, gratuito y sin clave.'],
   // Alcance (un punto por línea)
-  ['alcance', 'Incluye', 'Clasificación de frutos individuales en sano o antracnosis, con el estado «revisar» para los casos dudosos\nEntrenamiento y comparación de EfficientNet-B0 y MobileNetV2 con transferencia de aprendizaje\nMódulo web de diagnóstico, validación experta y tablero de incidencia para productor, especialista y administrador\nPrueba local con fotos de la finca y prueba de usabilidad (SUS), de octubre a diciembre de 2026'],
+  ['alcance', 'Incluye', 'Clasificación de frutos individuales en sano o antracnosis, con el estado «revisar» para los casos dudosos\nEntrenamiento y comparación de EfficientNet-B0 y MobileNetV2 con transferencia de aprendizaje y aumento de datos\nMódulo web de diagnóstico, validación experta y tablero de incidencia para productor, especialista y administrador\nBase de conocimiento: fichas de manejo y productos de apoyo según el resultado\nRiesgo climático de la zona con datos de Open-Meteo, sin sensores, y condiciones del lugar opcionales en cada foto\nNotificaciones en el sitio entre el productor y el especialista\nPrueba local con fotos de la finca y prueba de usabilidad (SUS), de octubre a diciembre de 2026'],
   ['alcance', 'No incluye', 'Análisis de hojas, ramas o plantas completas\nEstimación de la severidad (infección incipiente o avanzada)\nSensores de temperatura y humedad (trabajo futuro)\nReemplazo del diagnóstico de laboratorio\nServicios de nube pagados: el sistema se ejecuta en la PC del equipo'],
   // Qué estamos haciendo ahora (pasos, en orden)
   ...ESTADO_ITEMS,
@@ -410,6 +431,18 @@ export const METHOD_ITEMS = [
   ['limitaciones', 'Un solo equipo de cómputo', 'El entrenamiento se hace en la PC del equipo (GPU RTX 4060 de 8 GB): no se hizo una búsqueda amplia de hiperparámetros, y el ajuste fino de MobileNetV2 v1 solo funcionó sin el compilador XLA (opción --sin-xla).'],
   ['limitaciones', 'Clima estimado, no medido', 'El riesgo climático usa datos de Open-Meteo calculados por modelos meteorológicos para una zona de algunos kilómetros, no medidos en la parcela; en la montaña el clima cambia en poca distancia. La regla de riesgo es conocimiento experto con umbrales editables, no un modelo entrenado, y no entra al modelo de las fotos.'],
 ];
+
+// v5: Arquitectura, métricas y alcance antes de describir la v1 y las funciones de gestión del conocimiento
+// (solo esas secciones; se actualizan si nadie las editó).
+const METHOD_ITEMS_V5_TEXTS = {
+  'flujo|Preprocesamiento': 'Recorte, redimensionamiento a 224 × 224 píxeles y normalización. El aumento de datos (rotaciones, volteos, brillo y contraste) se aplica solo al entrenamiento.',
+  'flujo|Modelos': 'EfficientNet-B0 y MobileNetV2, ambos preentrenados y ajustados con transferencia de aprendizaje. MobileNetV2 es el recomendado: con la misma AUC, es el que cumple el recall de 85 % en el conjunto de prueba y responde más rápido.',
+  'flujo|Entrenamiento': 'Transferencia de aprendizaje en dos fases con Adam (primero solo la cabeza y luego las últimas capas de la red), pesos por clase y parada temprana según la AUC de validación, con la GPU RTX 4060 de la PC del equipo. Una neurona sigmoide entrega la probabilidad de antracnosis y dos umbrales, elegidos con validación, la convierten en sano, revisar o antracnosis.',
+  'alcance|Incluye': 'Clasificación de frutos individuales en sano o antracnosis, con el estado «revisar» para los casos dudosos\nEntrenamiento y comparación de EfficientNet-B0 y MobileNetV2 con transferencia de aprendizaje\nMódulo web de diagnóstico, validación experta y tablero de incidencia para productor, especialista y administrador\nPrueba local con fotos de la finca y prueba de usabilidad (SUS), de octubre a diciembre de 2026',
+};
+const METHOD_ITEMS_V5 = METHOD_ITEMS.filter(([s, t]) => ['flujo', 'alcance'].includes(s) || (s === 'metricas' && !['AUC', 'Casos «revisar»'].includes(t))).map(
+  ([s, t, b]) => [s, t, METHOD_ITEMS_V5_TEXTS[`${s}|${t}`] ?? b],
+);
 
 // v4: Metodología del tercer avance antes de reunir y depurar los datos (Croppie y Coffee Fruit Maturity, WSL2).
 // Solo las secciones que cambiaron: se actualizan si nadie las editó desde el panel.
@@ -976,8 +1009,10 @@ export const LEGACY_METHOD_VERSIONS = [
   LIMITACIONES_V2,
   TECNOLOGIAS_LIMITACIONES_V1,
   FLUJO_V1,
+  METHOD_ITEMS_V5,
+  ESTADO_ITEMS_V17,
   // Alcance cuando existía el perfil «propietario»
-  METHOD_ITEMS.map((i) =>
+  METHOD_ITEMS_V5.map((i) =>
     i[0] === 'alcance' && i[1] === 'Incluye' ? [i[0], i[1], i[2].replace('productor, especialista y administrador', 'productor, propietario, especialista y administrador')] : i,
   ),
   METHOD_ITEMS_V3.map((i) =>

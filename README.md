@@ -37,7 +37,7 @@ El repositorio contiene el sitio del proyecto (React + Node.js + PostgreSQL), el
 |---|---|---|
 | Inicio | `/` | Qué es la antracnosis, síntomas en el fruto, ciclo de la enfermedad y manejo integrado |
 | Nosotros | `/nosotros` | El proyecto como trabajo del curso, la UNTRM (creación, licenciamiento, FISME, curso), equipo y docente |
-| Metodología | `/metodologia` | El problema, estado sanitario del fruto (semáforo), arquitectura experimental, evaluación, tecnologías, alcance y enlace a este repositorio |
+| Metodología | `/metodologia` | El problema, estado sanitario del fruto (semáforo), arquitectura experimental, evaluación, resultados de los modelos en el conjunto de prueba, ciclo de gestión del conocimiento (SECI), tecnologías, alcance, estado actual, limitaciones y enlace a este repositorio |
 | Blog | `/blog` | Base de conocimiento: artículos sobre sanidad del café y **fichas de manejo** vinculadas a cada resultado del diagnóstico (sano, revisar, antracnosis); los usuarios registrados comentan |
 | **Diagnóstico** | `/diagnostico` | Tomar o subir la foto de un fruto, elegir el modelo y ver el resultado con semáforo (sano, revisar o antracnosis), probabilidad, Grad-CAM y recomendación |
 | **Trazabilidad** | `/trazabilidad` | Avance del proyecto: anillo del ciclo del café, objetivos, bitácora con fases SECI y matriz de requisitos |

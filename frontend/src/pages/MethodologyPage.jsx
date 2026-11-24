@@ -1,10 +1,13 @@
 import { Callout } from '../components/molecules';
-import { CallToAction, CardGridSection, ListColumnsSection, PageHero, StepsSection } from '../components/organisms';
+import { CallToAction, CardGridSection, ListColumnsSection, PageHero, ResultsSection, StepsSection } from '../components/organisms';
 import { MainLayout } from '../components/templates';
 import { useSite } from '../context/SiteContext.jsx';
 import { HEALTH_COLORS } from '../lib/traceability.js';
 
-/** Metodología: problema → clases → arquitectura → evaluación → tecnologías → alcance → estado actual → limitaciones. */
+/**
+ * Metodología: problema → clases → arquitectura → evaluación → resultados → ciclo del conocimiento →
+ * tecnologías → alcance → estado actual → limitaciones.
+ */
 export function MethodologyPage() {
   const { settings: s, section } = useSite();
   return (
@@ -31,6 +34,18 @@ export function MethodologyPage() {
       <CardGridSection title="Evaluación del desempeño" tone="alt" id="evaluacion" items={section('metricas')} marker={null}>
         {s.metodo_metricas_nota && <Callout label="Meta del proyecto">{s.metodo_metricas_nota}</Callout>}
       </CardGridSection>
+
+      {section('resultados').length > 0 && (
+        <ResultsSection title="Resultados obtenidos" id="resultados" items={section('resultados')}>
+          {s.metodo_resultados_nota && <Callout label="Cómo leerlos">{s.metodo_resultados_nota}</Callout>}
+        </ResultsSection>
+      )}
+
+      {section('conocimiento').length > 0 && (
+        <StepsSection title="Ciclo de gestión del conocimiento" tone="alt" id="conocimiento" items={section('conocimiento')}>
+          {s.metodo_conocimiento_nota && <Callout label="Modelo SECI">{s.metodo_conocimiento_nota}</Callout>}
+        </StepsSection>
+      )}
 
       <CardGridSection title="Tecnologías y herramientas" id="tecnologias" items={section('tecnologias')} marker="number" min={200} />
 
