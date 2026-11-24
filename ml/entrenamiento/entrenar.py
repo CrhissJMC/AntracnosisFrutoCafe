@@ -189,7 +189,7 @@ def predecir(modelo, ds):
 
 
 # ---------------------------------------------------------------- entrenamiento
-def compilar(modelo, lr):
+def compilar(modelo, lr, jit=True):
     modelo.compile(
         optimizer=keras.optimizers.Adam(lr),
         loss="binary_crossentropy",
@@ -199,6 +199,8 @@ def compilar(modelo, lr):
             keras.metrics.Precision(name="precision"),
             keras.metrics.AUC(name="auc"),
         ],
+        # Sin XLA (--sin-xla): evita el error CUDNN_STATUS_EXECUTION_FAILED que aparece en algunos ajustes finos en la GPU.
+        jit_compile="auto" if jit else False,
     )
 
 
@@ -213,6 +215,7 @@ def main():
     parser.add_argument("--capas-ajuste-fino", type=int, default=40, help="últimas capas de la base que se descongelan")
     parser.add_argument("--lote", type=int, default=32)
     parser.add_argument("--semilla", type=int, default=42)
+    parser.add_argument("--sin-xla", action="store_true", help="compila sin XLA (si la GPU falla con CUDNN_STATUS_EXECUTION_FAILED)")
     args = parser.parse_args()
 
     keras.utils.set_random_seed(args.semilla)
@@ -254,7 +257,7 @@ def main():
     )
 
     print(f"\n== {nombre} · fase 1: base congelada")
-    compilar(modelo, 1e-3)
+    compilar(modelo, 1e-3, jit=not args.sin_xla)
     h1 = modelo.fit(ds_train, validation_data=ds_val, epochs=args.epocas_fase1,
                     class_weight=pesos_clase, callbacks=[parada()])
 
@@ -265,7 +268,7 @@ def main():
     for capa in base.layers:
         if isinstance(capa, keras.layers.BatchNormalization):
             capa.trainable = False
-    compilar(modelo, 1e-5)
+    compilar(modelo, 1e-5, jit=not args.sin_xla)
     h2 = modelo.fit(ds_train, validation_data=ds_val, epochs=args.epocas_fase2,
                     class_weight=pesos_clase, callbacks=[parada()])
 

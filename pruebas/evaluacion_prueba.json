@@ -1,5 +1,5 @@
 {
-  "fuente": "datos/evaluaciones/*_v0-preliminar.json (conjunto de prueba, 568 imágenes)",
-  "mobilenet_v2": { "recall": 0.8879, "precision": 0.6786, "f1": 0.7692, "auc": 0.9602 },
-  "efficientnet_b0": { "recall": 0.8224, "precision": 0.7333, "f1": 0.7753, "auc": 0.96 }
+  "fuente": "datos/evaluaciones/mobilenet_v2_v1-aumento.json y efficientnet_b0_v0-preliminar.json (conjunto de prueba, 568 imágenes); versiones activas al 24/11/2026",
+  "mobilenet_v2": { "version": "v1-aumento", "recall": 0.8785, "precision": 0.7833, "f1": 0.8282, "auc": 0.9722 },
+  "efficientnet_b0": { "version": "v0-preliminar", "recall": 0.8224, "precision": 0.7333, "f1": 0.7753, "auc": 0.96 }
 }

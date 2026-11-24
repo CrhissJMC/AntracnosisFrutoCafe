@@ -191,7 +191,7 @@ try {
   check(true, 'coincidencia con la etiqueta (informativo)', `MobileNetV2 ${agree.mobilenet_v2}/12, EfficientNet-B0 ${agree.efficientnet_b0}/12; el resto queda en «revisar» o es un error del modelo`);
   check(true, 'detalle por imagen', detail.join(' | '));
   const ev = JSON.parse(await readFile(path.join(DIR, 'evaluacion_prueba.json'), 'utf8'));
-  check(ev.mobilenet_v2.recall >= 0.85, 'evidencia: evaluación en el conjunto de prueba (568 imágenes)', `MobileNetV2 recall ${ev.mobilenet_v2.recall}, AUC ${ev.mobilenet_v2.auc}; EfficientNet-B0 recall ${ev.efficientnet_b0.recall}, AUC ${ev.efficientnet_b0.auc}`);
+  check(ev.mobilenet_v2.recall >= 0.85, 'evidencia: evaluación de las versiones activas en el conjunto de prueba (568 imágenes)', `MobileNetV2 ${ev.mobilenet_v2.version} recall ${ev.mobilenet_v2.recall}, AUC ${ev.mobilenet_v2.auc}; EfficientNet-B0 ${ev.efficientnet_b0.version} recall ${ev.efficientnet_b0.recall}, AUC ${ev.efficientnet_b0.auc}`);
 
   // ── CP04 · diagnóstico visual ─────────────────────────────────────────
   caso('CP04', 'RF04 · Diagnóstico visual inmediato', 'Diagnosticar un fruto sano, uno con antracnosis y uno dudoso', 'Semáforo, probabilidad, Grad-CAM, recomendación y botón a fichas');
@@ -213,13 +213,14 @@ try {
 
   // ── CP05 · registro de capturas ───────────────────────────────────────
   caso('CP05', 'RF05 · Registro de capturas', 'Buscar en la base de datos la captura recién registrada', 'Foto, fecha, autor, versión del modelo y ubicación si se autorizó');
-  const withLoc = await analyze(prod, { image: await dataUrl('antracnosis.jpg'), model: 'ambos', latitud: -5.9069, longitud: -78.0431 });
+  const activas = Object.fromEntries((await sql('SELECT modelo, version FROM modelo_versiones WHERE activo')).rows.map((x) => [x.modelo, x.version]));
+  const withLoc = await analyze(prod, { image: await dataUrl('antracnosis.jpg'), model: 'ambos', latitud: -5.9069, longitud: -78.0431, altitud_m: '1650', temperatura_c: '21,5' });
   const noLoc = await analyze(prod, { image: await dataUrl('sano.jpg'), model: 'mobilenet_v2' });
   for (const [cap, loc] of [[withLoc.body.captura.id, true], [noLoc.body.captura.id, false]]) {
     const row = (
       await sql(
         `SELECT c.imagen, c.tomada_en, c.autor_id, c.latitud, c.longitud,
-                array_agg(m.modelo || ':' || m.version ORDER BY m.modelo) AS versiones
+                c.altitud_m, c.temperatura_c, array_agg(m.modelo || ':' || m.version ORDER BY m.modelo) AS versiones
            FROM capturas c JOIN diagnosticos d ON d.captura_id = c.id JOIN modelo_versiones m ON m.id = d.modelo_id
           WHERE c.id = $1 GROUP BY c.id`,
         [cap],
@@ -228,9 +229,9 @@ try {
     const fileOk = existsSync(path.join(CAPTURES_DIR, row.imagen));
     const locOk = loc ? Number(row.latitud) === -5.9069 && Number(row.longitud) === -78.0431 : row.latitud === null && row.longitud === null;
     check(
-      fileOk && row.tomada_en && row.autor_id === users.productor.id && row.versiones.every((v) => v.endsWith(':v0-preliminar')) && locOk,
-      `captura N.º ${cap} ${loc ? 'con' : 'sin'} ubicación: foto guardada, fecha, autor, versión del modelo y ubicación ${loc ? 'guardada' : 'vacía'}`,
-      `${row.versiones.join(', ')}; ${new Date(row.tomada_en).toISOString()}; ubicación ${row.latitud ?? '—'}, ${row.longitud ?? '—'}`,
+      fileOk && row.tomada_en && row.autor_id === users.productor.id && row.versiones.every((v) => activas[v.split(':')[0]] === v.split(':')[1]) && locOk && (loc ? row.altitud_m === 1650 && Number(row.temperatura_c) === 21.5 : row.altitud_m === null),
+      `captura N.º ${cap} ${loc ? 'con' : 'sin'} ubicación: foto guardada, fecha, autor, versión activa del modelo, ubicación ${loc ? 'guardada' : 'vacía'} y condiciones del lugar ${loc ? 'guardadas' : 'vacías (opcionales)'}`,
+      `${row.versiones.join(', ')}; ${new Date(row.tomada_en).toISOString()}; ubicación ${row.latitud ?? '—'}, ${row.longitud ?? '—'}; altitud ${row.altitud_m ?? '—'}, temperatura ${row.temperatura_c ?? '—'}`,
     );
   }
 
@@ -316,14 +317,14 @@ try {
      VALUES ('mobilenet_v2', 'prueba-cp09', 'mobilenet_v2.keras', 0.07, 0.74, 'Versión de prueba (CP09)', false) RETURNING id`,
   );
   created.versions.push(ins.rows[0].id);
-  const v0 = (await sql("SELECT id FROM modelo_versiones WHERE modelo = 'mobilenet_v2' AND version = 'v0-preliminar'")).rows[0].id;
+  const prev = (await sql("SELECT id, version FROM modelo_versiones WHERE modelo = 'mobilenet_v2' AND activo")).rows[0];
   r = await admin('PATCH', `/admin/modelos/${ins.rows[0].id}`, { activo: true });
   let act = (await sql("SELECT version FROM modelo_versiones WHERE modelo = 'mobilenet_v2' AND activo")).rows;
   check(r.status === 200 && act.length === 1 && act[0].version === 'prueba-cp09', 'al activar otra versión, queda una sola activa en MobileNetV2', act.map((x) => x.version).join(', '));
-  r = await admin('PATCH', `/admin/modelos/${v0}`, { activo: true });
+  r = await admin('PATCH', `/admin/modelos/${prev.id}`, { activo: true });
   act = (await sql("SELECT modelo, count(*) FILTER (WHERE activo)::int AS activas FROM modelo_versiones GROUP BY modelo ORDER BY modelo")).rows;
-  check(r.status === 200 && act.every((x) => x.activas === 1), 'se vuelve a activar v0-preliminar; cada arquitectura tiene una versión activa', act.map((x) => `${x.modelo}: ${x.activas}`).join(', '));
-  const list = (await admin('GET', '/admin/modelos')).body.versiones.filter((x) => x.version === 'v0-preliminar');
+  check(r.status === 200 && act.every((x) => x.activas === 1), `se vuelve a activar ${prev.version}; cada arquitectura tiene una versión activa`, act.map((x) => `${x.modelo}: ${x.activas}`).join(', '));
+  const list = (await admin('GET', '/admin/modelos')).body.versiones.filter((x) => x.activo);
   check(list.length === 2 && list.every((x) => x.auc && x.recall_antracnosis && x.f1_antracnosis), 'cada versión registra sus métricas (AUC, recall, F1)', list.map((x) => `${x.modelo}: AUC ${x.auc}, recall ${x.recall_antracnosis}`).join('; '));
 } finally {
   // ── limpieza: solo lo creado por esta prueba ──────────────────────────

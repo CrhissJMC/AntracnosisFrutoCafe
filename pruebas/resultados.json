@@ -1,5 +1,5 @@
 {
-  "fecha": "2026-11-22T03:54:47.954Z",
+  "fecha": "2026-11-24T15:38:04.939Z",
   "casos": [
     {
       "codigo": "CP01",
@@ -10,12 +10,12 @@
         {
           "ok": true,
           "desc": "una foto JPG se acepta y se analiza",
-          "detalle": "captura N.º 191"
+          "detalle": "captura N.º 209"
         },
         {
           "ok": true,
           "desc": "una foto PNG se acepta y se analiza",
-          "detalle": "captura N.º 192"
+          "detalle": "captura N.º 210"
         },
         {
           "ok": true,
@@ -44,37 +44,37 @@
         {
           "ok": true,
           "desc": "res_2400x2400.jpg: se analiza y la imagen que vio el modelo mide 224 × 224",
-          "detalle": "224 × 224, p = 0.921"
+          "detalle": "224 × 224, p = 0.9729"
         },
         {
           "ok": true,
           "desc": "res_120x120.jpg: se analiza y la imagen que vio el modelo mide 224 × 224",
-          "detalle": "224 × 224, p = 0.9475"
+          "detalle": "224 × 224, p = 0.9896"
         },
         {
           "ok": true,
           "desc": "horizontal_1600x1200.jpg: se analiza y la imagen que vio el modelo mide 224 × 224",
-          "detalle": "224 × 224, p = 0.9207"
+          "detalle": "224 × 224, p = 0.9757"
         },
         {
           "ok": true,
           "desc": "vertical_1200x1600.jpg: se analiza y la imagen que vio el modelo mide 224 × 224",
-          "detalle": "224 × 224, p = 0.9167"
+          "detalle": "224 × 224, p = 0.9729"
         },
         {
           "ok": true,
           "desc": "orient_base.jpg: se analiza y la imagen que vio el modelo mide 224 × 224",
-          "detalle": "224 × 224, p = 0.9174"
+          "detalle": "224 × 224, p = 0.9723"
         },
         {
           "ok": true,
           "desc": "orient_exif6.jpg: se analiza y la imagen que vio el modelo mide 224 × 224",
-          "detalle": "224 × 224, p = 0.914"
+          "detalle": "224 × 224, p = 0.9686"
         },
         {
           "ok": true,
           "desc": "una foto girada solo con la etiqueta EXIF da el mismo resultado que la original (se respeta la orientación)",
-          "detalle": "diferencia de probabilidad 0.0034"
+          "detalle": "diferencia de probabilidad 0.0037"
         }
       ],
       "estado": "Aprobado"
@@ -93,17 +93,17 @@
         {
           "ok": true,
           "desc": "coincidencia con la etiqueta (informativo)",
-          "detalle": "MobileNetV2 8/12, EfficientNet-B0 8/12; el resto queda en «revisar» o es un error del modelo"
+          "detalle": "MobileNetV2 9/12, EfficientNet-B0 8/12; el resto queda en «revisar» o es un error del modelo"
         },
         {
           "ok": true,
           "desc": "detalle por imagen",
-          "detalle": "antracnosis_1_coffee_berry.jpg: MNV2 antracnosis (0.9196), EffB0 antracnosis (0.8856) | antracnosis_2_coffee_berry.jpg: MNV2 antracnosis (0.9872), EffB0 antracnosis (0.9256) | antracnosis_3_coffee_berry.jpg: MNV2 antracnosis (0.8965), EffB0 antracnosis (0.9669) | antracnosis_4_coffee_cherry.jpg: MNV2 antracnosis (0.9496), EffB0 antracnosis (0.9623) | antracnosis_5_coffee_cherry.jpg: MNV2 antracnosis (0.9595), EffB0 antracnosis (0.8189) | antracnosis_6_coffee_cherry.jpg: MNV2 antracnosis (0.9731), EffB0 antracnosis (0.9422) | sano_1_coffee_cherry.jpg: MNV2 sano (0.0018), EffB0 sano (0.0032) | sano_2_coffee_cherry.jpg: MNV2 revisar (0.1062), EffB0 revisar (0.0926) | sano_3_coffee_cherry.jpg: MNV2 sano (0.0307), EffB0 sano (0.002) | sano_4_zenodo.jpg: MNV2 antracnosis (0.9507), EffB0 antracnosis (0.9363) | sano_5_zenodo.jpg: MNV2 antracnosis (0.892), EffB0 antracnosis (0.9643) | sano_6_coffee_berry.jpg: MNV2 revisar (0.6838), EffB0 antracnosis (0.8958)"
+          "detalle": "antracnosis_1_coffee_berry.jpg: MNV2 antracnosis (0.972), EffB0 antracnosis (0.8856) | antracnosis_2_coffee_berry.jpg: MNV2 antracnosis (0.9664), EffB0 antracnosis (0.9256) | antracnosis_3_coffee_berry.jpg: MNV2 antracnosis (0.8113), EffB0 antracnosis (0.9669) | antracnosis_4_coffee_cherry.jpg: MNV2 antracnosis (0.9192), EffB0 antracnosis (0.9623) | antracnosis_5_coffee_cherry.jpg: MNV2 antracnosis (0.9846), EffB0 antracnosis (0.8189) | antracnosis_6_coffee_cherry.jpg: MNV2 antracnosis (0.9941), EffB0 antracnosis (0.9422) | sano_1_coffee_cherry.jpg: MNV2 sano (0.0075), EffB0 sano (0.0032) | sano_2_coffee_cherry.jpg: MNV2 sano (0.0016), EffB0 revisar (0.0926) | sano_3_coffee_cherry.jpg: MNV2 sano (0), EffB0 sano (0.002) | sano_4_zenodo.jpg: MNV2 revisar (0.617), EffB0 antracnosis (0.9363) | sano_5_zenodo.jpg: MNV2 revisar (0.1762), EffB0 antracnosis (0.9643) | sano_6_coffee_berry.jpg: MNV2 antracnosis (0.6966), EffB0 antracnosis (0.8958)"
         },
         {
           "ok": true,
-          "desc": "evidencia: evaluación en el conjunto de prueba (568 imágenes)",
-          "detalle": "MobileNetV2 recall 0.8879, AUC 0.9602; EfficientNet-B0 recall 0.8224, AUC 0.96"
+          "desc": "evidencia: evaluación de las versiones activas en el conjunto de prueba (568 imágenes)",
+          "detalle": "MobileNetV2 v1-aumento recall 0.8785, AUC 0.9722; EfficientNet-B0 v0-preliminar recall 0.8224, AUC 0.96"
         }
       ],
       "estado": "Aprobado"
@@ -117,17 +117,17 @@
         {
           "ok": true,
           "desc": "fruto sano: resultado, probabilidad, umbrales, Grad-CAM, productos de apoyo y fichas de su clase",
-          "detalle": "sano (p = 0.0018), ficha «Fruto sano: prevención y vigilancia»"
+          "detalle": "sano (p = 0.0075), ficha «Fruto sano: prevención y vigilancia»"
         },
         {
           "ok": true,
           "desc": "fruto con antracnosis: resultado, probabilidad, umbrales, Grad-CAM, productos de apoyo y fichas de su clase",
-          "detalle": "antracnosis (p = 0.9196), ficha «Fruto con antracnosis: qué hacer con los frutos y la parcela»"
+          "detalle": "antracnosis (p = 0.972), ficha «Fruto con antracnosis: qué hacer con los frutos y la parcela»"
         },
         {
           "ok": true,
           "desc": "fruto dudoso: resultado, probabilidad, umbrales, Grad-CAM, productos de apoyo y fichas de su clase",
-          "detalle": "revisar (p = 0.541), ficha «Resultado «revisar»: qué hacer cuando el modelo no está seguro»"
+          "detalle": "revisar (p = 0.5754), ficha «Resultado «revisar»: qué hacer cuando el modelo no está seguro»"
         },
         {
           "ok": true,
@@ -145,13 +145,13 @@
       "pasos": [
         {
           "ok": true,
-          "desc": "captura N.º 202 con ubicación: foto guardada, fecha, autor, versión del modelo y ubicación guardada",
-          "detalle": "efficientnet_b0:v0-preliminar, mobilenet_v2:v0-preliminar; 2026-11-22T03:54:45.653Z; ubicación -5.906900, -78.043100"
+          "desc": "captura N.º 220 con ubicación: foto guardada, fecha, autor, versión activa del modelo, ubicación guardada y condiciones del lugar guardadas",
+          "detalle": "efficientnet_b0:v0-preliminar, mobilenet_v2:v1-aumento; 2026-11-24T15:38:02.137Z; ubicación -5.906900, -78.043100; altitud 1650, temperatura 21.5"
         },
         {
           "ok": true,
-          "desc": "captura N.º 203 sin ubicación: foto guardada, fecha, autor, versión del modelo y ubicación vacía",
-          "detalle": "mobilenet_v2:v0-preliminar; 2026-11-22T03:54:47.693Z; ubicación —, —"
+          "desc": "captura N.º 221 sin ubicación: foto guardada, fecha, autor, versión activa del modelo, ubicación vacía y condiciones del lugar vacías (opcionales)",
+          "detalle": "mobilenet_v2:v1-aumento; 2026-11-24T15:38:04.801Z; ubicación —, —; altitud —, temperatura —"
         }
       ],
       "estado": "Aprobado"
@@ -233,17 +233,17 @@
         {
           "ok": true,
           "desc": "los totales del tablero de hoy coinciden con el conteo en la base de datos",
-          "detalle": "capturas 18=18, sano 4=4, revisar 4=4, antracnosis 10=10, otro_dano 0=0, validadas 2=2"
+          "detalle": "capturas 13=13, sano 3=3, revisar 2=2, antracnosis 8=8, otro_dano 0=0, validadas 2=2"
         },
         {
           "ok": true,
           "desc": "el tablero incluye las capturas de prueba",
-          "detalle": "13 de prueba, 18 en total hoy"
+          "detalle": "13 de prueba, 13 en total hoy"
         },
         {
           "ok": true,
           "desc": "la suma por mes coincide con el total",
-          "detalle": "18"
+          "detalle": "13"
         }
       ],
       "estado": "Aprobado"
@@ -262,7 +262,7 @@
         {
           "ok": true,
           "desc": "incluye las capturas validadas en CP06, en la carpeta de su clase",
-          "detalle": "captura_202 y captura_203"
+          "detalle": "captura_220 y captura_221"
         },
         {
           "ok": true,
@@ -271,13 +271,13 @@
         },
         {
           "ok": true,
-          "desc": "se vuelve a activar v0-preliminar; cada arquitectura tiene una versión activa",
+          "desc": "se vuelve a activar v1-aumento; cada arquitectura tiene una versión activa",
           "detalle": "efficientnet_b0: 1, mobilenet_v2: 1"
         },
         {
           "ok": true,
           "desc": "cada versión registra sus métricas (AUC, recall, F1)",
-          "detalle": "efficientnet_b0: AUC 0.9600, recall 0.8224; mobilenet_v2: AUC 0.9602, recall 0.8879"
+          "detalle": "efficientnet_b0: AUC 0.9600, recall 0.8224; mobilenet_v2: AUC 0.9722, recall 0.8785"
         }
       ],
       "estado": "Aprobado"

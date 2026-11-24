@@ -42,6 +42,36 @@ export function productAdvice(items, clase) {
     });
 }
 
+/**
+ * Condiciones del lugar (variables de influencia) que el productor puede indicar con la foto. Todas opcionales:
+ * vacío = no lo sabe. Mismos rangos que la API y la base de datos.
+ */
+export const SITE_FIELDS = [
+  { key: 'altitud_m', label: 'Altitud', unit: 'm s. n. m.', min: 0, max: 5000, int: true, placeholder: 'p. ej., 1650', hint: 'Altura de la parcela sobre el nivel del mar.' },
+  { key: 'temperatura_c', label: 'Temperatura', unit: '°C', min: -5, max: 45, placeholder: 'p. ej., 21', hint: 'Del momento o la media del día.' },
+  { key: 'humedad_pct', label: 'Humedad relativa', unit: '%', min: 0, max: 100, placeholder: 'p. ej., 85', hint: 'Si tienes un higrómetro o la consultas en el teléfono.' },
+  { key: 'precipitacion_mm', label: 'Lluvia', unit: 'mm', min: 0, max: 500, placeholder: 'p. ej., 5', hint: 'Lluvia de las últimas 24 horas, si tienes pluviómetro.' },
+];
+
+/** Valida las condiciones: devuelve { values, errors } con números o null. */
+export function parseSiteConditions(raw) {
+  const values = {};
+  const errors = {};
+  for (const f of SITE_FIELDS) {
+    const text = String(raw[f.key] ?? '').trim().replace(',', '.');
+    if (text === '') {
+      values[f.key] = null;
+      continue;
+    }
+    const n = Number(text);
+    if (!Number.isFinite(n)) errors[f.key] = 'Escribe un número o déjalo vacío.';
+    else if (f.int && !Number.isInteger(n)) errors[f.key] = 'Escribe un número sin decimales.';
+    else if (n < f.min || n > f.max) errors[f.key] = `Debe estar entre ${f.min} y ${f.max} ${f.unit}.`;
+    else values[f.key] = n;
+  }
+  return { values, errors };
+}
+
 export const CAPTURE_GUIDE = [
   { icon: 'target', label: 'Un solo fruto' },
   { icon: 'image', label: 'Fondo uniforme' },

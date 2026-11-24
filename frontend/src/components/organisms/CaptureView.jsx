@@ -6,6 +6,7 @@ import { knowledgeClass } from '../../lib/diagnosis.js';
 import { KnowledgeLinks } from './KnowledgeLinks.jsx';
 import { ProductAdvice } from './ProductAdvice.jsx';
 import { CaptureClimate } from './ClimateRisk.jsx';
+import { SiteConditionsSummary } from './SiteConditions.jsx';
 import { formatDateTime } from '../../lib/format.js';
 import { captureImageUrl, classTone, MODEL_NAMES, validationLabel, validatorLabel } from '../../lib/modulo.js';
 import './CaptureView.css';
@@ -81,6 +82,7 @@ export function CaptureView({ capture }) {
         ))}
       </div>
 
+      <SiteConditionsSummary capture={capture} />
       <CaptureClimate clima={capture.clima} />
       <ProductAdvice clase={kbClass} />
       <KnowledgeLinks clase={kbClass} title={current ? 'Fichas de manejo según la validación' : 'Fichas de manejo según el modelo'} />

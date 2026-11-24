@@ -41,6 +41,7 @@ export function historyWhere(filters, user) {
 export async function captureDetail(id) {
   const { rows } = await query(
     `SELECT c.id, c.autor_id, c.tomada_en, c.latitud, c.longitud, u.name AS autor,
+            c.altitud_m, c.humedad_pct, c.temperatura_c, c.precipitacion_mm,
             to_char(c.tomada_en AT TIME ZONE 'America/Lima', 'YYYY-MM-DD') AS fecha_local,
             f.resultado, f.clase_final, f.validado
        FROM capturas c

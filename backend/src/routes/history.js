@@ -55,6 +55,7 @@ router.get(
     const where = historyWhere(filters, req.user);
     const { rows } = await query(
       `SELECT c.id, c.tomada_en, u.name AS autor, c.latitud, c.longitud,
+              c.altitud_m, c.humedad_pct, c.temperatura_c, c.precipitacion_mm,
               eb.version AS eb_version, eb.prob_antracnosis AS eb_prob, eb.resultado AS eb_resultado,
               mb.version AS mb_version, mb.prob_antracnosis AS mb_prob, mb.resultado AS mb_resultado,
               f.clase_final, f.validado, f.clase_confirmada, f.validador_nombre, f.perfil_validador, f.validada_en,
@@ -75,6 +76,7 @@ router.get(
     );
     const header = [
       'captura', 'fecha_hora_utc', 'autor', 'latitud', 'longitud',
+      'altitud_m', 'humedad_pct', 'temperatura_c', 'lluvia_mm',
       'efficientnet_b0_version', 'efficientnet_b0_prob_antracnosis', 'efficientnet_b0_resultado',
       'mobilenet_v2_version', 'mobilenet_v2_prob_antracnosis', 'mobilenet_v2_resultado',
       'clase_vigente', 'validado', 'clase_validada', 'validador', 'perfil_validador', 'fecha_validacion_utc', 'comentario',
@@ -82,6 +84,7 @@ router.get(
     const lines = rows.map((r) =>
       [
         r.id, r.tomada_en, r.autor, r.latitud, r.longitud,
+        r.altitud_m, r.humedad_pct, r.temperatura_c, r.precipitacion_mm,
         r.eb_version, r.eb_prob, CLASS_NAMES[r.eb_resultado], r.mb_version, r.mb_prob, CLASS_NAMES[r.mb_resultado],
         CLASS_NAMES[r.clase_final], r.validado ? 'sí' : 'no', CLASS_NAMES[r.clase_confirmada], r.validador_nombre,
         r.perfil_validador === 'admin' ? 'administrador' : r.perfil_validador, r.validada_en, r.comentario,

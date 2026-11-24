@@ -1,12 +1,12 @@
 {
-  "version": "v0-preliminar",
+  "version": "v1-aumento",
   "classes": [
     "sano",
     "antracnosis"
   ],
   "input_size": 224,
   "preprocess": "none",
-  "umbral_inferior": 0.07,
-  "umbral_superior": 0.74,
+  "umbral_inferior": 0.01,
+  "umbral_superior": 0.69,
   "gradcam_layer": "out_relu"
 }

@@ -160,8 +160,9 @@ Para ver la base de datos con pgAdmin o DBeaver, conéctate a `localhost:5433` c
 ### La pantalla (`/diagnostico`)
 1. **Fotografía del fruto:** guía de captura (un solo fruto, fondo uniforme, 10–20 cm, sin contraluz), arrastrar y soltar, **Tomar foto** (abre la cámara del teléfono) y **Subir foto**. Antes de enviarla, la foto se reduce a 1024 px y se le quitan los metadatos, incluida la ubicación GPS.
 2. **Modelo** (siempre visible): **MobileNetV2** por defecto y recomendado, porque es el que cumple el recall de 85 % en el conjunto de prueba (RNF01); también **EfficientNet-B0** (menos falsas alarmas) o **Comparar ambos**.
-3. **Resultado:** semáforo verde (sano), ámbar (revisar) o rojo (antracnosis), probabilidad de antracnosis con los umbrales de la versión, foto junto al mapa **Grad-CAM** y la descripción «qué se observa / qué hacer», tomada de Metodología → Estado sanitario del fruto. «Revisar» no es una clase: aparece cuando la probabilidad queda entre los dos umbrales, y pide otra foto y la revisión de un especialista. Con «Comparar ambos» se muestran los dos resultados y si coinciden.
-4. **Fichas de manejo** (base de conocimiento, RF07): debajo del resultado aparecen la ficha de manejo de ese resultado y hasta dos lecturas relacionadas del blog, que se pueden abrir y comentar, y el botón «Ver fichas de manejo para este resultado» abre el blog filtrado por esa clase (`/blog?clase=…`), con un filtro que se puede quitar. Con «Comparar ambos» manda el resultado más grave, y si los modelos no coinciden, el de «revisar». El detalle de cada captura en Historial y Validación muestra las mismas fichas según la validación vigente o, si no la hay, según el modelo.
+3. **Condiciones del lugar** (opcional, en un panel que se despliega): altitud (m s. n. m.), temperatura (°C), humedad relativa (%) y lluvia de las últimas 24 horas (mm). Ninguna es obligatoria, porque no todos los productores conocen esos datos con exactitud. Se acepta coma decimal y se validan los rangos en la pantalla, la API y la base de datos. No cambian el resultado de la foto: se guardan con la captura, aparecen en su detalle (Historial y Validación) y en el CSV, junto al clima estimado de la zona. Los valores se conservan para la siguiente foto de la misma parcela.
+4. **Resultado:** semáforo verde (sano), ámbar (revisar) o rojo (antracnosis), probabilidad de antracnosis con los umbrales de la versión, foto junto al mapa **Grad-CAM** y la descripción «qué se observa / qué hacer», tomada de Metodología → Estado sanitario del fruto. «Revisar» no es una clase: aparece cuando la probabilidad queda entre los dos umbrales, y pide otra foto y la revisión de un especialista. Con «Comparar ambos» se muestran los dos resultados y si coinciden.
+5. **Fichas de manejo** (base de conocimiento, RF07): debajo del resultado aparecen la ficha de manejo de ese resultado y hasta dos lecturas relacionadas del blog, que se pueden abrir y comentar, y el botón «Ver fichas de manejo para este resultado» abre el blog filtrado por esa clase (`/blog?clase=…`), con un filtro que se puede quitar. Con «Comparar ambos» manda el resultado más grave, y si los modelos no coinciden, el de «revisar». El detalle de cada captura en Historial y Validación muestra las mismas fichas según la validación vigente o, si no la hay, según el modelo.
 
 Analizar requiere iniciar sesión.
 
@@ -194,7 +195,7 @@ Analizar requiere iniciar sesión.
 ### El servicio de los modelos (`ml/`)
 - Python 3.11 + FastAPI + TensorFlow (CPU). Solo lo llama la API del sitio por la red interna de Docker; **no se expone a internet**.
 - Se enciende con `docker compose --profile ml up -d --build`. Sin él, la página avisa que el servicio no está activo.
-- **Modelos:** `ml/modelos/` ya trae EfficientNet-B0 y MobileNetV2 en su versión preliminar `v0-preliminar` (ver [ml/README.md](ml/README.md)). Al reemplazar un `.keras` por otro entrenado, se carga solo en el siguiente análisis, sin reiniciar nada.
+- **Modelos:** `ml/modelos/` trae **MobileNetV2 v1-aumento** (entrenada con aumento de datos, la versión activa y recomendada) y **EfficientNet-B0 v0-preliminar**. MobileNetV2 v0 queda archivada en `ml/modelos/v0-preliminar/`. La comparación está en [datos/evaluaciones/LEEME.md](datos/evaluaciones/LEEME.md) y la guía, en [ml/README.md](ml/README.md). Al reemplazar un `.keras` por otro entrenado, se carga solo en el siguiente análisis, sin reiniciar nada.
 - Configuración opcional por modelo (`<modelo>.json`): versión, orden de clases, preprocesamiento, **umbrales inferior y superior** sobre la probabilidad de antracnosis (sano, revisar o antracnosis; RNF01 y RNF05) y capa de Grad-CAM. El modelo puede terminar en una neurona sigmoide o en una softmax con las clases sano y antracnosis.
 - Los modelos y el conjunto de datos preparado (`datos/`) se versionan en Git para que quien clone tenga el mismo sistema.
 
@@ -263,7 +264,7 @@ Se ejecuta después de `schema.sql` en cada arranque, sin duplicar nada (informe
 |---|---|
 | `users.perfil` | Perfil del módulo: `productor`, `propietario` o `especialista` (lo asigna el administrador) |
 | `modelo_versiones` | Cada versión de cada modelo con umbrales y métricas; una activa por arquitectura (RF09) |
-| `capturas` | Foto (archivo en el volumen `capturas-data`), autor, fecha y ubicación si se autoriza (RF05) |
+| `capturas` | Foto (archivo en el volumen `capturas-data`), autor, fecha, ubicación si se autoriza (RF05) y, opcionales, las condiciones del lugar que indica el productor: `altitud_m`, `temperatura_c`, `humedad_pct` y `precipitacion_mm` |
 | `diagnosticos` | Resultado de cada modelo para la captura, con la versión que lo generó (RNF08) |
 | `validaciones` | Historial de validaciones de la captura: clase confirmada, comentario, quién y con qué perfil (RF06) |
 | `v_validacion_vigente`, `v_diagnostico_final` | La validación más reciente prevalece sobre el resultado del modelo |
@@ -364,9 +365,9 @@ El servicio `ml` expone `GET /health` y `POST /predict` **solo en la red interna
 
 | Hecho | Pendiente |
 |---|---|
-| Sitio con blog, panel y contenido editable | Revisión de las etiquetas de antracnosis con un especialista |
-| Trazabilidad con SECI y matriz de requisitos | Versión v1 de los modelos tras la revisión experta de las etiquetas |
-| Modelos v0 de EfficientNet-B0 y MobileNetV2 entrenados con la GPU de la PC; MobileNetV2 recomendado (cumple RNF01) | Reflejar en el informe (4.3 y Anexo 4) los cambios del módulo |
+| Sitio con blog, panel y contenido editable | Fotos de campo para medir el recall real y RNF04 |
+| Trazabilidad con SECI y matriz de requisitos | Que EfficientNet-B0 alcance el recall de 85 % |
+| Modelos entrenados con la GPU de la PC: MobileNetV2 v1 con aumento de datos (recomendado, cumple RNF01) y EfficientNet-B0 v0 | Reflejar en el informe (4.3 y Anexo 4) los cambios del módulo |
 | Módulos de diagnóstico, validación, historial, tablero y modelo de diagnóstico | Pruebas: usabilidad (SUS) y fotos de campo (RNF04) |
 | Base de conocimiento: fichas de manejo vinculadas a cada resultado (RF07) | |
 | Clima de la finca y riesgo de antracnosis (Open-Meteo, sin sensores) | |
@@ -395,6 +396,8 @@ El servicio `ml` expone `GET /health` y `POST /predict` **solo en la red interna
 | 21/11/2026 | Productos y abonos de apoyo por resultado (fungicidas, abonos, bioinsumos y precauciones, sin dosis), editables en el panel, y artículo sobre fungicidas, abonos y bioinsumos |
 | 21/11/2026 | Clima de la finca y riesgo de antracnosis sin sensores (Open-Meteo): tarjeta de riesgo de 7 días en el diagnóstico y el tablero, clima de los días previos a cada captura, lluvia por mes en el tablero y umbrales editables en el panel |
 | 21/11/2026 | MobileNetV2 pasa a ser el modelo recomendado y elegido por defecto (cumple RNF01). Casos de prueba CP01–CP10 ejecutados y aprobados, con script, imágenes y evidencia en `pruebas/`. El resultado del diagnóstico enlaza al blog filtrado por su clase (`/blog?clase=…`), con un filtro que se puede quitar |
+| 24/11/2026 | Condiciones del lugar opcionales en Nuevo diagnóstico (altitud, temperatura, humedad y lluvia): se guardan con la captura, se ven en su detalle y se exportan en el CSV |
+| 24/11/2026 | Versión v1 de los modelos con aumento de datos (4 variantes por foto de entrenamiento). MobileNetV2 v1 pasa a ser la activa (AUC 0,972, menos falsas alarmas y menos sesgo de fondo); EfficientNet-B0 sigue en v0. Objetivo 1 cerrado sin revisión experta de las etiquetas |
 
 ---
 

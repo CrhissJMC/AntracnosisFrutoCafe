@@ -82,7 +82,7 @@ Genera `fruto/{train,val,test}/{sano,antracnosis}/<fuente>/<grupo>__<n>.jpg` má
 Ningún grupo (foto original, video o recortes de una misma foto) queda en dos conjuntos.
 
 > «Coffee berry disease» reutiliza las fotos del dataset de maduración de Zenodo con etiquetas de lesión de un usuario anónimo de Roboflow:
-> sus imágenes de antracnosis deben revisarse con un especialista antes del entrenamiento final.
+> el equipo no cuenta con un especialista para revisarlas, así que se usan como se publicaron y queda documentado como limitación.
 
 ### Datos de entrada
 `entrenar.py` acepta la carpeta de `preparar_datos.py` (ya dividida) o una imagen por fruto en dos carpetas (se admiten subcarpetas por fuente):
@@ -123,6 +123,24 @@ Cada entrenamiento deja en `ml/modelos/`: `<modelo>.keras`, `<modelo>.json` (con
 `<modelo>_division.csv` (a qué conjunto fue cada imagen). Los umbrales se eligen con validación:
 el superior es el mayor que mantiene recall ≥ 85 % (RNF01) y el inferior deja como «sano» como máximo el 2 % de los frutos con antracnosis.
 
+### Aumento de datos fuera de línea (versión v1)
+`aumentar_datos.py` crea **4 variantes de cada foto de entrenamiento**, una de cada tipo, y las guarda en `datos/fruto_aumentado/`:
+- **espejo:** volteo horizontal, rotación leve y cambio de brillo y contraste;
+- **rotada:** giro de 90°, 180° o 270°, a veces con volteo vertical;
+- **zoom:** acercamiento ×1,15 a ×1,35 con rotación leve;
+- **borrosa:** desenfoque gaussiano con cambio de brillo.
+
+Pasa de 2703 a 13 515 imágenes de entrenamiento: 10 750 sanas y 2765 con antracnosis.
+- **Validación y prueba se copian sin cambios**, así el modelo se sigue midiendo con fotos reales.
+- Cada variante conserva el grupo de su original, para que nunca termine en otro conjunto.
+- Las rotaciones recortan el centro y no dejan esquinas negras.
+- El entrenamiento mantiene además el aumento aleatorio en cada época.
+- La carpeta (unos 200 MB) no se versiona: se regenera igual con la misma semilla.
+```powershell
+docker run --rm -u root -v "${PWD}\ml\entrenamiento:/ent:ro" -v "${PWD}\datos\fruto:/datos:ro" -v "${PWD}\datos\fruto_aumentado:/salida" antracnosis-entrenamiento python -I /ent/aumentar_datos.py --datos /datos --salida /salida
+docker run --rm --gpus all -v "${PWD}\ml\entrenamiento:/ent:ro" -v "${PWD}\datos\fruto_aumentado:/datos:ro" -v "${PWD}\ml\modelos_v1:/salida" -w /ent antracnosis-entrenamiento python entrenar.py --datos /datos --modelo mobilenet_v2 --salida /salida --version v1-aumento
+```
+
 ### Evaluar: ¿aprendió o memorizó?
 ```powershell
 docker run --rm -u root -v "${PWD}\ml\entrenamiento:/ent:ro" -v "${PWD}\ml\modelos:/modelos:ro" -v "${PWD}\datos\fruto:/datos:ro" -v "${PWD}\datos\evaluaciones:/out" -w /ent antracnosis-ml python evaluar.py --datos /datos --modelo /modelos/mobilenet_v2.keras --salida /out/mobilenet_v2_v1.json
@@ -149,7 +167,7 @@ Línea base medida el 15/11/2026 con el conjunto de `preparar_datos.py` (redes s
 | MobileNetV2 | val | 0,451 | 0,917 | 0,188 | 0,312 | 7,2 |
 | MobileNetV2 | test | 0,414 | 0,869 | 0,179 | 0,298 | 8,8 |
 
-Versión preliminar **v0** (15/11/2026, entrenada con la GPU antes de la revisión experta de las etiquetas):
+Versión preliminar **v0** (15/11/2026, entrenada con la GPU con las etiquetas públicas sin revisión experta):
 
 | Modelo | Conjunto | AUC | Recall | Precisión | F1 | % revisar | Umbrales |
 |---|---|---|---|---|---|---|---|
@@ -158,6 +176,15 @@ Versión preliminar **v0** (15/11/2026, entrenada con la GPU antes de la revisi�
 
 Aprendieron (AUC 0,96 frente a 0,23 / 0,41) y no memorizaron (brecha de AUC ≤ 0,03), pero el desglose por fuente y Grad-CAM
 muestran que se guían en parte por el fondo: ningún fruto sano fotografiado sobre fondo claro sale como «sano».
+
+Versión **v1-aumento** (24/11/2026, entrenada con aumento de datos; ver «Aumento de datos fuera de línea»):
+
+| Modelo | Conjunto | AUC | Recall | Precisión | F1 | % revisar | Umbrales | En uso |
+|---|---|---|---|---|---|---|---|---|
+| EfficientNet-B0 | test | 0,969 | 0,785 | 0,778 | 0,781 | 13,7 | 0,05 / 0,70 | No (sigue la v0) |
+| MobileNetV2 | test | 0,972 | 0,878 | 0,783 | 0,828 | 15,5 | 0,01 / 0,69 | **Sí** |
+
+MobileNetV2 v1 es significativamente mejor que su v0 (McNemar p = 0,012) y reduce el sesgo de fondo. Detalle en [datos/evaluaciones/LEEME.md](../datos/evaluaciones/LEEME.md).
 
 ### Probar el sistema sin entrenar
 ```powershell

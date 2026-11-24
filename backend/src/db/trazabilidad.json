@@ -1,17 +1,17 @@
 {
-  "exported_at": "2026-11-22T04:06:21.486Z",
+  "exported_at": "2026-11-24T15:39:47.197Z",
   "objectives": [
     {
       "code": 1,
-      "progress": 85
+      "progress": 100
     },
     {
       "code": 2,
-      "progress": 70
+      "progress": 90
     },
     {
       "code": 3,
-      "progress": 45
+      "progress": 55
     },
     {
       "code": 4,
@@ -676,6 +676,42 @@
       "seci_phase": "externalizacion",
       "author_name": "Administrador",
       "created_at": "2026-11-22T04:06:16.009Z"
+    },
+    {
+      "objective_code": 4,
+      "previous_progress": null,
+      "new_progress": null,
+      "note": "Variables de influencia en Nuevo diagnóstico: el productor puede indicar la altitud, la temperatura, la humedad relativa y la lluvia de las últimas 24 horas, todas opcionales porque no todos conocen esos datos con exactitud. Se validan los rangos en la pantalla, la API y la base de datos; se guardan con la captura, se muestran en su detalle junto al clima estimado de la zona y se exportan en el CSV. No entran al modelo de la foto. Pruebas: 15 casos de API y pantalla en 360, 768 y 1280 px.",
+      "seci_phase": "externalizacion",
+      "author_name": "Administrador",
+      "created_at": "2026-11-24T14:30:16.324Z"
+    },
+    {
+      "objective_code": 1,
+      "previous_progress": 85,
+      "new_progress": 100,
+      "note": "Objetivo cerrado sin revisión experta de las etiquetas: el equipo no cuenta con un especialista ni puede contratarlo, y no conoce a nadie que cumpla ese rol. Las 559 imágenes de Coffee berry disease se usan como se publicaron y el posible error de etiqueta queda documentado en las limitaciones. Se agregó aumento de datos: 4 variantes de cada foto de entrenamiento (espejo, rotada, zoom y borrosa), de 2 703 a 13 515 imágenes, sin tocar validación ni prueba.",
+      "seci_phase": "externalizacion",
+      "author_name": "Administrador",
+      "created_at": "2026-11-24T15:39:46.607Z"
+    },
+    {
+      "objective_code": 2,
+      "previous_progress": 70,
+      "new_progress": 90,
+      "note": "Versión v1 entrenada con aumento de datos en la GPU RTX 4060. MobileNetV2 v1: AUC 0,972 frente a 0,960 de v0 (IC 95 % de la diferencia 0,002–0,023; McNemar p = 0,012), recall 87,8 %, precisión 78,3 % y 26 falsas alarmas frente a 45; pasa a ser la versión activa. EfficientNet-B0 v1: AUC 0,969 pero recall 78,5 %, por eso sigue activa su v0. El ajuste fino de MobileNetV2 solo funcionó sin XLA (opción --sin-xla). Los casos CP01–CP10 se repitieron con la v1: los diez aprobados.",
+      "seci_phase": "externalizacion",
+      "author_name": "Administrador",
+      "created_at": "2026-11-24T15:39:46.619Z"
+    },
+    {
+      "objective_code": 3,
+      "previous_progress": 45,
+      "new_progress": 55,
+      "note": "MobileNetV2 v1 mantiene el recall de 85 % (87,8 % en prueba) con mucha mejor precisión y menos sesgo de fondo. Falta que EfficientNet-B0 llegue al 85 % (78,5 % en v1) y confirmar el recall con fotos de campo.",
+      "seci_phase": "externalizacion",
+      "author_name": "Administrador",
+      "created_at": "2026-11-24T15:39:46.628Z"
     }
   ]
 }

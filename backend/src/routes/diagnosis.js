@@ -39,6 +39,16 @@ const imageDataUrl = z
 
 const coord = (min, max) => z.preprocess((v) => (v === '' || v === undefined ? null : v), z.coerce.number().min(min).max(max).nullable());
 
+// Condiciones del lugar (variables de influencia), opcionales: vacío = no la sabe. Se acepta coma decimal.
+const optionalNumber = (min, max, label, { int = false } = {}) =>
+  z.preprocess(
+    (v) => (v === '' || v === undefined || v === null ? null : typeof v === 'string' ? Number(v.trim().replace(',', '.')) : v),
+    (int ? z.number({ invalid_type_error: `${label}: escribe un número` }).int(`${label}: sin decimales`) : z.number({ invalid_type_error: `${label}: escribe un número` }))
+      .min(min, `${label}: entre ${min} y ${max}`)
+      .max(max, `${label}: entre ${min} y ${max}`)
+      .nullable(),
+  );
+
 const analyzeSchema = z
   .object({
     image: imageDataUrl,
@@ -46,6 +56,10 @@ const analyzeSchema = z
     // Ubicación: solo si el usuario la autoriza en el navegador; ambas o ninguna.
     latitud: coord(-90, 90).default(null),
     longitud: coord(-180, 180).default(null),
+    altitud_m: optionalNumber(0, 5000, 'Altitud', { int: true }).default(null),
+    humedad_pct: optionalNumber(0, 100, 'Humedad').default(null),
+    temperatura_c: optionalNumber(-5, 45, 'Temperatura').default(null),
+    precipitacion_mm: optionalNumber(0, 500, 'Lluvia').default(null),
   })
   .strict()
   .refine((d) => (d.latitud === null) === (d.longitud === null), { message: 'Ubicación incompleta', path: ['latitud'] });
@@ -128,9 +142,9 @@ router.post(
     try {
       captura = await withTransaction(async (client) => {
         const { rows } = await client.query(
-          `INSERT INTO capturas (autor_id, imagen, latitud, longitud)
-           VALUES ($1, $2, $3, $4) RETURNING id, tomada_en`,
-          [req.user.id, image.name, data.latitud, data.longitud],
+          `INSERT INTO capturas (autor_id, imagen, latitud, longitud, altitud_m, humedad_pct, temperatura_c, precipitacion_mm)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, tomada_en`,
+          [req.user.id, image.name, data.latitud, data.longitud, data.altitud_m, data.humedad_pct, data.temperatura_c, data.precipitacion_mm],
         );
         for (const r of results.filter((x) => x.available)) {
           await client.query(
@@ -157,6 +171,7 @@ router.post(
         id: captura.id,
         tomada_en: captura.tomada_en,
         ubicacion: data.latitud !== null,
+        condiciones: ['altitud_m', 'humedad_pct', 'temperatura_c', 'precipitacion_mm'].filter((k) => data[k] !== null).length,
       },
     });
   }),

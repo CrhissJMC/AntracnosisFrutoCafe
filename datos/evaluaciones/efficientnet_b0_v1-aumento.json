@@ -1,0 +1,178 @@
+{
+  "modelo": "efficientnet_b0",
+  "version": "v1-aumento",
+  "fecha": "2026-11-24T15:17:12",
+  "umbrales": {
+    "inferior": 0.05,
+    "superior": 0.7
+  },
+  "conjuntos": {
+    "train": {
+      "n": 2703,
+      "auc": 0.9959,
+      "perdida_logaritmica": 0.0844,
+      "matriz_confusion": {
+        "VP": 520,
+        "FP": 40,
+        "FN": 33,
+        "VN": 2110
+      },
+      "recall_antracnosis": 0.9403,
+      "precision_antracnosis": 0.9286,
+      "f1_antracnosis": 0.9344,
+      "exactitud": 0.973,
+      "porcentaje_revisar": 11.02,
+      "antracnosis_dadas_por_sanas": 1,
+      "cumple_RNF01": true,
+      "probabilidad_media": {
+        "sano": 0.0521,
+        "antracnosis": 0.9195
+      },
+      "por_fuente": {
+        "coffee_berry/sano": {
+          "n": 58,
+          "antracnosis": 0.397,
+          "revisar": 0.603,
+          "sano": 0.0
+        },
+        "coffee_berry/antracnosis": {
+          "n": 391,
+          "antracnosis": 0.918,
+          "revisar": 0.079,
+          "sano": 0.003
+        },
+        "coffee_cherry/sano": {
+          "n": 1802,
+          "antracnosis": 0.003,
+          "revisar": 0.046,
+          "sano": 0.951
+        },
+        "coffee_cherry/antracnosis": {
+          "n": 162,
+          "antracnosis": 0.994,
+          "revisar": 0.006,
+          "sano": 0.0
+        },
+        "zenodo/sano": {
+          "n": 290,
+          "antracnosis": 0.038,
+          "revisar": 0.51,
+          "sano": 0.452
+        }
+      }
+    },
+    "val": {
+      "n": 569,
+      "auc": 0.9739,
+      "perdida_logaritmica": 0.1647,
+      "matriz_confusion": {
+        "VP": 92,
+        "FP": 14,
+        "FN": 16,
+        "VN": 447
+      },
+      "recall_antracnosis": 0.8519,
+      "precision_antracnosis": 0.8679,
+      "f1_antracnosis": 0.8598,
+      "exactitud": 0.9473,
+      "porcentaje_revisar": 14.06,
+      "antracnosis_dadas_por_sanas": 2,
+      "cumple_RNF01": true,
+      "probabilidad_media": {
+        "sano": 0.0648,
+        "antracnosis": 0.8316
+      },
+      "por_fuente": {
+        "coffee_berry/sano": {
+          "n": 12,
+          "antracnosis": 0.5,
+          "revisar": 0.5,
+          "sano": 0.0
+        },
+        "coffee_berry/antracnosis": {
+          "n": 84,
+          "antracnosis": 0.929,
+          "revisar": 0.071,
+          "sano": 0.0
+        },
+        "coffee_cherry/sano": {
+          "n": 387,
+          "antracnosis": 0.005,
+          "revisar": 0.062,
+          "sano": 0.933
+        },
+        "coffee_cherry/antracnosis": {
+          "n": 24,
+          "antracnosis": 0.583,
+          "revisar": 0.333,
+          "sano": 0.083
+        },
+        "zenodo/sano": {
+          "n": 62,
+          "antracnosis": 0.097,
+          "revisar": 0.581,
+          "sano": 0.323
+        }
+      }
+    },
+    "test": {
+      "n": 568,
+      "auc": 0.9688,
+      "perdida_logaritmica": 0.1884,
+      "matriz_confusion": {
+        "VP": 84,
+        "FP": 24,
+        "FN": 23,
+        "VN": 437
+      },
+      "recall_antracnosis": 0.785,
+      "precision_antracnosis": 0.7778,
+      "f1_antracnosis": 0.7814,
+      "exactitud": 0.9173,
+      "porcentaje_revisar": 13.73,
+      "antracnosis_dadas_por_sanas": 1,
+      "cumple_RNF01": false,
+      "probabilidad_media": {
+        "sano": 0.0838,
+        "antracnosis": 0.8145
+      },
+      "por_fuente": {
+        "coffee_berry/sano": {
+          "n": 12,
+          "antracnosis": 0.667,
+          "revisar": 0.333,
+          "sano": 0.0
+        },
+        "coffee_berry/antracnosis": {
+          "n": 84,
+          "antracnosis": 0.845,
+          "revisar": 0.155,
+          "sano": 0.0
+        },
+        "coffee_cherry/sano": {
+          "n": 387,
+          "antracnosis": 0.023,
+          "revisar": 0.062,
+          "sano": 0.915
+        },
+        "coffee_cherry/antracnosis": {
+          "n": 23,
+          "antracnosis": 0.565,
+          "revisar": 0.391,
+          "sano": 0.043
+        },
+        "zenodo/sano": {
+          "n": 62,
+          "antracnosis": 0.113,
+          "revisar": 0.452,
+          "sano": 0.435
+        }
+      }
+    }
+  },
+  "brecha_train_test": {
+    "auc": 0.0271,
+    "recall_antracnosis": 0.1553,
+    "f1_antracnosis": 0.153
+  }
+}

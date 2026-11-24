@@ -1,13 +1,13 @@
 import { useMemo, useState } from 'react';
 import { Button, Checkbox, Icon, Text } from '../components/atoms';
 import { Alert, Callout } from '../components/molecules';
-import { ClimateRisk, DiagnosisPanel, ImageCapture, ModelPicker, ModuleTabs, PageHero } from '../components/organisms';
+import { ClimateRisk, DiagnosisPanel, ImageCapture, ModelPicker, ModuleTabs, PageHero, SiteConditions } from '../components/organisms';
 import { DiagnosisLayout } from '../components/templates';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useSite } from '../context/SiteContext.jsx';
 import { useAsync } from '../hooks/useAsync.js';
 import { api } from '../lib/api.js';
-import { classDescriptions } from '../lib/diagnosis.js';
+import { classDescriptions, parseSiteConditions } from '../lib/diagnosis.js';
 import './DiagnosisPage.css';
 
 // MobileNetV2 es el recomendado: en el conjunto de prueba es el único que cumple el recall de 85 % (RNF01).
@@ -40,6 +40,9 @@ export function DiagnosisPage() {
   const [response, setResponse] = useState(null);
   const [error, setError] = useState(null);
   const [formError, setFormError] = useState('');
+  // Condiciones del lugar (opcionales): se conservan entre fotos, porque suelen ser las mismas en la parcela.
+  const [site, setSite] = useState({});
+  const [siteErrors, setSiteErrors] = useState({});
 
   const toggleLocation = async (checked) => {
     setUseLocation(checked);
@@ -64,11 +67,14 @@ export function DiagnosisPage() {
   const analyze = async () => {
     if (!photo) return setFormError('Primero toma o sube una foto del fruto.');
     if (location.status === 'loading') return setFormError('Espera a que se obtenga la ubicación.');
+    const conditions = parseSiteConditions(site);
+    setSiteErrors(conditions.errors);
+    if (Object.keys(conditions.errors).length) return setFormError('Revisa las condiciones del lugar o deja vacíos los datos que no sepas.');
     setFormError('');
     setStatus('loading');
     try {
       const coords = useLocation && location.coords ? location.coords : {};
-      setResponse(await api.post('/diagnostico/analizar', { image: photo, model, ...coords }));
+      setResponse(await api.post('/diagnostico/analizar', { image: photo, model, ...coords, ...conditions.values }));
       setStatus('done');
     } catch (err) {
       setError({ message: err.message, unavailable: err.status === 503 });
@@ -127,6 +133,23 @@ export function DiagnosisPage() {
             )}
           </div>
 
+          {user && (
+            <div className="dx-form__step">
+              <p className="dx-form__title">
+                <span>3</span> Condiciones del lugar <em className="dx-form__optional">(opcional)</em>
+              </p>
+              <SiteConditions
+                values={site}
+                errors={siteErrors}
+                onChange={(v) => {
+                  setSite(v);
+                  setSiteErrors({});
+                }}
+                disabled={status === 'loading'}
+              />
+            </div>
+          )}
+
           {user ? (
             <div className="dx-form__submit">
               {formError && (
@@ -162,7 +185,14 @@ export function DiagnosisPage() {
           {status === 'done' && response?.captura && (
             <Alert tone="success">
               Captura N.º {response.captura.id} guardada
-              {response.captura.ubicacion ? ', con su ubicación.' : '.'}
+              {[
+                response.captura.ubicacion && 'su ubicación',
+                response.captura.condiciones > 0 && `${response.captura.condiciones} ${response.captura.condiciones === 1 ? 'condición' : 'condiciones'} del lugar`,
+              ]
+                .filter(Boolean)
+                .join(' y ')
+                .replace(/^(.+)$/, ', con $1')}
+              .
             </Alert>
           )}
           <DiagnosisPanel status={status} error={error} response={response} photo={photo} descriptions={descriptions} />

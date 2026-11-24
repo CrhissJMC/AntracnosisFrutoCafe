@@ -82,6 +82,13 @@ CREATE TABLE IF NOT EXISTS capturas (
 CREATE INDEX IF NOT EXISTS capturas_tomada_idx ON capturas (tomada_en DESC);
 CREATE INDEX IF NOT EXISTS capturas_autor_idx  ON capturas (autor_id);
 
+-- Condiciones del lugar que indica el productor al tomar la foto (variables de influencia), todas opcionales:
+-- no todos las conocen con exactitud. No entran al modelo de la foto; quedan registradas para el análisis.
+ALTER TABLE capturas ADD COLUMN IF NOT EXISTS altitud_m        INTEGER      CHECK (altitud_m BETWEEN 0 AND 5000);
+ALTER TABLE capturas ADD COLUMN IF NOT EXISTS humedad_pct      NUMERIC(4,1) CHECK (humedad_pct BETWEEN 0 AND 100);
+ALTER TABLE capturas ADD COLUMN IF NOT EXISTS temperatura_c    NUMERIC(4,1) CHECK (temperatura_c BETWEEN -5 AND 45);
+ALTER TABLE capturas ADD COLUMN IF NOT EXISTS precipitacion_mm NUMERIC(6,1) CHECK (precipitacion_mm BETWEEN 0 AND 500);
+
 -- Bases creadas cuando había parcelas: se quitan (primero las vistas que las usan).
 DROP VIEW IF EXISTS v_dataset_reentrenamiento, v_incidencia_mensual, v_diagnostico_final, v_validacion_vigente CASCADE;
 ALTER TABLE capturas DROP COLUMN IF EXISTS parcela_id;

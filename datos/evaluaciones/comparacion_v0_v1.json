@@ -1,0 +1,32 @@
+{
+  "mobilenet_v2": {
+    "auc_v0": 0.9602,
+    "auc_v1": 0.9722,
+    "dif_auc": 0.012,
+    "dif_auc_ic95": [
+      0.002,
+      0.0231
+    ],
+    "mcnemar": {
+      "solo_v1_acierta": 32,
+      "solo_v0_acierta": 14,
+      "chi2": 6.283,
+      "p": 0.0122
+    }
+  },
+  "efficientnet_b0": {
+    "auc_v0": 0.96,
+    "auc_v1": 0.9688,
+    "dif_auc": 0.0088,
+    "dif_auc_ic95": [
+      0.0009,
+      0.0174
+    ],
+    "mcnemar": {
+      "solo_v1_acierta": 17,
+      "solo_v0_acierta": 13,
+      "chi2": 0.3,
+      "p": 0.5839
+    }
+  }
+}

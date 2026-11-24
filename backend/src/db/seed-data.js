@@ -255,10 +255,26 @@ const ESTADO_ITEMS_V13 = [
   ESTADO_VALIDACION,
 ];
 
-// Versión vigente (21/11/2026): casos de prueba CP01–CP10 aprobados y MobileNetV2 como modelo recomendado.
+const ESTADO_VALIDACION_V2 = ['estado', 'Validación del sistema', 'En curso. Hecho: los casos de prueba CP01–CP10 se ejecutaron contra el sistema completo y los diez quedaron aprobados, con actas y evidencia en el repositorio (carpeta pruebas/); y el modelo se evaluó con el conjunto de prueba, donde MobileNetV2 cumple el recall de 85 % y pasa a ser el recomendado. Falta: la encuesta de usabilidad (SUS) con compañeros del curso y, si es posible, la prueba con fotos de la finca (RNF04).'];
+
+// 21/11/2026: casos de prueba CP01–CP10 aprobados y MobileNetV2 como modelo recomendado.
+const ESTADO_ITEMS_V14 = [...ESTADO_ITEMS_V13.slice(0, 5), ESTADO_VALIDACION_V2];
+
+// 24/11/2026: condiciones del lugar opcionales en el diagnóstico.
+const ESTADO_ITEMS_V15 = [
+  ...ESTADO_ITEMS_V1.slice(0, 4),
+  ['estado', 'Módulos de gestión del conocimiento', 'Hecho. Registro de capturas, con las condiciones del lugar que el productor quiera indicar (altitud, temperatura, humedad y lluvia, todas opcionales); validación experta con historial de quién validó y con qué perfil; historial de capturas con exportación en CSV; tablero de incidencia por periodo, con la lluvia de cada mes; base de conocimiento, con fichas de manejo, artículos del blog y productos de apoyo (fungicidas, abonos y bioinsumos, sin dosis) para cada resultado; riesgo de antracnosis por el clima de los próximos 7 días (datos de Open-Meteo, sin sensores) y clima de los días previos a cada captura; y, en el panel, el modelo de diagnóstico con sus versiones, la versión activa y la descarga de las fotos validadas para reentrenar. Probado: casos CP01–CP10, tiempo de respuesta (menos de 3 s en 60 análisis), permisos por perfil y diseño adaptable. Pendiente: reflejar los cambios en el informe.'],
+  ESTADO_VALIDACION_V2,
+];
+
+// Versión vigente (24/11/2026): modelos v1 con aumento de datos y objetivo 1 cerrado sin revisión experta.
 const ESTADO_ITEMS = [
-  ...ESTADO_ITEMS_V13.slice(0, 5),
-  ['estado', 'Validación del sistema', 'En curso. Hecho: los casos de prueba CP01–CP10 se ejecutaron contra el sistema completo y los diez quedaron aprobados, con actas y evidencia en el repositorio (carpeta pruebas/); y el modelo se evaluó con el conjunto de prueba, donde MobileNetV2 cumple el recall de 85 % y pasa a ser el recomendado. Falta: la encuesta de usabilidad (SUS) con compañeros del curso y, si es posible, la prueba con fotos de la finca (RNF04).'],
+  ['estado', 'Datos reunidos y depurados', 'Hecho. 3 840 imágenes de un fruto cada una (768 con antracnosis y 3 072 sanas) de tres conjuntos públicos, divididas en 70 % entrenamiento, 15 % validación y 15 % prueba sin repartir una misma foto entre conjuntos. Para la v1, cada foto de entrenamiento tiene 4 variantes (espejo, rotada, con zoom y borrosa): 13 515 imágenes de entrenamiento. Las etiquetas se usan como se publicaron: el equipo no cuenta con un especialista para revisarlas.'],
+  ['estado', 'Modelos entrenados (v0 y v1)', 'Hecho. La v1 se entrenó con aumento de datos en la GPU de la PC. MobileNetV2 v1 sube la AUC en el conjunto de prueba de 0,960 a 0,972 (diferencia significativa), mantiene el recall en 87,8 % y baja las falsas alarmas de 45 a 26: es la versión que usa el sistema. EfficientNet-B0 v1 también mejora la AUC (0,969) y las falsas alarmas, pero su recall baja de 82,2 % a 78,5 %, por eso sigue en uso su v0.'],
+  ['estado', 'Revisión de lo que aprendió el modelo', 'Hecho. El aumento de datos reduce el sesgo de fondo: con MobileNetV2 v1, los frutos sanos fotografiados sobre fondo claro marcados como antracnosis bajan de 45 % a 13 % (la mayoría pasa a «revisar»). Aún no se elimina del todo y queda como limitación.'],
+  ['estado', 'Etiquetas de los datos públicos', 'Cerrado sin revisión experta. El equipo no cuenta con un especialista ni puede contratarlo, así que las etiquetas se usan como se publicaron y el posible error queda documentado en las limitaciones.'],
+  ESTADO_ITEMS_V15[4],
+  ESTADO_VALIDACION_V2,
 ];
 
 // Productos y abonos de apoyo según el resultado del diagnóstico (se muestran junto al resultado y
@@ -322,6 +338,18 @@ const TECNOLOGIAS_LIMITACIONES_V1 = [
   ['limitaciones', 'Un solo equipo de cómputo', 'El entrenamiento se hace en la PC del equipo (GPU RTX 4060 de 8 GB): se usan lotes pequeños y no se hizo una búsqueda amplia de hiperparámetros.'],
 ];
 
+// Limitaciones antes de la v1 y de cerrar el objetivo 1 sin revisión experta (24/11/2026).
+const LIMITACIONES_V2 = [
+  ['limitaciones', 'Etiquetas sin verificar', 'La principal fuente con antracnosis (Coffee berry disease, Roboflow) reutiliza las fotos de un conjunto colombiano de madurez de Zenodo, etiquetadas por un usuario anónimo como Colletotrichum kahawae, especie reportada solo en África; algunos frutos marcados como enfermos figuran como secos o sobremaduros. Un especialista debe revisar esas 559 imágenes antes del modelo final.'],
+  ['limitaciones', 'Pocos frutos enfermos', 'Solo 768 de las 3 840 imágenes tienen antracnosis y vienen de dos fuentes. Se compensa con pesos por clase y aumento de datos, pero el modelo puede no reconocer síntomas poco representados.'],
+  ['limitaciones', 'Datos de otras regiones', 'No hay fotos de frutos de Amazonas en el entrenamiento y en el Perú la antracnosis la causan otras especies de Colletotrichum. El desempeño real se medirá con al menos 100 fotos de la finca revisadas por un especialista.'],
+  ['limitaciones', 'El modelo se guía en parte por el fondo', 'Cada fuente tiene su propio fondo, cámara e iluminación, y casi todos los frutos enfermos vienen de fotos sobre fondo claro. En la versión v0, ningún fruto sano de ese tipo de foto sale como «sano» y los mapas Grad-CAM muestran atención en el fondo: el resultado es fiable en fotos del cafetal pero no en fotos sobre fondo claro. Se corregirá con más frutos sanos sobre fondo claro y revisando las etiquetas.'],
+  ['limitaciones', 'Sin severidad ni planta completa', 'El modelo clasifica un fruto por foto en sano o antracnosis. No estima la severidad ni analiza ramas completas: en las fotos de rama solo se usaron frutos de al menos 40 píxeles.'],
+  ['limitaciones', 'Modelo preliminar', 'La versión v0 se entrenó antes de la revisión experta de las etiquetas: sus métricas son orientativas, EfficientNet-B0 aún no alcanza el recall de 85 % en el conjunto de prueba (0,82) y el sistema no reemplaza el diagnóstico de un especialista ni de laboratorio.'],
+  ['limitaciones', 'Un solo equipo de cómputo', 'El entrenamiento se hace en la PC del equipo (GPU RTX 4060 de 8 GB): se usan lotes pequeños y no se hizo una búsqueda amplia de hiperparámetros.'],
+  ['limitaciones', 'Clima estimado, no medido', 'El riesgo climático usa datos de Open-Meteo calculados por modelos meteorológicos para una zona de algunos kilómetros, no medidos en la parcela; en la montaña el clima cambia en poca distancia. La regla de riesgo es conocimiento experto con umbrales editables, no un modelo entrenado, y no entra al modelo de las fotos.'],
+];
+
 export const METHOD_ITEMS = [
   // El problema
   ['problema', 'El café importa', 'Es una actividad productiva clave para muchas comunidades rurales; las enfermedades afectan el rendimiento y la calidad de la cosecha.'],
@@ -366,13 +394,13 @@ export const METHOD_ITEMS = [
   // Productos de apoyo según el resultado (pantalla de diagnóstico)
   ...PRODUCT_ITEMS,
   // Limitaciones
-  ['limitaciones', 'Etiquetas sin verificar', 'La principal fuente con antracnosis (Coffee berry disease, Roboflow) reutiliza las fotos de un conjunto colombiano de madurez de Zenodo, etiquetadas por un usuario anónimo como Colletotrichum kahawae, especie reportada solo en África; algunos frutos marcados como enfermos figuran como secos o sobremaduros. Un especialista debe revisar esas 559 imágenes antes del modelo final.'],
+  ['limitaciones', 'Etiquetas sin revisión experta', 'La principal fuente con antracnosis (Coffee berry disease, Roboflow Universe) la publicó un usuario anónimo: reutiliza las fotos de un conjunto colombiano de madurez de Zenodo, etiquetadas como Colletotrichum kahawae, especie reportada solo en África, y algunos frutos marcados como enfermos parecen secos o sobremaduros. El equipo no cuenta con un especialista ni puede contratarlo, así que las 559 imágenes se usan como se publicaron: las métricas pueden estar afectadas por esos errores de etiqueta.'],
   ['limitaciones', 'Pocos frutos enfermos', 'Solo 768 de las 3 840 imágenes tienen antracnosis y vienen de dos fuentes. Se compensa con pesos por clase y aumento de datos, pero el modelo puede no reconocer síntomas poco representados.'],
-  ['limitaciones', 'Datos de otras regiones', 'No hay fotos de frutos de Amazonas en el entrenamiento y en el Perú la antracnosis la causan otras especies de Colletotrichum. El desempeño real se medirá con al menos 100 fotos de la finca revisadas por un especialista.'],
-  ['limitaciones', 'El modelo se guía en parte por el fondo', 'Cada fuente tiene su propio fondo, cámara e iluminación, y casi todos los frutos enfermos vienen de fotos sobre fondo claro. En la versión v0, ningún fruto sano de ese tipo de foto sale como «sano» y los mapas Grad-CAM muestran atención en el fondo: el resultado es fiable en fotos del cafetal pero no en fotos sobre fondo claro. Se corregirá con más frutos sanos sobre fondo claro y revisando las etiquetas.'],
+  ['limitaciones', 'Datos de otras regiones', 'No hay fotos de frutos de Amazonas en el entrenamiento y en el Perú la antracnosis la causan otras especies de Colletotrichum. El desempeño real se medirá con fotos de la finca.'],
+  ['limitaciones', 'El modelo se guía en parte por el fondo', 'Cada fuente tiene su propio fondo, cámara e iluminación, y casi todos los frutos enfermos vienen de fotos sobre fondo claro. En la v0, ningún fruto sano de ese tipo de foto salía como «sano» y los mapas Grad-CAM mostraban atención en el fondo. La v1, entrenada con aumento de datos, lo reduce (con MobileNetV2, esos frutos marcados como antracnosis bajan de 45 % a 13 %), pero no lo elimina: el resultado es más fiable en fotos del cafetal que sobre fondo claro.'],
   ['limitaciones', 'Sin severidad ni planta completa', 'El modelo clasifica un fruto por foto en sano o antracnosis. No estima la severidad ni analiza ramas completas: en las fotos de rama solo se usaron frutos de al menos 40 píxeles.'],
-  ['limitaciones', 'Modelo preliminar', 'La versión v0 se entrenó antes de la revisión experta de las etiquetas: sus métricas son orientativas, EfficientNet-B0 aún no alcanza el recall de 85 % en el conjunto de prueba (0,82) y el sistema no reemplaza el diagnóstico de un especialista ni de laboratorio.'],
-  ['limitaciones', 'Un solo equipo de cómputo', 'El entrenamiento se hace en la PC del equipo (GPU RTX 4060 de 8 GB): se usan lotes pequeños y no se hizo una búsqueda amplia de hiperparámetros.'],
+  ['limitaciones', 'Modelos sin validar en campo', 'Las versiones v0 y v1 se entrenaron con datos públicos sin revisión experta y no se probaron con fotos de la finca: sus métricas son orientativas. EfficientNet-B0 aún no alcanza el recall de 85 % en el conjunto de prueba (0,82 en v0 y 0,79 en v1), y el sistema no reemplaza el diagnóstico de un especialista ni de laboratorio.'],
+  ['limitaciones', 'Un solo equipo de cómputo', 'El entrenamiento se hace en la PC del equipo (GPU RTX 4060 de 8 GB): no se hizo una búsqueda amplia de hiperparámetros, y el ajuste fino de MobileNetV2 v1 solo funcionó sin el compilador XLA (opción --sin-xla).'],
   ['limitaciones', 'Clima estimado, no medido', 'El riesgo climático usa datos de Open-Meteo calculados por modelos meteorológicos para una zona de algunos kilómetros, no medidos en la parcela; en la montaña el clima cambia en poca distancia. La regla de riesgo es conocimiento experto con umbrales editables, no un modelo entrenado, y no entra al modelo de las fotos.'],
 ];
 
@@ -935,6 +963,9 @@ export const LEGACY_METHOD_VERSIONS = [
   ESTADO_ITEMS_V11,
   ESTADO_ITEMS_V12,
   ESTADO_ITEMS_V13,
+  ESTADO_ITEMS_V14,
+  ESTADO_ITEMS_V15,
+  LIMITACIONES_V2,
   TECNOLOGIAS_LIMITACIONES_V1,
   FLUJO_V1,
   METHOD_ITEMS_V3.map((i) =>
@@ -975,12 +1006,18 @@ export const MODEL_VERSIONS = [
     modelo: 'efficientnet_b0', version: 'v0-preliminar', archivo: 'ml/modelos/efficientnet_b0.keras',
     umbral_inferior: 0.04, umbral_superior: 0.8, auc: 0.96, recall: 0.8224, precision: 0.7333, f1: 0.7753,
     num_imagenes: 2703, entrenado_en: '2026-11-15T14:54:00-05:00',
-    notas: 'Versión preliminar, entrenada antes de la revisión experta de las etiquetas. Se guía en parte por el fondo de la foto.',
+    notas: 'Versión preliminar, entrenada con las etiquetas públicas sin revisión experta. Se guía en parte por el fondo de la foto.',
   },
   {
-    modelo: 'mobilenet_v2', version: 'v0-preliminar', archivo: 'ml/modelos/mobilenet_v2.keras',
+    modelo: 'mobilenet_v2', version: 'v0-preliminar', archivo: 'ml/modelos/v0-preliminar/mobilenet_v2.keras',
     umbral_inferior: 0.07, umbral_superior: 0.74, auc: 0.9602, recall: 0.8879, precision: 0.6786, f1: 0.7692,
     num_imagenes: 2703, entrenado_en: '2026-11-15T14:48:00-05:00',
-    notas: 'Versión preliminar, entrenada antes de la revisión experta de las etiquetas. Se guía en parte por el fondo de la foto.',
+    notas: 'Versión preliminar, entrenada con las etiquetas públicas sin revisión experta. Se guía en parte por el fondo de la foto.',
+  },
+  {
+    modelo: 'mobilenet_v2', version: 'v1-aumento', archivo: 'ml/modelos/mobilenet_v2.keras',
+    umbral_inferior: 0.01, umbral_superior: 0.69, auc: 0.9722, recall: 0.8785, precision: 0.7833, f1: 0.8282,
+    num_imagenes: 13515, entrenado_en: '2026-11-24T10:33:00-05:00',
+    notas: 'Aumento de datos: 4 variantes de cada foto de entrenamiento (espejo, rotada, zoom y borrosa). Frente a v0 en el conjunto de prueba: AUC 0,960 → 0,972 (diferencia significativa), 19 falsas alarmas menos y menos sesgo de fondo; cumple el recall de 85 %.',
   },
 ];

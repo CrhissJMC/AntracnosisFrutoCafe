@@ -241,6 +241,16 @@ async function seedModule(client) {
     );
     if (rowCount) log('seed_model_version', { modelo: v.modelo, version: v.version });
   }
+  // MobileNetV2 v1-aumento reemplaza a v0 (24/11/2026): se activa una sola vez; después manda el panel.
+  const { rowCount: once } = await client.query(
+    "INSERT INTO migraciones_aplicadas (nombre) VALUES ('activar_mobilenet_v1') ON CONFLICT DO NOTHING",
+  );
+  if (once) {
+    // En dos pasos: el índice único de «una activa por modelo» se comprueba fila por fila.
+    await client.query("UPDATE modelo_versiones SET activo = FALSE WHERE modelo = 'mobilenet_v2' AND activo");
+    await client.query("UPDATE modelo_versiones SET activo = TRUE WHERE modelo = 'mobilenet_v2' AND version = 'v1-aumento'");
+    log('activate_model_version', { modelo: 'mobilenet_v2', version: 'v1-aumento' });
+  }
 }
 
 // Base de conocimiento (RF07): fichas de manejo y artículos vinculados a cada resultado.
